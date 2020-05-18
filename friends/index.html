@@ -71,7 +71,7 @@
     var CONFIG = window.CONFIG || {}
     CONFIG = {
       fancybox: true,
-      pjax: false,
+      pjax: true,
       lazyload: {
         enable: true,
         loadingImage: '/images/theme/loading.gif',
@@ -156,6 +156,9 @@
     <div class="head-info">
       <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-03</span
         class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/friends/index.html"
+          class="leancloud" data-flag-title="friends"></span></span>
       
       <span class="post-info-item"><i class="iconfont iconfont-size"></i>655</span>
     </div>
@@ -282,6 +285,11 @@
 
 
 
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
 
 
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
@@ -295,6 +303,43 @@
 
 
 
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
 
 
 
