@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ceph+docker方式搭建owncloud实现私网云盘 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,ceph+docker方式搭建owncloud实现私网..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: '寂寞的时候，我会卷曲着自己，假装被拥抱着。'
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/post-image.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">ceph+docker方式搭建owncloud实现私网云盘</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-19</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/19/ceph+docker%E6%96%B9%E5%BC%8F%E6%90%AD%E5%BB%BAowncloud%E5%AE%9E%E7%8E%B0%E7%A7%81%E7%BD%91%E4%BA%91%E7%9B%98/"
+          class="leancloud" data-flag-title="ceph+docker方式搭建owncloud实现私网云盘"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>29327</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <h3 id="ceph-docker方式搭建owncloud实现私网云盘">ceph+docker方式搭建owncloud实现私网云盘</h3>
+<h4 id="项目背景">项目背景</h4>
+<p>企业应用中越来越多的会使用容器技术来是实现解决方案</p>
+<p>1、单节点的docker和docker-compose</p>
+<p>2、多节点的docker swarm集群</p>
+<p>3、多节点的k8s集群</p>
+<p>以上都是可以基于容器技术实现企业应用的编排和快速部署</p>
+<p>在特别大型的业务架构中, 数据达到T级别,P级别,甚至E级别或更高。如此大量 的数据,我们需要保证它的数据读写性能, 数据可靠性, 在线扩容等, 并且希望能 与容器技术整合使用。<br>
+ceph分布式存储是非常不错的开源解决方案<br>
+目前ceph在docker swarm集群与kubernetes集群中已经可以实现对接使用。 虽然3种类型存储并不是在任何场合都支持，但开源社区中也有相应的解决方 案，也会越来越成熟。<br>
+下面我们就使用ceph做底层存储, 分别在docker节点,docker swarm集 群,kubernetes集群中对接应用打造私有云盘与web应用。</p>
+<h4 id="项目架构图">项目架构图</h4>
+<p><img class="lazyload" data-original="C:%5CUsers%5Cmy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1587473152092.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="1587473152092"></p>
+<p>PS:在架构图中写的比较全，但是在这个项目中不会全部做完，只是ceph集群加单台docker部署owncloud，实现云盘的功能，并没有docker集群的操作。</p>
+<p>四台主机</p>
+<p>系统版本为7.6  1810</p>
+<p>ceph1  10.0.0.5    作为管理ceph集群的节点，它自身也在集群中</p>
+<p>ceph2  10.0.0.6      组成ceph集群</p>
+<p>ceph3    10.0.0.41  组成ceph集群</p>
+<p>owncloud  10.0.0.63   docker部署owncloud</p>
+<h4 id="部署过程">部署过程</h4>
+<h5 id="准备过程">准备过程</h5>
+<h6 id="1、所有节点配置静态IP地址（要求能上公网）（ceph1举例）">1、所有节点配置静态IP地址（要求能上公网）（ceph1举例）</h6>
+<figure class="highlight ini"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[root@ceph1 yum.repos.d 04:14:18]</span><span class="hljs-comment"># cat /etc/sysconfig/network-scripts/ifcfg-eth0</span><br><span class="hljs-attr">TYPE</span>=Ethernet<br><span class="hljs-attr">PROXY_METHOD</span>=none<br><span class="hljs-attr">BROWSER_ONLY</span>=<span class="hljs-literal">no</span><br><span class="hljs-attr">BOOTPROTO</span>=static<br><span class="hljs-attr">DEFROUTE</span>=<span class="hljs-literal">yes</span><br><span class="hljs-attr">IPV4_FAILURE_FATAL</span>=<span class="hljs-literal">no</span><br><span class="hljs-attr">IPV6INIT</span>=<span class="hljs-literal">yes</span><br><span class="hljs-attr">IPV6_AUTOCONF</span>=<span class="hljs-literal">yes</span><br><span class="hljs-attr">IPV6_DEFROUTE</span>=<span class="hljs-literal">yes</span><br><span class="hljs-attr">IPV6_FAILURE_FATAL</span>=<span class="hljs-literal">no</span><br><span class="hljs-attr">IPV6_ADDR_GEN_MODE</span>=stable-privacy<br><span class="hljs-attr">NAME</span>=eth0<br><span class="hljs-attr">DEVICE</span>=eth0<br><span class="hljs-attr">ONBOOT</span>=<span class="hljs-literal">yes</span><br><span class="hljs-attr">IPADDR</span>=<span class="hljs-number">10.0</span>.<span class="hljs-number">0.5</span><br><span class="hljs-attr">NETMASK</span>=<span class="hljs-number">255.255</span>.<span class="hljs-number">255.0</span><br><span class="hljs-attr">GATEWAY</span>=<span class="hljs-number">10.0</span>.<span class="hljs-number">0.254</span><br><span class="hljs-attr">DNS1</span>=<span class="hljs-number">223.5</span>.<span class="hljs-number">5.5</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="2、所有节点主机名配置在-etc-hosts文件中">2、所有节点主机名配置在/etc/hosts文件中</h6>
+<p>（ceph1举例）</p>
+<figure class="highlight accesslog"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs accesslog"><span class="hljs-string">[root@ceph1 yum.repos.d 04:14:36]</span># cat /etc/hosts<br><span class="hljs-number">127.0.0.1</span>   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::<span class="hljs-number">1</span>         localhost localhost.localdomain localhost6 localhost6.localdomain6<br><span class="hljs-number">10.0.0.5</span> ceph1<br><span class="hljs-number">10.0.0.6</span> ceph2<br><span class="hljs-number">10.0.0.41</span> ceph3<br><span class="hljs-number">10.0.0.63</span> owncloud<br></code></pre></td></tr></tbody></table></figure>
+<p>说明：还有没有开始部署的节点，也请先把IP地址和主机名进行绑定到/etc/hosts中</p>
+<h6 id="3、所有节点关闭centos7的firewalld房防火墙，iptables规则清空">3、所有节点关闭centos7的firewalld房防火墙，iptables规则清空</h6>
+<figure class="highlight clean"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs clean"># systemctl stop firewalld # systemctl disable firewalld<br><br># yum install iptables-services -y # systemctl restart iptables # systemctl enable iptables<br><br># iptables -F # iptables -F -t nat # iptables -F -t mangle # iptables -F -t raw<br><br># service iptables save iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="4、所有节点关闭selinux">4、所有节点关闭selinux</h6>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 yum.repos.d 04:16:08]<span class="hljs-comment"># cat /etc/selinux/config</span><br><br><span class="hljs-comment"># This file controls the state of SELinux on the system.</span><br><br><span class="hljs-comment"># SELINUX= can take one of these three values:</span><br><br><span class="hljs-comment"># enforcing - SELinux security policy is enforced.</span><br><br><span class="hljs-comment"># permissive - SELinux prints warnings instead of enforcing.</span><br><br><span class="hljs-comment"># disabled - No SELinux policy is loaded.</span><br><br>SELINUX=disabled<br><br><span class="hljs-comment"># SELINUXTYPE= can take one of three values:</span><br><br><span class="hljs-comment"># targeted - Targeted processes are protected,</span><br><br><span class="hljs-comment"># minimum - Modification of targeted policy. Only selected processes are protected.</span><br><br><span class="hljs-comment"># mls - Multi Level Security protection.</span><br><br>SELINUXTYPE=targeted<br><br>[root@ceph1 yum.repos.d 04:18:09]<span class="hljs-comment"># getenforce</span><br>Disabled<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="5、同步时间">5、同步时间</h6>
+<figure class="highlight vala"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># systemctl restart ntpd </span><br><span class="hljs-meta"># systemctl enabled ntpd</span><br></code></pre></td></tr></tbody></table></figure>
+<p>PS：准备工作是在所有节点都进行操作的</p>
+<h5 id="部署开始">部署开始</h5>
+<h6 id="1、添加ceph的yum源">1、添加ceph的yum源</h6>
+<figure class="highlight ini"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-section">[root@ceph1 yum.repos.d 02:40:54]</span><span class="hljs-comment"># cat ceph.repo</span><br><span class="hljs-section">[ceph]</span><br><span class="hljs-attr">name</span>=ceph<br><span class="hljs-attr">baseurl</span>=https://mirrors.tuna.tsinghua.edu.cn/ceph/rpm-mimic/el7/x<span class="hljs-number">86_64</span>/<br><span class="hljs-attr">enabled</span>=<span class="hljs-number">1</span><br><span class="hljs-attr">gpgcheck</span>=<span class="hljs-number">0</span><br><span class="hljs-attr">priority</span>=<span class="hljs-number">1</span><br><br><span class="hljs-section">[ceph-noarch]</span><br><span class="hljs-attr">name</span>=cephnoarch<br><span class="hljs-attr">baseurl</span>=https://mirrors.tuna.tsinghua.edu.cn/ceph/rpm-mimic/el7/noarch/<br><span class="hljs-attr">enabled</span>=<span class="hljs-number">1</span><br><span class="hljs-attr">gpgcheck</span>=<span class="hljs-number">0</span><br><span class="hljs-attr">priority</span>=<span class="hljs-number">1</span><br><br><span class="hljs-section">[ceph-source]</span><br><span class="hljs-attr">name</span>=Ceph source packages<br><span class="hljs-attr">baseurl</span>=https://mirrors.tuna.tsinghua.edu.cn/ceph/rpm-mimic/el7/SRPMS/<br><span class="hljs-attr">enabled</span>=<span class="hljs-number">1</span><br><span class="hljs-attr">gpgcheck</span>=<span class="hljs-number">0</span><br><span class="hljs-attr">priority</span>=<span class="hljs-number">1</span><br><br><span class="hljs-section">[root@ceph1 yum.repos.d 02:40:57]</span><span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>注释：我这里使用的清华源，也可以使用阿里源或者是搭建本地yum源（搭建本地yum源的前提是将所有的rpm下载到本地）</p>
+<p>将此ceph.repo拷贝到其他所有节点</p>
+<h6 id="2、配置ceph集群ssh免密">2、配置ceph集群ssh免密</h6>
+<p>以ceph1为部署节点，在ceph1上配置到其他节点的ssh免密</p>
+<p>目的：因为ceph集群会经常同步配置文件到其他节点，免密会方便很多</p>
+<figure class="highlight ruby"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ruby">[root@ceph1 ~]<span class="hljs-comment"># ssh-keygen            # 三次回车做成空密码密钥[root<span class="hljs-doctag">@ceph</span>_node1 ~]# ssh-copy-id ceph1 </span><br>[root@ceph_node1 ~]<span class="hljs-comment"># ssh-copy-id ceph2 </span><br>[root@ceph_node1 ~]<span class="hljs-comment"># ssh-copy-id ceph3 </span><br>[root@ceph_node1 ~]<span class="hljs-comment"># ssh-copy-id owncloud</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="3、在ceph1上安装部署工具">3、在ceph1上安装部署工具</h6>
+<p>其他节点不需要安装</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install -y  python-setuptools.noarch  <span class="hljs-comment">#先安装一个模块</span><br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight cmake"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">yum <span class="hljs-keyword">install</span> ceph-deploy -y  <span class="hljs-comment">#安装部署工具</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="4、在ceph1上创建集群">4、在ceph1上创建集群</h6>
+<p>创建一个集群配置目录</p>
+<p>注意：后面大部分的操作都在这个目录中操作</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkdir /etc/ceph<br> <span class="hljs-built_in">cd</span> /etc/ceph<br></code></pre></td></tr></tbody></table></figure>
+<p>创建一个ceph1集群</p>
+<figure class="highlight actionscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs actionscript">ceph-deploy <span class="hljs-keyword">new</span>  ceph1<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 ceph 06:41:01]<span class="hljs-comment"># ll</span><br>total 16<br>-rw-r--r-- 1 root root  191 Apr 21 02:38 ceph.conf<br>-rw-r--r-- 1 root root 2917 Apr 21 02:38 ceph-deploy-ceph.log<br>-rw------- 1 root root   73 Apr 21 02:38 ceph.mon.keyring<br>-rw-r--r-- 1 root root   92 Apr 16 12:47 rbdmap<br>[root@ceph1 ceph 06:42:02]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>说明：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">ceph.conf 集群配置文件<br><br>ceph-deploy-ceph.log  使用ceph-deploy部署的日志记录<br><br>ceph.mon.keyring   验证key文件<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="5、安装ceph软件">5、安装ceph软件</h6>
+<p>在所有ceph集群节点安装ceph与ceph-radosgw软件包</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">06</span>:<span class="hljs-number">42</span>:<span class="hljs-number">32</span>]# ceph -v<br>ceph version <span class="hljs-number">13.2</span><span class="hljs-number">.9</span> (<span class="hljs-number">58</span>a2a9b31fd08d8bb3089fce0e312331502ff945) mimic (stable)<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">06</span>:<span class="hljs-number">42</span>:<span class="hljs-number">36</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>补充说明：如果网速够好的话，可以使用ceph-deploy install ceph1 ceph2 ceph3 命令来安装。ceph-deploy命令会自动通过公网官方源安装。（网速不给力就不要使用这种方式了）</p>
+<p>在ceph客户端节点（k8s集群节点上）安装ceph-common</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># yum install ceph-common -y</span><br></code></pre></td></tr></tbody></table></figure>
+<h5 id="创建mon监控组件">创建mon监控组件</h5>
+<p>增加监控网络，网段为实验环境的集群物理网络</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 ceph 06:50:47]<span class="hljs-comment"># cat /etc/ceph/ceph.conf</span><br>[global]<br>fsid = bb1d01eb-0d72-4794-9d7c-cb692d7a8f34<br>mon_initial_members = ceph1<br>mon_host = 10.0.0.5<br>auth_cluster_required = cephx<br>auth_service_required = cephx<br>auth_client_required = cephx<br><br>public network = 10.0.0.0/24  <span class="hljs-comment">#添加的配置，监控网络</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="1、集群节点初始化">1、集群节点初始化</h6>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 ceph 06:52:13]<span class="hljs-comment"># ceph-deploy mon create-initial</span><br>[root@ceph1 ceph 06:52:05]<span class="hljs-comment"># ceph health</span><br>HEALTH_OK<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="2、将配置文件信息同步到所有的ceph集群节点">2、将配置文件信息同步到所有的ceph集群节点</h6>
+<figure class="highlight nsis"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nsis">ceph-deploy <span class="hljs-literal">admin</span> ceph1 ceph2 ceph3<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash"><br>[root@ceph1 ceph 06:57:15]<span class="hljs-comment"># ceph -s</span><br>  cluster:<br>    id:     bb1d01eb-0d72-4794-9d7c-cb692d7a8f34<br>    health: HEALTH_OK<br><br>  services:<br>    mon: 1 daemons, quorum ceph1<br>    mgr: no daemons active<br>    osd: 0 osds: 0 up, 0 <span class="hljs-keyword">in</span><br><br>  data:<br>    pools:   0 pools, 0 pgs<br>    objects: 0  objects, 0 B<br>    usage:   0 B used, 0 B / 0 B avail<br>    pgs:<br><br>[root@ceph1 ceph 06:57:19]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>此时集群已经搭建好了</p>
+<h6 id="3、多个mon节点">3、多个mon节点</h6>
+<p>为了防止mon节点单点故障，你可以添加多个mon节点（非必要步骤）</p>
+<figure class="highlight dockerfile"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile">ceph-deploy mon <span class="hljs-keyword">add</span><span class="bash"> ceph2</span><br>ceph-deploy mon <span class="hljs-keyword">add</span><span class="bash"> ceph3</span><br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">06</span><span class="hljs-string">:59:11]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_OK</span><br><span class="hljs-string">健康状态为ok</span><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span>  <span class="hljs-string">三个监控</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-literal">no</span> <span class="hljs-string">daemons</span> <span class="hljs-string">active</span><br>    <span class="hljs-attr">osd: 0 osds:</span> <span class="hljs-number">0</span> <span class="hljs-string">up,</span> <span class="hljs-number">0</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">0</span> <span class="hljs-string">B</span> <span class="hljs-string">used,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span> <span class="hljs-string">/</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span><br></code></pre></td></tr></tbody></table></figure>
+<h5 id="监控到时间不同不的解决方法">监控到时间不同不的解决方法</h5>
+<p>ceph集群对时间同步的要求非常高，即使你已经将ntpd服务开启，但仍然有可能会有clock skew deteted相关警告</p>
+<p>可以尝试如下做法：</p>
+<h6 id="1、在ceph集群节点上使用crontab同步">1、在ceph集群节点上使用crontab同步</h6>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># systemctl stop ntpd # systemctl disable ntpd</span><br><br><span class="hljs-comment"># crontab -e */10 * * * * ntpdate ntp1.aliyun.com                每5或10 分钟同步1次公网的任意时间服务器</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="2、调大时间警告的阈值">2、调大时间警告的阈值</h6>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph_node1 ceph]# vim ceph.conf <br>[global]                                在global参数组里添加 以下两行                       <span class="hljs-built_in">..</span><span class="hljs-built_in">..</span><span class="hljs-built_in">..</span> <br>mon<span class="hljs-built_in"> clock </span>drift allowed = 2             # monitor间的时钟滴 答数(默认0.5秒) <br>mon<span class="hljs-built_in"> clock </span>drift warn backoff = 30       # 调大时钟允许的偏移量 (默认为5)<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="3、同步到所有节点">3、同步到所有节点</h6>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph_node1 ceph]<span class="hljs-comment"># ceph-deploy --overwrite-conf admin ceph_node1 ceph_node2 ceph_node3</span><br><br>前面第1次同步不需要加--overwrite-conf参数 这次修改ceph.conf再同步就需要加--overwrite-conf参数覆盖<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="4、所有ceph集群节点上重启ceph-mon-target服务">4、所有ceph集群节点上重启ceph-mon.target服务</h6>
+<figure class="highlight aspectj"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs aspectj">systemctl  restart  ceph-mon.<span class="hljs-keyword">target</span><br></code></pre></td></tr></tbody></table></figure>
+<h5 id="创建mgr管理组件">创建mgr管理组件</h5>
+<p>ceph luminous版本之后新增加了一个组件：ceph  manager daemon ，简称ceph-mgr</p>
+<p>该组件的主要作用是分担和扩展monitor的部分功能，减轻monitor的负担，让更好的管理ceph存储系统</p>
+<p>ceph dashboard图形化管理就用到了mgr</p>
+<h6 id="1、创建一个mgr">1、创建一个mgr</h6>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">07</span>:<span class="hljs-number">11</span>:<span class="hljs-number">17</span>]# ceph-deploy mgr  create ceph1<br></code></pre></td></tr></tbody></table></figure>
+<p>查看一下</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><br><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">07</span><span class="hljs-string">:11:32]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_OK</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active)</span> <span class="hljs-string">这里就是mgr</span> <br>    <span class="hljs-attr">osd: 0 osds:</span> <span class="hljs-number">0</span> <span class="hljs-string">up,</span> <span class="hljs-number">0</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">0</span> <span class="hljs-string">B</span> <span class="hljs-string">used,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span> <span class="hljs-string">/</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="2、添加多个mgr可以实现HA">2、添加多个mgr可以实现HA</h6>
+<figure class="highlight gauss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs gauss">ceph-deploy mgr  <span class="hljs-keyword">create</span> ceph2<br>ceph-deploy mgr  <span class="hljs-keyword">create</span> ceph3<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 ceph 07:13:12]<span class="hljs-comment"># ceph -s</span><br>  cluster:<br>    id:     bb1d01eb-0d72-4794-9d7c-cb692d7a8f34<br>    health: HEALTH_WARN<br>            OSD count 0 &lt; osd_pool_default_size 3<br><br>  services:<br>    mon: 3 daemons, quorum ceph1,ceph2,ceph3  三个监控<br>    mgr: ceph1(active), standbys: ceph2, ceph3    ceph1为主mgr<br>    osd: 0 osds: 0 up, 0 <span class="hljs-keyword">in</span><br>看到0个磁盘<br>  data:<br>    pools:   0 pools, 0 pgs<br>    objects: 0  objects, 0 B<br>    usage:   0 B used, 0 B / 0 B avail<br>    pgs:<br><br>[root@ceph1 ceph 07:13:19]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>至此ceph集群基本已经搭建完成，但是还需要增加OSD磁盘</p>
+<h5 id="ceph集群管理">ceph集群管理</h5>
+<h6 id="1、物理上添加磁盘">1、物理上添加磁盘</h6>
+<p>在ceph集群所有节点上增加磁盘</p>
+<p>（我这里只是模拟，就增加一个5G的做测试使用)</p>
+<p><img class="lazyload" data-original="C:%5CUsers%5Cmy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1587468133938.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="1587468133938"></p>
+<p>ceph1 ceph2 ceph3 三个节点上都要进行操作</p>
+<p>不重启让系统识别新增加的磁盘</p>
+<p>操作之前</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 ceph 07:13:19]<span class="hljs-comment"># lsblk</span><br>NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT<br>sda               8:0    0   50G  0 disk<br>├─sda1            8:1    0    1G  0 part /boot<br>└─sda2            8:2    0   49G  0 part<br>  ├─centos-swap 253:0    0    2G  0 lvm  [SWAP]<br>  └─centos-root 253:1    0   47G  0 lvm  /<br>sr0              11:0    1  4.3G  0 rom<br>[root@ceph1 ceph 07:24:28]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>操作之中</p>
+<figure class="highlight kotlin"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs kotlin">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">07</span>:<span class="hljs-number">24</span>:<span class="hljs-number">28</span>]# echo <span class="hljs-string">"- - -"</span> &gt; /sys/<span class="hljs-class"><span class="hljs-keyword">class</span>/<span class="hljs-title">scsi_host</span>/<span class="hljs-title">host0</span>/<span class="hljs-title">scan</span></span><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">07</span>:<span class="hljs-number">26</span>:<span class="hljs-number">01</span>]# echo <span class="hljs-string">"- - -"</span> &gt; /sys/<span class="hljs-class"><span class="hljs-keyword">class</span>/<span class="hljs-title">scsi_host</span>/<span class="hljs-title">host1</span>/<span class="hljs-title">scan</span></span><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">07</span>:<span class="hljs-number">26</span>:<span class="hljs-number">08</span>]# echo <span class="hljs-string">"- - -"</span> &gt; /sys/<span class="hljs-class"><span class="hljs-keyword">class</span>/<span class="hljs-title">scsi_host</span>/<span class="hljs-title">host2</span>/<span class="hljs-title">scan</span></span><br></code></pre></td></tr></tbody></table></figure>
+<p>操作之后</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@ceph1 ceph 07:26:12]<span class="hljs-comment"># lsblk</span><br>NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT<br>sda               8:0    0   50G  0 disk<br>├─sda1            8:1    0    1G  0 part /boot<br>└─sda2            8:2    0   49G  0 part<br>  ├─centos-swap 253:0    0    2G  0 lvm  [SWAP]<br>  └─centos-root 253:1    0   47G  0 lvm  /<br>sdb       这里就是我们新加的        8:16   0    5G  0 disk<br>sr0              11:0    1  4.3G  0 rom<br>[root@ceph1 ceph 07:26:36]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="2、创建OSD磁盘">2、创建OSD磁盘</h6>
+<p>将磁盘添加到ceph集群中需要osd</p>
+<p>ceph OSD ：功能是存储于处理一些数据，并通过检查其他OSD守护进程的心跳来向ceph monitors 提供一些监控信息</p>
+<p>1、列表所有节点的磁盘 并使用zap命令清除磁盘信息准备创建OSD</p>
+<figure class="highlight awk"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk"> ceph-deploy disk zap ceph1 <span class="hljs-regexp">/dev/</span>sdb<br>ceph-deploy disk zap ceph2 <span class="hljs-regexp">/dev/</span>sdb<br>ceph-deploy disk zap ceph3 <span class="hljs-regexp">/dev/</span>sdb<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight markdown"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs markdown">[root@ceph1 ceph 07:32:01]# ceph-deploy disk zap ceph3 /dev/sdb<br>[<span class="hljs-string">ceph_deploy.conf</span>][<span class="hljs-symbol">DEBUG </span>] found configuration file at: /root/.cephdeploy.conf<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>] Invoked (2.0.1): /usr/bin/ceph-deploy disk zap ceph3 /dev/sdb<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>] ceph-deploy options:<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  username                      : None<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  verbose                       : False<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  debug                         : False<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  overwrite_conf                : False<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  subcommand                    : zap<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  quiet                         : False<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  cd<span class="hljs-emphasis">_conf                       : &lt;ceph_</span>deploy.conf.cephdeploy.Conf instance at 0x7feb12eb0368&gt;<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  cluster                       : ceph<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  host                          : ceph3<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  func                          : <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">function</span> <span class="hljs-attr">disk</span> <span class="hljs-attr">at</span> <span class="hljs-attr">0x7feb12eec8c0</span>&gt;</span></span><br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  ceph_conf                     : None<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  default_release               : False<br>[<span class="hljs-string">ceph_deploy.cli</span>][<span class="hljs-symbol">INFO </span>]  disk                          : ['/dev/sdb']<br>[<span class="hljs-string">ceph_deploy.osd</span>][<span class="hljs-symbol">DEBUG </span>] zapping /dev/sdb on ceph3<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">DEBUG </span>] connected to host: ceph3<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">DEBUG </span>] detect platform information from remote host<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">DEBUG </span>] detect machine type<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">DEBUG </span>] find the location of an executable<br>[<span class="hljs-string">ceph_deploy.osd</span>][<span class="hljs-symbol">INFO </span>] Distro info: CentOS Linux 7.6.1810 Core<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">DEBUG </span>] zeroing last few blocks of device<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">DEBUG </span>] find the location of an executable<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">INFO </span>] Running command: /usr/sbin/ceph-volume lvm zap /dev/sdb<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">WARNIN</span>] --&gt; Zapping: /dev/sdb<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">WARNIN</span>] --&gt; --destroy was not specified, but zapping a whole device will remove the partition table<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">WARNIN</span>] Running command: /bin/dd if=/dev/zero of=/dev/sdb bs=1M count=10 conv=fsync<br>[<span class="hljs-string">ceph3</span>][<span class="hljs-symbol">WARNIN</span>] --&gt; Zapping successful for: <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Raw</span> <span class="hljs-attr">Device:</span> /<span class="hljs-attr">dev</span>/<span class="hljs-attr">sdb</span>&gt;</span></span><br></code></pre></td></tr></tbody></table></figure>
+<p>2、创建OSD磁盘</p>
+<figure class="highlight jboss-cli"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">ceph-deploy osd create <span class="hljs-params">--data</span> <span class="hljs-string">/dev/sdb</span> ceph1<br>ceph-deploy osd create <span class="hljs-params">--data</span> <span class="hljs-string">/dev/sdb</span> ceph2<br>ceph-deploy osd create <span class="hljs-params">--data</span> <span class="hljs-string">/dev/sdb</span> ceph3<br></code></pre></td></tr></tbody></table></figure>
+<p>3、验证</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">07</span><span class="hljs-string">:34:31]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_OK</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active),</span> <span class="hljs-attr">standbys:</span> <span class="hljs-string">ceph2,</span> <span class="hljs-string">ceph3</span><br>    <span class="hljs-attr">osd: 3 osds:</span> <span class="hljs-number">3</span> <span class="hljs-string">up,</span> <span class="hljs-number">3</span> <span class="hljs-string">in</span><br><span class="hljs-string">三个磁盘</span><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">3.0</span> <span class="hljs-string">GiB</span> <span class="hljs-string">used,</span> <span class="hljs-number">12</span> <span class="hljs-string">GiB</span> <span class="hljs-string">/</span> <span class="hljs-number">15</span> <span class="hljs-string">GiB</span> <span class="hljs-string">avail</span>  <span class="hljs-string">合成一个15G的磁盘，但是使用了3G</span> <span class="hljs-string">是因为合成时会用掉一些空间</span><br>    <span class="hljs-attr">pgs:</span><br></code></pre></td></tr></tbody></table></figure>
+<h5 id="扩容操作">扩容操作</h5>
+<h6 id="节点中增加某个磁盘">节点中增加某个磁盘</h6>
+<p>如：在ceph3上再添加一块磁盘/dev/sdc。做如下操作就可以</p>
+<figure class="highlight jboss-cli"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">ceph-deploy disk zap ceph3 <span class="hljs-string">/dev/sdc</span><br>ceph-deploy osd create <span class="hljs-params">--data</span> <span class="hljs-string">/dev/sdc</span> ceph3<br></code></pre></td></tr></tbody></table></figure>
+<p>验证</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">08</span><span class="hljs-string">:10:41]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_OK</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active),</span> <span class="hljs-attr">standbys:</span> <span class="hljs-string">ceph2,</span> <span class="hljs-string">ceph3</span><br>    <span class="hljs-attr">osd: 4 osds:</span> <span class="hljs-number">4</span> <span class="hljs-string">up,</span> <span class="hljs-number">4</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">4.0</span> <span class="hljs-string">GiB</span> <span class="hljs-string">used,</span> <span class="hljs-number">16</span> <span class="hljs-string">GiB</span> <span class="hljs-string">/</span> <span class="hljs-number">20</span> <span class="hljs-string">GiB</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="增加某个节点并添加此节点的磁盘">增加某个节点并添加此节点的磁盘</h6>
+<p>如果是新增加一个节点（假设是owncloud节点）并添加一块磁盘</p>
+<p>那么做法如下：</p>
+<p>1、准备好owncloud节点的基本环境，安装ceph相关软件</p>
+<figure class="highlight gml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gml">yum install -<span class="hljs-symbol">y</span>  ceph  ceph-radosgw -<span class="hljs-symbol">y</span><br></code></pre></td></tr></tbody></table></figure>
+<p>2、在ceph1上同步1配置到owncloud节点</p>
+<figure class="highlight ebnf"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">ceph-deploy admin  owncloud</span><br></code></pre></td></tr></tbody></table></figure>
+<p>3、将owncloud加入集群</p>
+<figure class="highlight jboss-cli"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs jboss-cli">ceph-deploy disk  zap  owncloud <span class="hljs-string">/dev/sdb</span><br>ceph-deploy osd create <span class="hljs-params">--data</span>   <span class="hljs-string">/dev/sdb</span>  owncloud<br></code></pre></td></tr></tbody></table></figure>
+<p>4、验证</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">08</span><span class="hljs-string">:15:44]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_OK</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active),</span> <span class="hljs-attr">standbys:</span> <span class="hljs-string">ceph2,</span> <span class="hljs-string">ceph3</span><br>    <span class="hljs-attr">osd: 5 osds:</span> <span class="hljs-number">5</span> <span class="hljs-string">up,</span> <span class="hljs-number">5</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">5.0</span> <span class="hljs-string">GiB</span> <span class="hljs-string">used,</span> <span class="hljs-number">20</span> <span class="hljs-string">GiB</span> <span class="hljs-string">/</span> <span class="hljs-number">25</span> <span class="hljs-string">GiB</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span><br><br><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">08</span><span class="hljs-string">:15:48]#</span><br></code></pre></td></tr></tbody></table></figure>
+<h6 id="删除磁盘方法">删除磁盘方法</h6>
+<p>和很多存储一样，增加磁盘（扩容）都比较方便，但是要删除磁盘会比较麻烦。</p>
+<p>这里以删除owncloud节点的/dev/sdb磁盘为例</p>
+<p>1、查看osd磁盘状态</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">23</span>:<span class="hljs-number">49</span>]# ceph  osd  tree<br>ID CLASS WEIGHT  TYPE NAME         STATUS REWEIGHT PRI-AFF<br><span class="hljs-number">-1</span>       <span class="hljs-number">0.02449</span> root <span class="hljs-keyword">default</span><br><span class="hljs-number">-3</span>       <span class="hljs-number">0.00490</span>     host ceph1<br> <span class="hljs-number">0</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.0</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-5</span>       <span class="hljs-number">0.00490</span>     host ceph2<br> <span class="hljs-number">1</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.1</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-7</span>       <span class="hljs-number">0.00980</span>     host ceph3<br> <span class="hljs-number">2</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.2</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br> <span class="hljs-number">3</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.3</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-9</span>       <span class="hljs-number">0.00490</span>     host owncloud<br> <span class="hljs-number">4</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.4</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br></code></pre></td></tr></tbody></table></figure>
+<p>2、先标记为out</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">23</span>:<span class="hljs-number">56</span>]# ceph osd <span class="hljs-keyword">out</span> osd<span class="hljs-number">.4</span><br>marked <span class="hljs-keyword">out</span> osd<span class="hljs-number">.4</span>.<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">24</span>:<span class="hljs-number">46</span>]# ceph  osd  tree<br>ID CLASS WEIGHT  TYPE NAME         STATUS REWEIGHT PRI-AFF<br><span class="hljs-number">-1</span>       <span class="hljs-number">0.02449</span> root <span class="hljs-keyword">default</span><br><span class="hljs-number">-3</span>       <span class="hljs-number">0.00490</span>     host ceph1<br> <span class="hljs-number">0</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.0</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-5</span>       <span class="hljs-number">0.00490</span>     host ceph2<br> <span class="hljs-number">1</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.1</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-7</span>       <span class="hljs-number">0.00980</span>     host ceph3<br> <span class="hljs-number">2</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.2</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br> <span class="hljs-number">3</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.3</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-9</span>       <span class="hljs-number">0.00490</span>     host owncloud<br> <span class="hljs-number">4</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.4</span>         up        <span class="hljs-number">0</span> <span class="hljs-number">1.00000</span><br> 可以看到权重为<span class="hljs-number">0</span>但是状态还是up<br></code></pre></td></tr></tbody></table></figure>
+<p>3、再rm删除，但是要先去osd.4对应的节点上停止ceph-osd服务，否则删除不了</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>owncloud yum.repos.d <span class="hljs-number">08</span>:<span class="hljs-number">27</span>:<span class="hljs-number">35</span>]# systemctl stop  ceph-<span class="hljs-symbol">osd@</span><span class="hljs-number">4.</span>service<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">28</span>:<span class="hljs-number">09</span>]# ceph osd rm osd<span class="hljs-number">.4</span><br><br>removed osd<span class="hljs-number">.4</span><br></code></pre></td></tr></tbody></table></figure>
+<p>4、查看集群状态</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">08</span><span class="hljs-string">:28:18]#</span><br><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">08</span><span class="hljs-string">:28:18]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_WARN</span> <span class="hljs-string">会有警告，是因为没有在crush算法中删除</span><br>            <span class="hljs-number">1</span> <span class="hljs-string">osds</span> <span class="hljs-string">exist</span> <span class="hljs-string">in</span> <span class="hljs-string">the</span> <span class="hljs-string">crush</span> <span class="hljs-string">map</span> <span class="hljs-string">but</span> <span class="hljs-string">not</span> <span class="hljs-string">in</span> <span class="hljs-string">the</span> <span class="hljs-string">osdmap</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span> <br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active),</span> <span class="hljs-attr">standbys:</span> <span class="hljs-string">ceph2,</span> <span class="hljs-string">ceph3</span><br>    <span class="hljs-attr">osd: 4 osds:</span> <span class="hljs-number">4</span> <span class="hljs-string">up,</span> <span class="hljs-number">4</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">4.0</span> <span class="hljs-string">GiB</span> <span class="hljs-string">used,</span> <span class="hljs-number">16</span> <span class="hljs-string">GiB</span> <span class="hljs-string">/</span> <span class="hljs-number">20</span> <span class="hljs-string">GiB</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span><br></code></pre></td></tr></tbody></table></figure>
+<p>此时再查看，发现osd.4已经没有up了</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">28</span>:<span class="hljs-number">22</span>]# ceph osd  tree<br>ID CLASS WEIGHT  TYPE NAME         STATUS REWEIGHT PRI-AFF<br><span class="hljs-number">-1</span>       <span class="hljs-number">0.02449</span> root <span class="hljs-keyword">default</span><br><span class="hljs-number">-3</span>       <span class="hljs-number">0.00490</span>     host ceph1<br> <span class="hljs-number">0</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.0</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-5</span>       <span class="hljs-number">0.00490</span>     host ceph2<br> <span class="hljs-number">1</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.1</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-7</span>       <span class="hljs-number">0.00980</span>     host ceph3<br> <span class="hljs-number">2</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.2</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br> <span class="hljs-number">3</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.3</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-9</span>       <span class="hljs-number">0.00490</span>     host owncloud<br> <span class="hljs-number">4</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.4</span>        DNE        <span class="hljs-number">0</span><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">29</span>:<span class="hljs-number">23</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>5、在crush算法中和auth验证中删除</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>owncloud yum.repos.d <span class="hljs-number">08</span>:<span class="hljs-number">32</span>:<span class="hljs-number">29</span>]# ceph osd crush remove osd<span class="hljs-number">.4</span><br>removed item id <span class="hljs-number">4</span> name <span class="hljs-string">'osd.4'</span> <span class="hljs-keyword">from</span> crush map<br>[<span class="hljs-symbol">root@</span>owncloud yum.repos.d <span class="hljs-number">08</span>:<span class="hljs-number">32</span>:<span class="hljs-number">43</span>]# ceph auth del osd<span class="hljs-number">.4</span><br>updated<br></code></pre></td></tr></tbody></table></figure>
+<p>6、还需要在osd.4对应的节点上卸载磁盘</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>owncloud yum.repos.d <span class="hljs-number">08</span>:<span class="hljs-number">33</span>:<span class="hljs-number">04</span>]# df -Th |grep  osd<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M   <span class="hljs-number">52</span>K  <span class="hljs-number">487</span>M   <span class="hljs-number">1</span>% /var/lib/ceph/osd/ceph<span class="hljs-number">-4</span><br><br>[<span class="hljs-symbol">root@</span>owncloud yum.repos.d <span class="hljs-number">08</span>:<span class="hljs-number">33</span>:<span class="hljs-number">30</span>]# umount /var/lib/ceph/osd/ceph<span class="hljs-number">-4</span>/<br>[<span class="hljs-symbol">root@</span>owncloud yum.repos.d <span class="hljs-number">08</span>:<span class="hljs-number">33</span>:<span class="hljs-number">50</span>]# df -Th<br>Filesystem              Type      Size  Used Avail Use% Mounted on<br>/dev/mapper/centos-root xfs        <span class="hljs-number">47</span>G  <span class="hljs-number">1.6</span>G   <span class="hljs-number">46</span>G   <span class="hljs-number">4</span>% /<br>devtmpfs                devtmpfs  <span class="hljs-number">475</span>M     <span class="hljs-number">0</span>  <span class="hljs-number">475</span>M   <span class="hljs-number">0</span>% /dev<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M     <span class="hljs-number">0</span>  <span class="hljs-number">487</span>M   <span class="hljs-number">0</span>% /dev/shm<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M   <span class="hljs-number">14</span>M  <span class="hljs-number">473</span>M   <span class="hljs-number">3</span>% /run<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M     <span class="hljs-number">0</span>  <span class="hljs-number">487</span>M   <span class="hljs-number">0</span>% /sys/fs/cgroup<br>/dev/sda1               xfs      <span class="hljs-number">1014</span>M  <span class="hljs-number">133</span>M  <span class="hljs-number">882</span>M  <span class="hljs-number">14</span>% /boot<br>tmpfs                   tmpfs      <span class="hljs-number">98</span>M     <span class="hljs-number">0</span>   <span class="hljs-number">98</span>M   <span class="hljs-number">0</span>% /run/user/<span class="hljs-number">0</span><br></code></pre></td></tr></tbody></table></figure>
+<p>在ceph1节点查看验证</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">08</span>:<span class="hljs-number">29</span>:<span class="hljs-number">23</span>]# ceph osd  tree<br>ID CLASS WEIGHT  TYPE NAME         STATUS REWEIGHT PRI-AFF<br><span class="hljs-number">-1</span>       <span class="hljs-number">0.01959</span> root <span class="hljs-keyword">default</span><br><span class="hljs-number">-3</span>       <span class="hljs-number">0.00490</span>     host ceph1<br> <span class="hljs-number">0</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.0</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-5</span>       <span class="hljs-number">0.00490</span>     host ceph2<br> <span class="hljs-number">1</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.1</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-7</span>       <span class="hljs-number">0.00980</span>     host ceph3<br> <span class="hljs-number">2</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.2</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br> <span class="hljs-number">3</span>   hdd <span class="hljs-number">0.00490</span>         osd<span class="hljs-number">.3</span>         up  <span class="hljs-number">1.00000</span> <span class="hljs-number">1.00000</span><br><span class="hljs-number">-9</span>             <span class="hljs-number">0</span>     host owncloud<br></code></pre></td></tr></tbody></table></figure>
+<p>到这里，就完全删除了。</p>
+<p>如果想要加回来，再次部署在节点上即可</p>
+<p>如下命令</p>
+<figure class="highlight autoit"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs autoit">[root<span class="hljs-symbol">@ceph1</span> ceph]<span class="hljs-meta"># ceph-deploy disk zap ceph1 /dev/sdb </span><br>[root<span class="hljs-symbol">@ceph1</span> ceph]<span class="hljs-meta"># ceph-deploy osd create --data /dev/sdb ceph1</span><br></code></pre></td></tr></tbody></table></figure>
+<h5 id="小结与说明">小结与说明</h5>
+<p>ceph集群安装要注意：</p>
+<p>1、ceph-deploy命令默认找官方yum源，国内网速非常慢（而且ceph安装时设置了300秒超时，也就是你安装5分钟内不安装完就会断开）</p>
+<p>2、建议使用国内镜像源（我使用的清华源），如果网速还是慢，就做好本地yum源。</p>
+<p>3、ceph集群节点需要安装ceph与ceph-radosgw软件包，客户端节点只需要安装ceph-common软件包</p>
+<p>4、ceph集群对时间同步很敏感，请一定保证没有时间不同的相关警告</p>
+<p>ceph集群操作注意：</p>
+<p>任何操作一定要保证集群健康的情况下操作，并使用ceph -s命令进行确认</p>
+<p>修改配置文件请在部署节点上修改，然后使用</p>
+<p>ceph-deploy --overwriteconf admin ceph1 ceph2 ceph3命令同步到其它节点</p>
+<h5 id="ceph的存储类型">ceph的存储类型</h5>
+<h6 id="三种存储类型介绍">三种存储类型介绍</h6>
+<p><img class="lazyload" data-original="C:%5CUsers%5Cmy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1587473493263.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="1587473493263"></p>
+<p>无论用那种存储，都可以分为以下三种类型</p>
+<p>文件存储：类似于一个大的目录，多个客户端可以挂载过来</p>
+<p>优点：利于数据共享</p>
+<p>缺点：速度较慢</p>
+<p>块存储：类似于一个block的设备，客户端可以格式化，挂载并使用，和用一个硬盘一样</p>
+<p>优点：和本地硬盘一样直接使用</p>
+<p>缺点：数据不同享</p>
+<p>对象存储：看做一个综合了文件存储和块存储优点的大硬盘，可以挂载也可以通过URL来访问</p>
+<p>优点：速度快，数据共享</p>
+<p>缺点：成本高，不兼容现有的模式</p>
+<p><img class="lazyload" data-original="C:%5CUsers%5Cmy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1587473700624.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="1587473700624"></p>
+<p>RADOS;ceph的高可靠，高可扩展、高性能、高自动化都是由这一层来提供的，用户数据的存储最终也是通过这一层来进行存储的</p>
+<p>可以说RADOS就是ceph底层的原生态的数据引擎，但是实际应用时却不直接使用它，而是分为以下4种方式来使用：</p>
+<p>LIBRADOS是一个库, 它允许应用程序通过访问该库来与RADOS系统进行交 互，支持多种编程语言。如Python,C,C++等. 简单来说,就是给开发人员使 用的接口。</p>
+<p>CEPH FS通过Linux内核客户端和FUSE来提供文件系统。(文件存储)</p>
+<p>RBD通过Linux内核客户端和QEMU/KVM驱动来提供一个分布式的块设 备。(块存储)</p>
+<p>RADOSGW是一套基于当前流行的RESTFUL协议的网关，并且兼容S3和 Swift。(对象存储)</p>
+<h6 id="存储原理">存储原理</h6>
+<p>要实现数据存取需要建一个pool,创建pool要分配PG。</p>
+<p><img class="lazyload" data-original="C:%5CUsers%5Cmy%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1587473929074.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="1587473929074"></p>
+<p>如果客户端对一个pool写了一个文件，那么这个文件是如何分布到多个节点的磁盘上呢？</p>
+<p>答案是通过crush算法</p>
+<h6 id="CRUSH算法">CRUSH算法</h6>
+<p>CRUSH(Controlled Scalable Decentralized Placement of Replicated Data)算法为可控的,可扩展的,分布式的副本数据放置算法的简称。 PG到OSD的映射的过程算法叫做CRUSH 算法。(一个Object需要保存三个 副本，也就是需要保存在三个osd上)。</p>
+<p>CRUSH算法是一个伪随机的过程，他可以从所有的OSD中，随机性选择一 个OSD集合，但是同一个PG每次随机选择的结果是不变的，也就是映射的 OSD集合是固定的。</p>
+<h5 id="小结：">小结：</h5>
+<p>1、客户端直接对pool操作(但文件存储、块存储、对象存储区我们不这么做)</p>
+<p>2、pool里面要分配PG</p>
+<p>3、PG里面可以存放多个对象</p>
+<p>4、对象就是客户端写入的数据分离单位</p>
+<p>5、crush算法将客户端写入的数据映射分布到OSD，从而最终存放到物理磁盘上。</p>
+<h5 id="RADOS原生数据存取">RADOS原生数据存取</h5>
+<h6 id="1、创建pool并测试">1、创建pool并测试</h6>
+<p>创建test_pool 指定pg数为128</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 09:03:17]# ceph osd<span class="hljs-built_in"> pool </span>create test_pool 128<br>pool <span class="hljs-string">'test_pool'</span> created<br></code></pre></td></tr></tbody></table></figure>
+<p>修改pg数量，可以使用修改调整</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">ceph osd<span class="hljs-built_in"> pool </span><span class="hljs-builtin-name">set</span> test_pool  pg_num 64<br></code></pre></td></tr></tbody></table></figure>
+<p>查看数量</p>
+<figure class="highlight pgsql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">[root@ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">03</span>:<span class="hljs-number">32</span>]# ceph osd pool  <span class="hljs-keyword">get</span> test_pool pg_num<br>pg_num: <span class="hljs-number">128</span><br>[root@ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">03</span>:<span class="hljs-number">46</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>说明：pg数与osd数量关系</p>
+<p>pg数为2的倍数，一般为5个一下osd,分为128个PG或者一下即可</p>
+<p>可以使用ceph  osd  pool set test_pool pg_num 64 这样的命令来尝试调整。</p>
+<h6 id="2、存储测试">2、存储测试</h6>
+<p>1、我这里把本机的/etc/fstab文件上传到test_pool并取名为netfatab</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">11</span>:<span class="hljs-number">12</span>]# rados put newfatab /etc/fstab  --pool=test_pool<br></code></pre></td></tr></tbody></table></figure>
+<p>2、查看</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">11</span>:<span class="hljs-number">19</span>]# rados -p test_pool ls<br>newfatab<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">11</span>:<span class="hljs-number">47</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>3、删除并查看</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">12</span>:<span class="hljs-number">45</span>]# rados rm newfatab --pool=test_pool<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">13</span>:<span class="hljs-number">16</span>]# rados -p test_pool ls<br></code></pre></td></tr></tbody></table></figure>
+<h6 id="3、删除pool">3、删除pool</h6>
+<p>1、在部署节点ceph1上增加参数允许ceph删除pool</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">15</span>:<span class="hljs-number">29</span>]# cat ceph.conf<br>[global]<br>fsid = bb1d01eb<span class="hljs-number">-0</span>d72<span class="hljs-number">-4794</span><span class="hljs-number">-9</span>d7c-cb692d7a8f34<br>mon_initial_members = ceph1<br>mon_host = <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.5</span><br>auth_cluster_required = cephx<br>auth_service_required = cephx<br>auth_client_required = cephx<br><br><span class="hljs-keyword">public</span> network = <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span>/<span class="hljs-number">24</span><br>mon_allow_pool_delete = <span class="hljs-literal">true</span><br>增加最后一条信息<br></code></pre></td></tr></tbody></table></figure>
+<p>2、修改了配置，要同步到其他集群节点</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">17</span>:<span class="hljs-number">19</span>]# ceph-deploy --overwrite-conf admin ceph1 ceph2 ceph3<br></code></pre></td></tr></tbody></table></figure>
+<p>3、重启监控服务</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">17</span>:<span class="hljs-number">42</span>]# systemctl restart  ceph-mon.target<br></code></pre></td></tr></tbody></table></figure>
+<p>4、删除pool名输入两次，后接–yes-i-really-really-mean-it参数就可以删 除了</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 09:17:52]# ceph osd<span class="hljs-built_in"> pool </span>delete test_pool test_pool --yes-i-really-really-mean-it<br>pool <span class="hljs-string">'test_pool'</span> removed<br>[root@ceph1 ceph 09:19:23]#<br></code></pre></td></tr></tbody></table></figure>
+<h5 id="创建ceph文件存储">创建ceph文件存储</h5>
+<p>要运行ceph文件系统，你必须先创建至少一个带mds的ceph存储集群</p>
+<p>（ceph块设备和ceph对象存储都不使用MDS）</p>
+<p>ceph MDS为ceph文件存储类型存放元数据metadata</p>
+<p>1、在ceph1节点部署上同步配置文件，并创建MDS（也可以做多个mds实现HA）</p>
+<figure class="highlight gauss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gauss">ceph-deploy mds  <span class="hljs-keyword">create</span> ceph1 ceph2 ceph3<br></code></pre></td></tr></tbody></table></figure>
+<p>2、一个ceph文件系统需要至少两个RADOS存储池，一个用于数据，一个用于元数据。所以我们创建他们</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 09:24:47]# ceph osd <span class="hljs-built_in"> pool </span>create cephfs_pool 128<br>pool <span class="hljs-string">'cephfs_pool'</span> created<br><br>[root@ceph1 ceph 09:25:06]# ceph osd<span class="hljs-built_in"> pool </span>create cephfs_metadata 64<br>pool <span class="hljs-string">'cephfs_metadata'</span> created<br><br>[root@ceph1 ceph 09:25:27]# ceph osd<span class="hljs-built_in"> pool </span>ls |grep  cephfs<br>cephfs_pool<br>cephfs_metadata<br></code></pre></td></tr></tbody></table></figure>
+<p>3、创建ceph文件系统并确认客户端访问的节点</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">26</span>:<span class="hljs-number">38</span>]# ceph fs new cephfs cephfs_metadata cephfs_pool<br>new fs with metadata pool <span class="hljs-number">3</span> <span class="hljs-keyword">and</span> data pool <span class="hljs-number">2</span><br><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">26</span>:<span class="hljs-number">59</span>]# ceph fs ls<br>name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_pool ]<br><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">27</span>:<span class="hljs-number">09</span>]# ceph mds stat<br>cephfs<span class="hljs-number">-1</span>/<span class="hljs-number">1</span>/<span class="hljs-number">1</span> up  {<span class="hljs-number">0</span>=ceph3=up:active}, <span class="hljs-number">2</span> up:standby<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">09</span>:<span class="hljs-number">27</span>:<span class="hljs-number">17</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>4、客户端准备key验证文件</p>
+<p>说明：ceph默认启用了cephx认证，所以客户端的挂载必须要认证</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>lsy ~ <span class="hljs-number">09</span>:<span class="hljs-number">52</span>:<span class="hljs-number">52</span>]# mount -t ceph  <span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.5</span>:<span class="hljs-number">6789</span>:/ /mnt -o name=admin,secret=AQBQ0J5eLDHnLRAAf850/HEvbZd3DAvWE8czrA==<br>[<span class="hljs-symbol">root@</span>lsy ~ <span class="hljs-number">09</span>:<span class="hljs-number">54</span>:<span class="hljs-number">04</span>]# df -Th<br>Filesystem              Type      Size  Used Avail Use% Mounted on<br>/dev/mapper/centos-root xfs        <span class="hljs-number">47</span>G  <span class="hljs-number">3.6</span>G   <span class="hljs-number">44</span>G   <span class="hljs-number">8</span>% /<br>devtmpfs                devtmpfs  <span class="hljs-number">475</span>M     <span class="hljs-number">0</span>  <span class="hljs-number">475</span>M   <span class="hljs-number">0</span>% /dev<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M     <span class="hljs-number">0</span>  <span class="hljs-number">487</span>M   <span class="hljs-number">0</span>% /dev/shm<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M   <span class="hljs-number">14</span>M  <span class="hljs-number">473</span>M   <span class="hljs-number">3</span>% /run<br>tmpfs                   tmpfs     <span class="hljs-number">487</span>M     <span class="hljs-number">0</span>  <span class="hljs-number">487</span>M   <span class="hljs-number">0</span>% /sys/fs/cgroup<br>/dev/sda1               xfs      <span class="hljs-number">1014</span>M  <span class="hljs-number">133</span>M  <span class="hljs-number">882</span>M  <span class="hljs-number">14</span>% /boot<br>tmpfs                   tmpfs      <span class="hljs-number">98</span>M     <span class="hljs-number">0</span>   <span class="hljs-number">98</span>M   <span class="hljs-number">0</span>% /run/user/<span class="hljs-number">0</span><br><span class="hljs-number">10.0</span><span class="hljs-number">.0</span><span class="hljs-number">.5</span>:<span class="hljs-number">6789</span>:/         ceph      <span class="hljs-number">5.0</span>G     <span class="hljs-number">0</span>  <span class="hljs-number">5.0</span>G   <span class="hljs-number">0</span>% /mnt<br>[<span class="hljs-symbol">root@</span>lsy ~ <span class="hljs-number">09</span>:<span class="hljs-number">54</span>:<span class="hljs-number">13</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>这样的方式可以</p>
+<p>但是使用文件密钥的方式我就实现不出来。</p>
+<figure class="highlight n1ql"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs n1ql">[root@lsy ~ 10:<span class="hljs-number">05</span>:<span class="hljs-number">42</span>]# mount -t ceph ceph1:<span class="hljs-number">6789</span>:/   /mnt -o name=admin,secretfile=/root/admin.<span class="hljs-keyword">key</span><br>mount: wrong fs <span class="hljs-built_in">type</span>, bad <span class="hljs-keyword">option</span>, bad superblock <span class="hljs-keyword">on</span> ceph1:<span class="hljs-number">6789</span>:/,<br>       <span class="hljs-literal">missing</span> codepage <span class="hljs-keyword">or</span> helper program, <span class="hljs-keyword">or</span> other error<br><br>   <span class="hljs-keyword">In</span> <span class="hljs-keyword">some</span> cases useful info <span class="hljs-keyword">is</span> found <span class="hljs-keyword">in</span> syslog - try<br>   dmesg | tail <span class="hljs-keyword">or</span> so.<br></code></pre></td></tr></tbody></table></figure>
+<p>几种方式的总结：见博客</p>
+<p><a href="https://blog.csdn.net/weixin_42506599/article/details/105669234" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42506599/article/details/105669234</a></p>
+<h5 id="删除文件存储方法">删除文件存储方法</h5>
+<p>1、在客户端上删除数据，并umount所有挂载</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@lsy</span> <span class="hljs-string">~</span> <span class="hljs-number">10</span><span class="hljs-string">:24:55]#</span> <span class="hljs-string">rm</span> <span class="hljs-string">/mnt/*</span> <span class="hljs-string">-rf</span><br><span class="hljs-string">[root@lsy</span> <span class="hljs-string">~</span> <span class="hljs-number">10</span><span class="hljs-string">:25:04]#</span><br><span class="hljs-string">[root@lsy</span> <span class="hljs-string">~</span> <span class="hljs-number">10</span><span class="hljs-string">:25:05]#</span> <span class="hljs-string">umount</span> <span class="hljs-string">/mnt/</span><br><span class="hljs-string">[root@lsy</span> <span class="hljs-string">~</span> <span class="hljs-number">10</span><span class="hljs-string">:25:09]#</span> <span class="hljs-string">df</span> <span class="hljs-string">-Th</span><br><span class="hljs-string">Filesystem</span>              <span class="hljs-string">Type</span>      <span class="hljs-string">Size</span>  <span class="hljs-string">Used</span> <span class="hljs-string">Avail</span> <span class="hljs-string">Use%</span> <span class="hljs-string">Mounted</span> <span class="hljs-string">on</span><br><span class="hljs-string">/dev/mapper/centos-root</span> <span class="hljs-string">xfs</span>        <span class="hljs-string">47G</span>  <span class="hljs-number">3.</span><span class="hljs-string">6G</span>   <span class="hljs-string">44G</span>   <span class="hljs-number">8</span><span class="hljs-string">%</span> <span class="hljs-string">/</span><br><span class="hljs-string">devtmpfs</span>                <span class="hljs-string">devtmpfs</span>  <span class="hljs-string">475M</span>     <span class="hljs-number">0</span>  <span class="hljs-string">475M</span>   <span class="hljs-number">0</span><span class="hljs-string">%</span> <span class="hljs-string">/dev</span><br><span class="hljs-string">tmpfs</span>                   <span class="hljs-string">tmpfs</span>     <span class="hljs-string">487M</span>     <span class="hljs-number">0</span>  <span class="hljs-string">487M</span>   <span class="hljs-number">0</span><span class="hljs-string">%</span> <span class="hljs-string">/dev/shm</span><br><span class="hljs-string">tmpfs</span>                   <span class="hljs-string">tmpfs</span>     <span class="hljs-string">487M</span>   <span class="hljs-string">14M</span>  <span class="hljs-string">473M</span>   <span class="hljs-number">3</span><span class="hljs-string">%</span> <span class="hljs-string">/run</span><br><span class="hljs-string">tmpfs</span>                   <span class="hljs-string">tmpfs</span>     <span class="hljs-string">487M</span>     <span class="hljs-number">0</span>  <span class="hljs-string">487M</span>   <span class="hljs-number">0</span><span class="hljs-string">%</span> <span class="hljs-string">/sys/fs/cgroup</span><br><span class="hljs-string">/dev/sda1</span>               <span class="hljs-string">xfs</span>      <span class="hljs-string">1014M</span>  <span class="hljs-string">133M</span>  <span class="hljs-string">882M</span>  <span class="hljs-number">14</span><span class="hljs-string">%</span> <span class="hljs-string">/boot</span><br><span class="hljs-string">tmpfs</span>                   <span class="hljs-string">tmpfs</span>      <span class="hljs-string">98M</span>     <span class="hljs-number">0</span>   <span class="hljs-string">98M</span>   <span class="hljs-number">0</span><span class="hljs-string">%</span> <span class="hljs-string">/run/user/0</span><br><span class="hljs-string">[root@lsy</span> <span class="hljs-string">~</span> <span class="hljs-number">10</span><span class="hljs-string">:25:11]#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>2、停止所有节点的MDS（只有停掉MDS才可以删除文件系统）</p>
+<figure class="highlight autoit"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs autoit">[root<span class="hljs-symbol">@ceph1</span> ~]<span class="hljs-meta"># systemctl stop ceph-mds.target </span><br><br>[root<span class="hljs-symbol">@ceph2</span> ~]<span class="hljs-meta"># systemctl stop ceph-mds.target </span><br><br>[root<span class="hljs-symbol">@ceph3</span> ~]<span class="hljs-meta"># systemctl stop ceph-mds.target</span><br></code></pre></td></tr></tbody></table></figure>
+<p>3、回到ceph1删除</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 10:26:48]# ceph  fs rm cephfs --yes-i-really-mean-it<br>[root@ceph1 ceph 10:29:25]# ceph osd<span class="hljs-built_in"> pool </span>delete cephfs_metadata cephfs_metadata --yes-i-really-really-mean-it<br>pool <span class="hljs-string">'cephfs_metadata'</span> removed<br>[root@ceph1 ceph 10:30:04]# ecph osd<span class="hljs-built_in"> pool </span>delete cephfs_pool cephfs_pool --yes-i-really-really-mean-it<br>bash: ecph: command <span class="hljs-keyword">not</span> found<br>[root@ceph1 ceph 10:30:43]# ceph osd<span class="hljs-built_in"> pool </span>delete cephfs_pool cephfs_pool --yes-i-really-really-mean-it<br>pool <span class="hljs-string">'cephfs_pool'</span> removed<br></code></pre></td></tr></tbody></table></figure>
+<p>此时查看装态为err</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">10</span><span class="hljs-string">:26:19]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_ERR</span><br>            <span class="hljs-number">1</span> <span class="hljs-string">filesystem</span> <span class="hljs-string">is</span> <span class="hljs-string">degraded</span><br>            <span class="hljs-number">1</span> <span class="hljs-string">filesystem</span> <span class="hljs-string">has</span> <span class="hljs-string">a</span> <span class="hljs-string">failed</span> <span class="hljs-string">mds</span> <span class="hljs-string">daemon</span><br>            <span class="hljs-number">1</span> <span class="hljs-string">filesystem</span> <span class="hljs-string">is</span> <span class="hljs-string">offline</span><br>            <span class="hljs-string">insufficient</span> <span class="hljs-string">standby</span> <span class="hljs-string">MDS</span> <span class="hljs-string">daemons</span> <span class="hljs-string">available</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active),</span> <span class="hljs-attr">standbys:</span> <span class="hljs-string">ceph2,</span> <span class="hljs-string">ceph3</span><br>    <span class="hljs-attr">mds:</span> <span class="hljs-string">cephfs-0/1/1</span> <span class="hljs-string">up</span> <span class="hljs-string">,</span> <span class="hljs-number">1</span> <span class="hljs-string">failed</span><br>    <span class="hljs-attr">osd: 4 osds:</span> <span class="hljs-number">4</span> <span class="hljs-string">up,</span> <span class="hljs-number">4</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">2</span> <span class="hljs-string">pools,</span> <span class="hljs-number">192</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">22</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">3.1</span> <span class="hljs-string">KiB</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">4.0</span> <span class="hljs-string">GiB</span> <span class="hljs-string">used,</span> <span class="hljs-number">16</span> <span class="hljs-string">GiB</span> <span class="hljs-string">/</span> <span class="hljs-number">20</span> <span class="hljs-string">GiB</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span>     <span class="hljs-number">192</span> <span class="hljs-string">active+clean</span><br></code></pre></td></tr></tbody></table></figure>
+<p>4、再次启动mds服务</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">32</span>:<span class="hljs-number">34</span>]# systemctl start  ceph-mds.target<br></code></pre></td></tr></tbody></table></figure>
+<p>此时查看状态，又回到健康状态</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">[root@ceph1</span> <span class="hljs-string">ceph</span> <span class="hljs-number">10</span><span class="hljs-string">:32:44]#</span> <span class="hljs-string">ceph</span> <span class="hljs-string">-s</span><br>  <span class="hljs-attr">cluster:</span><br>    <span class="hljs-attr">id:</span>     <span class="hljs-string">bb1d01eb-0d72-4794-9d7c-cb692d7a8f34</span><br>    <span class="hljs-attr">health:</span> <span class="hljs-string">HEALTH_OK</span><br><br>  <span class="hljs-attr">services:</span><br>    <span class="hljs-attr">mon:</span> <span class="hljs-number">3</span> <span class="hljs-string">daemons,</span> <span class="hljs-string">quorum</span> <span class="hljs-string">ceph1,ceph2,ceph3</span><br>    <span class="hljs-attr">mgr:</span> <span class="hljs-string">ceph1(active),</span> <span class="hljs-attr">standbys:</span> <span class="hljs-string">ceph2,</span> <span class="hljs-string">ceph3</span><br>    <span class="hljs-attr">osd: 4 osds:</span> <span class="hljs-number">4</span> <span class="hljs-string">up,</span> <span class="hljs-number">4</span> <span class="hljs-string">in</span><br><br>  <span class="hljs-attr">data:</span><br>    <span class="hljs-attr">pools:</span>   <span class="hljs-number">0</span> <span class="hljs-string">pools,</span> <span class="hljs-number">0</span> <span class="hljs-string">pgs</span><br>    <span class="hljs-attr">objects:</span> <span class="hljs-number">0</span>  <span class="hljs-string">objects,</span> <span class="hljs-number">0</span> <span class="hljs-string">B</span><br>    <span class="hljs-attr">usage:</span>   <span class="hljs-number">4.0</span> <span class="hljs-string">GiB</span> <span class="hljs-string">used,</span> <span class="hljs-number">16</span> <span class="hljs-string">GiB</span> <span class="hljs-string">/</span> <span class="hljs-number">20</span> <span class="hljs-string">GiB</span> <span class="hljs-string">avail</span><br>    <span class="hljs-attr">pgs:</span><br></code></pre></td></tr></tbody></table></figure>
+<h5 id="创建ceph块存储">创建ceph块存储</h5>
+<h6 id="1、创建块存储并使用">1、创建块存储并使用</h6>
+<p>1、建立存储池并初始化</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 10:35:32]# ceph osd<span class="hljs-built_in"> pool </span>create rbd_pool 8<br>pool <span class="hljs-string">'rbd_pool'</span> created<br>[root@ceph1 ceph 10:35:47]# rbd<span class="hljs-built_in"> pool </span>init rbd_pool<br></code></pre></td></tr></tbody></table></figure>
+<p>2、创建一个存储卷volume1，大小为5000M</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">37</span>:<span class="hljs-number">06</span>]# rbd  create volume1 --pool rbd_pool --size <span class="hljs-number">5000</span><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">37</span>:<span class="hljs-number">35</span>]# rbd ls rbd_pool<br>volume1<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">37</span>:<span class="hljs-number">45</span>]# rbd info volume1 -p rbd_pool<br>rbd image <span class="hljs-string">'volume1'</span>:<br>        size <span class="hljs-number">4.9</span> GiB <span class="hljs-keyword">in</span> <span class="hljs-number">1250</span> objects<br>        order <span class="hljs-number">22</span> (<span class="hljs-number">4</span> MiB objects)<br>        id: <span class="hljs-number">5</span>ed46b8b4567<br>        block_name_prefix: rbd_data<span class="hljs-number">.5</span>ed46b8b4567<br>        format: <span class="hljs-number">2</span><br>        features: layering, exclusive-lock, object-map, fast-diff, deep-flatten<br>        op_features:<br>        flags:<br>        create_timestamp: Tue Apr <span class="hljs-number">21</span> <span class="hljs-number">10</span>:<span class="hljs-number">37</span>:<span class="hljs-number">35</span> <span class="hljs-number">2020</span><br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">38</span>:<span class="hljs-number">03</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>4、将创建的卷映射为块设备</p>
+<p>因为rbd镜像的一些特性，OS kernel并不支持，所以映射报错</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 10:39:55]# rbd map rbd_pool/volume1<br>rbd: sysfs write failed<br>RBD image feature <span class="hljs-builtin-name">set</span> mismatch. You can <span class="hljs-builtin-name">disable</span> features unsupported by the kernel with <span class="hljs-string">"rbd feature disable rbd_pool/volume1 object-map fast-diff deep-flatten"</span>.<br><span class="hljs-keyword">In</span> some cases useful <span class="hljs-builtin-name">info</span> is found <span class="hljs-keyword">in</span> syslog - try <span class="hljs-string">"dmesg | tail"</span>.<br>rbd: map failed: (6) <span class="hljs-literal">No</span> such device <span class="hljs-keyword">or</span> address<br>[root@ceph1 ceph 10:40:10]#<br></code></pre></td></tr></tbody></table></figure>
+<p>解决方法：distable相关特性</p>
+<p>（四者之间有先后顺序问题）</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">44</span>:<span class="hljs-number">36</span>]#  rbd feature disable rbd_pool/volume1  fast-diff<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">45</span>:<span class="hljs-number">42</span>]#  rbd feature disable rbd_pool/volume1  object-map<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">45</span>:<span class="hljs-number">45</span>]#  rbd feature disable rbd_pool/volume1  exclusive-lock<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">46</span>:<span class="hljs-number">02</span>]#<br>[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">48</span>:<span class="hljs-number">17</span>]#  rbd feature disable rbd_pool/volume1  deep-flatten<br></code></pre></td></tr></tbody></table></figure>
+<p>再次映射</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">10</span>:<span class="hljs-number">48</span>:<span class="hljs-number">49</span>]# rbd map rbd_pool/volume1<br>/dev/rbd0<br></code></pre></td></tr></tbody></table></figure>
+<p>5、查看映射（如果要取消映射，可以使用rbd unmap /dev/rbd0）</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 10:50:17]# rbd showmapped<br>id<span class="hljs-built_in"> pool </span>    image   snap device<br>0  rbd_pool volume1 -    /dev/rbd0<br>[root@ceph1 ceph 10:50:28]#<br></code></pre></td></tr></tbody></table></figure>
+<p>6、格式化挂载</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 10:50:51]# mkfs.xfs /dev/rbd0<br><span class="hljs-attribute">meta-data</span>=/dev/rbd0              <span class="hljs-attribute">isize</span>=512    <span class="hljs-attribute">agcount</span>=8, <span class="hljs-attribute">agsize</span>=160768 blks<br>         =                       <span class="hljs-attribute">sectsz</span>=512   <span class="hljs-attribute">attr</span>=2, <span class="hljs-attribute">projid32bit</span>=1<br>         =                       <span class="hljs-attribute">crc</span>=1        <span class="hljs-attribute">finobt</span>=0, <span class="hljs-attribute">sparse</span>=0<br>data     =                       <span class="hljs-attribute">bsize</span>=4096   <span class="hljs-attribute">blocks</span>=1280000, <span class="hljs-attribute">imaxpct</span>=25<br>         =                       <span class="hljs-attribute">sunit</span>=1024   <span class="hljs-attribute">swidth</span>=1024 blks<br>naming   =version 2              <span class="hljs-attribute">bsize</span>=4096   <span class="hljs-attribute">ascii-ci</span>=0 <span class="hljs-attribute">ftype</span>=1<br>log      =internal log           <span class="hljs-attribute">bsize</span>=4096   <span class="hljs-attribute">blocks</span>=2560, <span class="hljs-attribute">version</span>=2<br>         =                       <span class="hljs-attribute">sectsz</span>=512   <span class="hljs-attribute">sunit</span>=8 blks, <span class="hljs-attribute">lazy-count</span>=1<br>realtime =none                   <span class="hljs-attribute">extsz</span>=4096   <span class="hljs-attribute">blocks</span>=0, <span class="hljs-attribute">rtextents</span>=0<br>[root@ceph1 ceph 10:51:03]# mount /dev/rbd0  /mnt/<br>df[root@ceph1 ceph 10:51:15]# df -Th |tail -1<br>/dev/rbd0               xfs       4.9G   33M  4.9G   1% /mnt<br>[root@ceph1 ceph 10:51:24]#<br></code></pre></td></tr></tbody></table></figure>
+<p>补充：第二个客户端如果也要用此块存储，只需要执行以下几步就可以</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph2 yum.repos.d <span class="hljs-number">10</span>:<span class="hljs-number">52</span>:<span class="hljs-number">45</span>]# rbd  map rbd_pool/volume1<br>/dev/rbd0<br>[<span class="hljs-symbol">root@</span>ceph2 yum.repos.d <span class="hljs-number">10</span>:<span class="hljs-number">53</span>:<span class="hljs-number">03</span>]# rbd showmapped<br>id pool     image   snap device<br><span class="hljs-number">0</span>  rbd_pool volume1 -    /dev/rbd0<br>[<span class="hljs-symbol">root@</span>ceph2 yum.repos.d <span class="hljs-number">10</span>:<span class="hljs-number">53</span>:<span class="hljs-number">10</span>]# mount /dev/rbd0 /mnt/<br>[<span class="hljs-symbol">root@</span>ceph2 yum.repos.d <span class="hljs-number">10</span>:<span class="hljs-number">53</span>:<span class="hljs-number">24</span>]# df -Th |tail <span class="hljs-number">-1</span><br>/dev/rbd0               xfs       <span class="hljs-number">4.9</span>G   <span class="hljs-number">33</span>M  <span class="hljs-number">4.9</span>G   <span class="hljs-number">1</span>% /mnt<br>[<span class="hljs-symbol">root@</span>ceph2 yum.repos.d <span class="hljs-number">10</span>:<span class="hljs-number">53</span>:<span class="hljs-number">31</span>]#<br></code></pre></td></tr></tbody></table></figure>
+<p>注意：块存储是不能实现同读和同写的，请不要两个客户端同时挂载进行读写。</p>
+<h6 id="2、删除块存储方法">2、删除块存储方法</h6>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph2 yum.repos.d 10:53:31]# umount /mnt/<br>[root@ceph2 yum.repos.d 10:55:03]# rbd unmap /dev/rbd0<br>[root@ceph2 yum.repos.d 10:55:15]# ceph osd<span class="hljs-built_in"> pool </span>delete rbd_pool rbd_pool --yes-i-really-really-mean-it<br>pool <span class="hljs-string">'rbd_pool'</span> removed<br>[root@ceph2 yum.repos.d 10:55:54]#<br></code></pre></td></tr></tbody></table></figure>
+<h5 id="创建对象存储网关">创建对象存储网关</h5>
+<p>rgw(对象存储网关)：为客户端访问对象存储的接口</p>
+<p>rgw的创建</p>
+<p>1、在ceph集群任意一个节点上创建rgw(我这里为ceph1)</p>
+<p>确保你已经装了这个软件包</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">11</span>:<span class="hljs-number">11</span>:<span class="hljs-number">37</span>]# yum install -y ceph-radosgw<br></code></pre></td></tr></tbody></table></figure>
+<p>创建rgw</p>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs angelscript">[<span class="hljs-symbol">root@</span>ceph1 ceph <span class="hljs-number">11</span>:<span class="hljs-number">11</span>:<span class="hljs-number">37</span>]# ceph-deploy rgw create ceph1<br></code></pre></td></tr></tbody></table></figure>
+<p>2、验证7480端口</p>
+<figure class="highlight routeros"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs routeros">[root@ceph1 ceph 11:11:25]# lsof -i:7480<br>COMMAND    PID<span class="hljs-built_in"> USER </span>  FD  <span class="hljs-built_in"> TYPE </span> DEVICE SIZE/OFF NODE NAME<br>radosgw 121388 ceph   41u  IPv4 1625237      0t0  TCP *:7480 (LISTEN)<br></code></pre></td></tr></tbody></table></figure>
+<p>对象网关创建成功，后面的项目中我们会通过ceph1的对象网关来连接就可以使用了。</p>
+<p>连接的地址为10.0.0.5:7480</p>
+<h5 id="小结与说明：">小结与说明：</h5>
+<p>我们实现了ceph集群，并创建了三中类型存储，那么如何使用这些存储呢？</p>
+<p>在不同的场景与应用中，会需要不同类型的存储类型，并不是说在一个项目里要把三中类型都用到</p>
+<p>在后面的项目中，我们会分别用到这三种不同的类型。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/18/%E4%BA%91%E8%AE%A1%E7%AE%97/">KVM虚拟化<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
