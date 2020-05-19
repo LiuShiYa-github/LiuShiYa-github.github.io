@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>KVM虚拟化 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,1.什么是云计算
+云计算是一种按量付费的模式
+云计算底..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: '寂寞的时候，我会卷曲着自己，假装被拥抱着。'
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/post-image.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">KVM虚拟化</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-18</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/18/%E4%BA%91%E8%AE%A1%E7%AE%97/"
+          class="leancloud" data-flag-title="KVM虚拟化"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>19776</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <h1>1.什么是云计算</h1>
+<p>云计算是一种按量付费的模式<br>
+云计算底层时通过虚拟化技术实现的</p>
+<h1>2.云计算的服务类型</h1>
+<p>2.1 IAAS 基础设施即服务(infrastructure as an service) 虚拟机 ecs openstack</p>
+<p>PAAS 平台即服务(platform as an service ) php，java docker容器 +k8s</p>
+<p>SAAS 软件即服务(software as an service ) 企业邮箱服务 cdn服务 rds数据库 开发+运维</p>
+<p>![微信截图_20200108190223](D:\Program Files\Typora\图片\微信截图_20200108190223.png)</p>
+<h1>3.为什么要使用云计算</h1>
+<p>小公司：前期投入小   风险小   扩展灵活<br>
+大公司：闲置服务器资源，出租（超卖–128G的内存可以卖300台1G.因为所有人买了1G的服务器，但是不一定都会使用，所以可以将其闲置的给别人用，也就是双十一的时候，阿里云服务器总是会给你迁移</p>
+<p>补充：<br>
+公有云：谁都可以租<br>
+私有云：只有公司内部使用（安全）<br>
+混合云：有自己的私有云 + 租的公有云</p>
+<h1>4.云计算的基础 – KVM虚拟化</h1>
+<p>宿主机：内存4G+ 纯净的系统CentOS-7</p>
+<p>ps：模板机导入，模板机优化看同目录下视频</p>
+<p>模板机导入报错，点击重试就可以了</p>
+<p>![QQ图片20200108111513](D:\Program Files\Typora\图片\QQ图片20200108111513.png)</p>
+<h2 id="4-1什么是虚拟化">4.1什么是虚拟化</h2>
+<p>通过模拟计算机的硬件，来实现在同一台计算机上同时运行多个不同的操作系统的技术</p>
+<h2 id="4-2虚拟化软件">4.2虚拟化软件</h2>
+<p>qemu软件纯模拟全虚拟化软件，完全利用软件模拟硬件。特别慢，兼容性好<br>
+xen（半虚拟化软件）一部分硬件，一部分软件  需要用专门修改之后的内核，兼容性差</p>
+<p>KVM  全虚拟机KVM：Kernel-based Virtual Machine。硬件cpu支持，内核中的一个模块。centos6以后，kvm性能较好，兼容较好</p>
+<h2 id="4-3安装kvm虚拟化管理工具">4.3安装kvm虚拟化管理工具</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">主机名</th>
+<th style="text-align:left">ip地址</th>
+<th style="text-align:left">内存</th>
+<th style="text-align:left">虚拟机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">kvm01</td>
+<td style="text-align:left">10.0.0.11</td>
+<td style="text-align:left">4G(后期调整到2G)</td>
+<td style="text-align:left">cpu开启vt虚拟化</td>
+</tr>
+<tr>
+<td style="text-align:left">kvm02</td>
+<td style="text-align:left">10.0.0.12</td>
+<td style="text-align:left">2G</td>
+<td style="text-align:left">cpu开启vt虚拟化</td>
+</tr>
+</tbody>
+</table>
+<p>![微信截图_20200108192254](D:\Program Files\Typora\图片\微信截图_20200108192254.png)</p>
+<ul>
+<li>yum install libvirt virt-install qemu-kvm -y
+<ul>
+<li>libvirt 作用：虚拟机的管理软件 libvirt: kvm,xen,qemu,lxc…</li>
+<li>virt virt-install virt-clone 作用：虚拟机的安装工具和克隆工具</li>
+<li>qemu-kvm qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#使用老师的yum源</span><br><span class="hljs-comment">#如果是其他环境可以将 /etc/hosts 文件注释就可以找到阿里云了</span><br>rm -fr /etc/yum.repos.d/local.repo <br><span class="hljs-built_in">echo</span> <span class="hljs-string">'192.168.16.200 mirrors.aliyun.com'</span> &gt;&gt;/etc/hosts<br>curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo<br><br>yum install libvirt virt-install qemu-kvm -y<br>[root@oldboy ~]<span class="hljs-comment"># rpm -qa libvirt</span><br>libvirt-4.5.0-23.el7_7.3.x86_64<br></code></pre></td></tr></tbody></table></figure>
+<h2 id="4-4安装一台kvm虚拟机-磁盘-配置文件">4.4安装一台kvm虚拟机(磁盘+配置文件)</h2>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#启动虚拟化软件</span><br>systemctl start libvirtd.service <br>systemctl <span class="hljs-built_in">enable</span> libvirtd.service<br><br><span class="hljs-comment">#下载并上传虚拟机镜像到/opt目录下</span><br>[root@kvm01 ~]<span class="hljs-comment"># ls /opt</span><br>CentOS-7-x86_64-Minimal-1908.iso<br><br><span class="hljs-comment">#10.0.0.11 宿主机</span><br><span class="hljs-comment">#虚拟机的名字不能够重复，磁盘的名字也不能够重复</span><br><span class="hljs-comment">#建议虚拟机内存不要低于1024M，否则安装系统特别慢！</span><br>virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole<br><br><span class="hljs-comment">##在执行这一串命令的时候会遇到的坑</span><br><span class="hljs-comment">#第一个错误：opt下没有镜像文件，或者版本不一致，看好版本和目录就性</span><br><span class="hljs-comment">#第二个错误：</span><br>ERROR    Failed to connect socket to <span class="hljs-string">'/var/run/libvirt/libvirt-sock'</span>: No such file or directory<br><span class="hljs-comment">##原因是服务没有启动</span><br>systemctl start libvirtd.service <br>systemctl <span class="hljs-built_in">enable</span> libvirtd.service<br><br>--virt-type kvm    虚拟化的类型(qemu)<br>--os-type=linux    系统类型<br>--os-variant rhel7 系统版本<br>--name centos7     虚拟机的名字 <br>--memory 1024      虚拟机的内存<br>--vcpus 1          虚拟cpu的核数<br>--disk /opt/centos2.raw,format=raw,size=10<br>--cdrom /opt/CentOS-7-x86_64-DVD-1708.iso <br>--network network=default   使用默认NAT的网络<br>--graphics vnc,listen=0.0.0.0 <br>--noautoconsole<br><br><br><span class="hljs-comment">#安装完成后默认是5900端口</span><br>[root@kvm01 ~]<span class="hljs-comment"># netstat -lntup|grep 5900</span><br>tcp        0      0 0.0.0.0:5900            0.0.0.0:*               LISTEN      26230/qemu-kvm<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>
+<p>以上命令执行完成之后，使用vnc连接到系统图形化界面，安装系统</p>
+</li>
+<li>
+<p>vnc：10.0.0.11:5900   (注意vnc的版本，当前目录下有软件)</p>
+</li>
+<li>
+<p>云主机都没有swap分区，因为本身就是虚拟机中再虚拟出来的，swap是从硬盘分离空间就更慢了![微信截图_20200108194015](D:\Program Files\Typora\图片\微信截图_20200108194015.png)</p>
+</li>
+</ul>
+<p>![微信截图_20200108194032](D:\Program Files\Typora\图片\微信截图_20200108194032.png)</p>
+<ul>
+<li>安装完成之后，修改网卡地址为10.0.0.11  重启网卡就可以登录</li>
+</ul>
+<h2 id="4-5-kvm虚拟机的-font-color-red-virsh-font-日常管理和配置">4.5 kvm虚拟机的<font color="red">virsh</font>日常管理和配置</h2>
+<ul>
+<li>
+<p>virsh list    只显示正在运行的虚拟机</p>
+</li>
+<li>
+<p>virsh list --all    显示全部拥有的虚拟机</p>
+</li>
+<li>
+<p>virsh start centos7    启动虚拟机</p>
+</li>
+<li>
+<p>virsh reboot  centos7  重启虚拟机（有系统）</p>
+</li>
+<li>
+<p>virsh  shutdown  centos7  前提是虚拟机centos7已经安装系统</p>
+</li>
+<li>
+<p>virsh destroy centos7   相当于直接把电源（就是在安装系统出错，无法关机的时候可以使用）</p>
+<ul>
+<li>如果你此时安装系统出错，想要重新安装，注意是不能出现同样的名字的，所以先将centos7删除（先拔电源，再删除）</li>
+<li>virsh destroy centos7</li>
+<li>virsh undefine centos7 （只会删除配置文件，不会删除磁盘）
+<ul>
+<li>坑：如果此处你不关机，直接删除配置文件，就会导致你看的时候虚拟机时运行的，但是当你使用shutdown 关机的时候，只要你关机，你的虚拟机就找不到了（解决：使用一长串命令重新生成配置文件，或者修改已有的配置文件）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>virsh dumpxml web01 &gt;/opt/vm_web01.xml   虚拟机备份</p>
+</li>
+<li>
+<p>从备份中导入配置  virsh define /opt/vm_web01.xml</p>
+</li>
+<li>
+<p><font color="red">编辑配置文件，不要直接编辑</font></p>
+<ul>
+<li>配置文件目录：ls /etc/libvirt/qemu   （以.xml结尾）</li>
+<li>使用命令编辑（语法检测功能）
+<ul>
+<li>virsh edit web01
+<ul>
+<li>修改name名称（一般用专业命令修改）</li>
+<li>删除UUID信息（避免冲突，重启后自动生成）</li>
+<li>编辑磁盘名称、类型 （跟opt目录下一致）</li>
+<li>编辑mac地址  （避免冲突，重启后自动生成）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>virsh domrename centos7 web01    重命名虚拟机（低版本不支持）</p>
+</li>
+<li>
+<p>virsh suspend centos7    挂起虚拟机</p>
+<ul>
+<li>注意挂起之后，时间也会暂停，所以需要时间同步</li>
+<li>老师优化机模板里使用的配置文件</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>virsh resume centos7  恢复挂起的虚拟机</li>
+<li>virsh vncdisplay centos7  查询虚拟机端口
+<ul>
+<li>此处查询的是短端口，也就是使用10.0.0.11:5900 和 10.0.0.11:0 是同样的效果</li>
+</ul>
+</li>
+<li>virsh autostart centos7  实现虚拟机开机自启动，（也就是宿主重启libvirtd.service 服务后，虚拟就就能启动）
+<ul>
+<li>实际原理，在ls /etc/libvirt/qemu下生成autostart目录，在目录下创建一个软连接</li>
+<li>如果不使用命令，自己创建一个软连接也没问题</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-6-console-控制台登录">4.6 console 控制台登录</h2>
+<ul>
+<li>
+<p>再console模式里面，不要使用vim编辑，会错乱，先cat，复制到外面，编辑好echo追加</p>
+</li>
+<li>
+<p>登录vnc进去，查看网卡ip</p>
+</li>
+<li>
+<p>通过xshell 下的kvm虚拟机 ssh远程连接到虚拟机</p>
+<ul>
+<li>ssh <a href="mailto:root@192.168.122.153">root@192.168.122.153</a></li>
+</ul>
+</li>
+<li>
+<p>执行命令</p>
+<ul>
+<li>grubby --update-kernel=ALL --args=“console=ttyS0,115200n8”</li>
+<li>reboot</li>
+</ul>
+</li>
+<li>
+<p>登录到 console控制台</p>
+<ul>
+<li>virsh console web01（两次回车）</li>
+</ul>
+</li>
+<li>
+<p>退出console控制台  使用ctrl + ]</p>
+</li>
+</ul>
+<h2 id="4-7kvm虚拟机虚拟磁盘格式和快照管理">4.7kvm虚拟机虚拟磁盘格式和快照管理</h2>
+<ul>
+<li>raw：裸格式，占用空间比较大，不支持快照，不方便传输，读写性能较好
+<ul>
+<li>总50G   占用50G   传输50G</li>
+</ul>
+</li>
+<li>qcow2： copy on write  占用空间小，<strong>支持快照</strong>，性能比raw差一点，方便传输
+<ul>
+<li>总50G   占用5G   传输5G</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#在安装的时候配置</span><br>virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole<br><br>virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --vcpus 1 --disk /data/oldboy.qcow2,format=qcow2,size=10 --cdrom /data/CentOS-7.2-x86_64-DVD-1511.iso --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole<br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-7-1磁盘工具的常用命令">4.7.1磁盘工具的常用命令</h3>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#查看虚拟磁盘信息</span><br>[root@kvm01 ~]<span class="hljs-comment"># qemu-img info /opt/web01.raw</span><br>image: /opt/web01.raw<br>file format: raw<br>virtual size: 10G (10737418240 bytes)<br>disk size: 1.5G<br><br><span class="hljs-comment">#创建一块qcow2格式的虚拟硬盘</span><br>qemu-img create -f qcow2 /opt/test.qcow2 2G<br><br><span class="hljs-comment">#调整磁盘容量</span><br>qemu-img   resize  /opt/test.qcow2 +20G  <span class="hljs-comment">#在原基础上加20G</span><br>qemu-img   resize  /opt/test.qcow2 20G  <span class="hljs-comment">#直接调整为u20G</span><br><br><span class="hljs-comment">#qcow2的不支持缩容</span><br><span class="hljs-comment">#raw的可以缩容，但你知道就可以了，永远不要使用（防止数据丢失）</span><br><br><br><span class="hljs-comment">#磁盘格式转换  raw转qcow2：</span><br><span class="hljs-comment">#转换完成之后，原来的磁盘还在</span><br>qemu-img convert  -f raw  -O qcow2  oldboy.raw   oldboy.qcow2<br><br><span class="hljs-comment">#要使用新的磁盘，需要编辑配置文件</span><br>virsh destroy web01<br><br>virsh edit web01：<br>&lt;disk <span class="hljs-built_in">type</span>=<span class="hljs-string">'file'</span> device=<span class="hljs-string">'disk'</span>&gt;<br>      &lt;driver name=<span class="hljs-string">'qemu'</span> <span class="hljs-built_in">type</span>=<span class="hljs-string">'qcow2'</span>/&gt;<br>      &lt;<span class="hljs-built_in">source</span> file=<span class="hljs-string">'/data/centos2.qcow2'</span>/&gt;<br>      &lt;target dev=<span class="hljs-string">'vda'</span> bus=<span class="hljs-string">'virtio'</span>/&gt;<br>      &lt;address <span class="hljs-built_in">type</span>=<span class="hljs-string">'pci'</span> domain=<span class="hljs-string">'0x0000'</span> bus=<span class="hljs-string">'0x00'</span> slot=<span class="hljs-string">'0x06'</span> <span class="hljs-keyword">function</span>=<span class="hljs-string">'0x0'</span>/&gt;<br>&lt;/disk&gt;<br><br>virsh start web01<br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-7-2快照管理（qxow2格式）">4.7.2快照管理（qxow2格式）</h3>
+<ul>
+<li>
+<p>创建快照virsh snapshot-create-as centos7 --name install_ok</p>
+</li>
+<li>
+<p>查看快照virsh snapshot-list centos7</p>
+</li>
+<li>
+<p>还原快照virsh snapshot-revert centos7 --snapshotname 1516574134</p>
+<ul>
+<li>还原之后的时间是快照的时间，注意时间同步</li>
+</ul>
+</li>
+<li>
+<p>删除快照virsh snapshot-delete centos7 --snapshotname 1516636570</p>
+</li>
+<li>
+<p><font color="red">只有qcow2支持做快照，并且快照保存在qcow2的磁盘文件中</font></p>
+</li>
+</ul>
+<h2 id="4-8kvm虚拟机克隆">4.8kvm虚拟机克隆</h2>
+<h3 id="4-8-1完整克隆">4.8.1完整克隆</h3>
+<ul>
+<li>
+<p><strong>克隆的时候不会克隆原有的快照</strong></p>
+</li>
+<li>
+<p>自动挡</p>
+</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment"># -o 旧的虚拟机    -n新的虚拟机</span><br>virt-clone --auto-clone -o web01 -n web02 (完整克隆)<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>手动挡</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#-c  表示的是压缩克隆</span><br>qemu-img convert -f qcow2 -O qcow2 -c web01.qcow2 web03.qcow2<br>virsh dumpxml web01 &gt;web02.xml<br>vim web02.xml<br><span class="hljs-comment">#修改虚拟机的名字</span><br><span class="hljs-comment">#删除虚拟机uuid</span><br><span class="hljs-comment">#删除mac地址</span><br><span class="hljs-comment">#修改磁盘路径</span><br>virsh define web02.xml <br>virsh start web02<br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-8-2连接克隆">4.8.2连接克隆</h3>
+<ul>
+<li>生成虚拟机磁盘文件   qemu-img create -f qcow2 -b web03.qcow2 web04.qcow2</li>
+<li>生成虚拟机的配置文件</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs sh">virsh dumpxml web01 &gt;web03.xml<br>vim web03.xml<br><span class="hljs-comment">#修改虚拟机的名字</span><br>&lt;name&gt;web03&lt;/name&gt;<br><span class="hljs-comment">#删除虚拟机uuid</span><br>&lt;uuid&gt;8e505e25-5175-46ab-a9f6-feaa096daaa4&lt;/uuid&gt;<br><span class="hljs-comment">#删除mac地址</span><br>&lt;mac address=<span class="hljs-string">'52:54:00:4e:5b:89'</span>/&gt;<br><span class="hljs-comment">#修改磁盘路径</span><br>&lt;<span class="hljs-built_in">source</span> file=<span class="hljs-string">'/opt/web03.qcow2'</span>/&gt;<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>导入虚拟机并进行启动测试</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">virsh define web03.xml <br>virsh start web03<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>全自动连接克隆脚本</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@kvm01 scripts]<span class="hljs-comment"># cat link_clone.sh </span><br><span class="hljs-meta">#!/bin/bash</span><br>old_vm=<span class="hljs-variable">$1</span><br>new_vm=<span class="hljs-variable">$2</span><br><span class="hljs-comment">#a：生成虚拟机磁盘文件</span><br>old_disk=`virsh dumpxml <span class="hljs-variable">$old_vm</span>|grep <span class="hljs-string">"&lt;source file"</span>|awk -F<span class="hljs-string">"'"</span> <span class="hljs-string">'{print $2}'</span>`<br>disk_tmp=`dirname <span class="hljs-variable">$old_disk</span>`<br>qemu-img create -f qcow2 -b <span class="hljs-variable">$old_disk</span>  <span class="hljs-variable">${disk_tmp}</span>/<span class="hljs-variable">${new_vm}</span>.qcow2<br><span class="hljs-comment">#b：生成虚拟机的配置文件</span><br>virsh dumpxml <span class="hljs-variable">$old_vm</span> &gt;/tmp/<span class="hljs-variable">${new_vm}</span>.xml<br><span class="hljs-comment">#修改虚拟机的名字</span><br>sed -ri <span class="hljs-string">"s#(&lt;name&gt;)(.*)(&lt;/name&gt;)#\1<span class="hljs-variable">${new_vm}</span>\3#g"</span> /tmp/<span class="hljs-variable">${new_vm}</span>.xml<br><span class="hljs-comment">#删除虚拟机uuid</span><br>sed -i <span class="hljs-string">'/&lt;uuid&gt;/d'</span> /tmp/<span class="hljs-variable">${new_vm}</span>.xml<br><span class="hljs-comment">#删除mac地址</span><br>sed -i <span class="hljs-string">'/&lt;mac address/d'</span> /tmp/<span class="hljs-variable">${new_vm}</span>.xml<br><span class="hljs-comment">#修改磁盘路径</span><br>sed -ri <span class="hljs-string">"s#(&lt;source file=')(.*)('/&gt;)#\1<span class="hljs-variable">${disk_tmp}</span>/<span class="hljs-variable">${new_vm}</span>.qcow2\3#g"</span> /tmp/<span class="hljs-variable">${new_vm}</span>.xml<br><span class="hljs-comment">#c：导入虚拟机并进行启动测试</span><br>virsh define /tmp/<span class="hljs-variable">${new_vm}</span>.xml<br>virsh start <span class="hljs-variable">${new_vm}</span><br></code></pre></td></tr></tbody></table></figure>
+<h2 id="4-9kvm虚拟机的桥接网络">4.9kvm虚拟机的桥接网络</h2>
+<p>默认的虚拟机网络是NAT模式 网段192.168.122.0/24</p>
+<ul>
+<li>虚拟机上网原理
+<ul>
+<li>桥接模式的话，就是创建一个交换机，所有的虚拟机，都会连接到交换机</li>
+<li>虚拟机每有一块网卡，就会有一个vnet</li>
+<li>宿主机通过br0网卡 也会连接到交换机才出去</li>
+<li>eth0网卡在你生成桥接后。就没有网卡地址，此处只是一个连接作用</li>
+<li>不需要内核转发也可以实现</li>
+</ul>
+</li>
+<li>NAT与桥接可以共存
+<ul>
+<li>在创建虚拟机的时候可以选择使用哪种网络模式</li>
+<li>nat是通过宿主机的virbr网卡上网 192.168.122.1（网关）</li>
+<li>此处想要上网。<strong>需要内核转发</strong>，nat转换成外网地址</li>
+</ul>
+</li>
+</ul>
+<p>![QQ图片20200109121531](D:\Program Files\Typora\图片\QQ图片20200109121531.jpg)</p>
+<h3 id="4-9-1创建桥接网卡">4.9.1创建桥接网卡</h3>
+<p>创建桥接网卡命令 virsh iface-bridge eth0 br0</p>
+<p>取消桥接网卡命令 virsh iface-unbridge br0</p>
+<h3 id="4-9-2新虚拟机使用桥接模式">4.9.2新虚拟机使用桥接模式</h3>
+<ul>
+<li>默认NAT模式</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name web04 --memory 1024 --vcpus 1 --disk /opt/web04.qcow2 --boot hd --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>桥接模式</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sh">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name web04 --memory 1024 --vcpus 1 --disk /data/web04.qcow2 --boot hd --network bridge=br0 --graphics vnc,listen=0.0.0.0 --noautoconsole<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>问题：虚拟机获取不到ip地址</li>
+</ul>
+<p>![微信截图_20200109194456](D:\Program Files\Typora\图片\微信截图_20200109194456.png)</p>
+<h3 id="4-9-3将已有虚拟机网络修改为桥接模式">4.9.3将已有虚拟机网络修改为桥接模式</h3>
+<ul>
+<li>关机  virsh destroy centos7</li>
+<li>修改虚拟机配置文件</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sh">vir edit centos7<br>&lt;interface <span class="hljs-built_in">type</span>=<span class="hljs-string">'bridge'</span>&gt;<br>&lt;<span class="hljs-built_in">source</span> bridge=<span class="hljs-string">'br0'</span>&gt;<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>启动虚拟机，测试虚拟机网络
+<ul>
+<li>如果上层没有开启dhcp,需要手动配置ip地址</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-built_in">echo</span> <span class="hljs-string">'TYPE="Ethernet"</span><br><span class="hljs-string">BOOTPROTO="static"</span><br><span class="hljs-string">NAME="eth0"</span><br><span class="hljs-string">DEVICE="eth0"</span><br><span class="hljs-string">ONBOOT="yes"</span><br><span class="hljs-string">DNS1="180.76.76.76"</span><br><span class="hljs-string">IPADDR="10.0.0.88"</span><br><span class="hljs-string">NETMASK="255.255.255.0"</span><br><span class="hljs-string">GATEWAY="10.0.0.254"'</span> &gt;/etc/sysconfig/network-scripts/ifcfg-eth0<br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>重启网卡，本地测试连接
+<ul>
+<li>systemctl restart network</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-10热添加技术">4.10热添加技术</h2>
+<ul>
+<li>硬盘   网卡  内存  cpu</li>
+</ul>
+<h3 id="4-10-1-kvm热添加硬盘">4.10.1 kvm热添加硬盘</h3>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#临时生效</span><br>virsh attach-disk web01 /data/web01-add.qcow2 vdb --subdriver qcow2<br><span class="hljs-comment">#永久生效</span><br>virsh attach-disk web01 /data/web01-add.qcow2 vdb --subdriver qcow2 --config<br><span class="hljs-comment">#临时剥离硬盘</span><br>virsh detach-disk web01 vdb<br><span class="hljs-comment">#永久剥离硬盘</span><br>virsh detach-disk web01 vdb --config<br><br><br><span class="hljs-comment">#创建硬盘</span><br>[root@kvm01 ~]<span class="hljs-comment"># qemu-img create -f qcow2 /opt/add_web05.qcow2 2G</span><br>Formatting <span class="hljs-string">'/opt/add_web05.qcow2'</span>, fmt=qcow2 size=2147483648 encryption=off cluster_size=65536 lazy_refcounts=off <br>[root@kvm01 ~]<span class="hljs-comment"># virsh attach-disk web05 /opt/add_web05.qcow2 vdb --subdriver qcow2</span><br>Disk attached successfully<br><br><span class="hljs-comment">#进入虚拟机格式化硬盘</span><br>fdisk 查看是否添加成功<br>[root@localhost ~]<span class="hljs-comment"># mkfs.xfs /dev/vdb</span><br>meta-data=/dev/vdb               isize=512    agcount=4, agsize=131072 blks<br>         =                       sectsz=512   attr=2, projid32bit=1<br>         =                       crc=1        finobt=0, sparse=0<br>data     =                       bsize=4096   blocks=524288, imaxpct=25<br>         =                       sunit=0      swidth=0 blks<br>naming   =version 2              bsize=4096   ascii-ci=0 ftype=1<br><span class="hljs-built_in">log</span>      =internal <span class="hljs-built_in">log</span>           bsize=4096   blocks=2560, version=2<br>         =                       sectsz=512   sunit=0 blks, lazy-count=1<br>realtime =none                   extsz=4096   blocks=0, rtextents=0<br>[root@localhost ~]<span class="hljs-comment"># mount /dev/vdb /mnt</span><br>[root@localhost ~]<span class="hljs-comment"># df -h</span><br>Filesystem      Size  Used Avail Use% Mounted on<br>devtmpfs        486M     0  486M   0% /dev<br>tmpfs           496M     0  496M   0% /dev/shm<br>tmpfs           496M  6.8M  489M   2% /run<br>tmpfs           496M     0  496M   0% /sys/fs/cgroup<br>/dev/vda1        10G  1.3G  8.8G  13% /<br>tmpfs           100M     0  100M   0% /run/user/0<br>/dev/vdb        2.0G   33M  2.0G   2% /mnt<br><br><br><span class="hljs-comment">#磁盘扩容</span><br><span class="hljs-comment">#卸载</span><br>[root@localhost ~]<span class="hljs-comment"># umount /mnt</span><br><span class="hljs-comment">#剥离硬盘</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh detach-disk web05 vdb</span><br>Disk detached successfully<br><span class="hljs-comment">#硬盘扩容</span><br>[root@kvm01 ~]<span class="hljs-comment"># qemu-img resize /opt/add_web05.qcow2 12G</span><br>Image resized.<br>[root@kvm01 ~]<span class="hljs-comment"># virsh attach-disk web05 /opt/add_web05.qcow2 vdb --subdriver qcow2</span><br>Disk attached successfully<br><br><br><span class="hljs-comment">#重新挂载，使用xfs_growfs更新扩容盘</span><br><span class="hljs-comment">#看到最后一行blocks发生变化，表示成功</span><br>[root@localhost ~]<span class="hljs-comment"># xfs_growfs /dev/vdb</span><br>xfs_growfs: /dev/vdb is not a mounted XFS filesystem<br>[root@localhost ~]<span class="hljs-comment"># mount /dev/vdb /mnt</span><br>[root@localhost ~]<span class="hljs-comment"># xfs_growfs /dev/vdb</span><br>meta-data=/dev/vdb               isize=512    agcount=4, agsize=131072 blks<br>         =                       sectsz=512   attr=2, projid32bit=1<br>         =                       crc=1        finobt=0 spinodes=0<br>data     =                       bsize=4096   blocks=524288, imaxpct=25<br>         =                       sunit=0      swidth=0 blks<br>naming   =version 2              bsize=4096   ascii-ci=0 ftype=1<br><span class="hljs-built_in">log</span>      =internal               bsize=4096   blocks=2560, version=2<br>         =                       sectsz=512   sunit=0 blks, lazy-count=1<br>realtime =none                   extsz=4096   blocks=0, rtextents=0<br>data blocks changed from 524288 to 3145728<br>[root@localhost ~]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-10-2kvm虚拟机在线热添加网卡">4.10.2kvm虚拟机在线热添加网卡</h3>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#直接添加就ok</span><br><span class="hljs-comment">#network  网卡类型</span><br><span class="hljs-comment">#永久添加 --config</span><br>[root@kvm01 ~]<span class="hljs-comment">#  virsh attach-interface web01 network default --config</span><br><br><span class="hljs-comment">#虚拟机查看会有一块ens的网卡</span><br>[root@localhost network-scripts]<span class="hljs-comment"># ip addr</span><br>3: ens9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000<br>    link/ether 52:54:00:55:3a:5d brd ff:ff:ff:ff:ff:ff<br>    inet 192.168.122.107/24 brd 192.168.122.255 scope global noprefixroute dynamic ens9<br>       valid_lft 3597sec preferred_lft 3597sec<br>    inet6 fe80::bafc:c758:2dfa:28c2/64 scope link noprefixroute <br>       valid_lft forever preferred_lft forever<br>[root@localhost network-scripts]<span class="hljs-comment"># </span><br><span class="hljs-comment">#此处网卡的名称不是eth，因为使用的网卡类型（公司）不一样，通过配置文件可以看到</span><br>virsh edit web01<br>    &lt;interface <span class="hljs-built_in">type</span>=<span class="hljs-string">'bridge'</span>&gt;<br>      &lt;mac address=<span class="hljs-string">'52:54:00:93:0a:a8'</span>/&gt;<br>      &lt;<span class="hljs-built_in">source</span> bridge=<span class="hljs-string">'br0'</span>/&gt;<br>      &lt;model <span class="hljs-built_in">type</span>=<span class="hljs-string">'virtio'</span>/&gt;<br>      &lt;address <span class="hljs-built_in">type</span>=<span class="hljs-string">'pci'</span> domain=<span class="hljs-string">'0x0000'</span> bus=<span class="hljs-string">'0x00'</span> slot=<span class="hljs-string">'0x03'</span> <span class="hljs-keyword">function</span>=<span class="hljs-string">'0x0'</span>/&gt;<br>    &lt;/interface&gt;<br>    &lt;interface <span class="hljs-built_in">type</span>=<span class="hljs-string">'network'</span>&gt;<br>      &lt;mac address=<span class="hljs-string">'52:54:00:01:6f:e0'</span>/&gt;<br>      &lt;<span class="hljs-built_in">source</span> network=<span class="hljs-string">'default'</span>/&gt;<br>      &lt;model <span class="hljs-built_in">type</span>=<span class="hljs-string">'rtl8139'</span>/&gt;<br>      &lt;address <span class="hljs-built_in">type</span>=<span class="hljs-string">'pci'</span> domain=<span class="hljs-string">'0x0000'</span> bus=<span class="hljs-string">'0x00'</span> slot=<span class="hljs-string">'0x09'</span> <span class="hljs-keyword">function</span>=<span class="hljs-string">'0x0'</span>/&gt;<br>    &lt;/interface&gt;<br><br><span class="hljs-comment">#给虚拟机添加一块eth的网卡（加上model type的类型就ok）</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh attach-interface web01 network default --model virtio</span><br>[root@localhost network-scripts]<span class="hljs-comment"># ip addr</span><br>4: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000<br>    link/ether 52:54:00:95:62:56 brd ff:ff:ff:ff:ff:ff<br>    inet6 fe80::3a85:5dff:1b9c:5f98/64 scope link noprefixroute <br>       valid_lft forever preferred_lft forever<br><br><br><span class="hljs-comment">#卸载网卡</span><br><span class="hljs-comment">#写上网卡类型 network ，但是会有两块同样类型网卡，所以需要指定mac地址</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh detach-interface web01 network</span><br>error: Domain has 2 interfaces. Please specify <span class="hljs-built_in">which</span> one to detach using --mac<br>error: Failed to detach interface<br><br>[root@kvm01 ~]<span class="hljs-comment"># virsh detach-interface web01 network --mac 52:54:00:55:3a:5d</span><br>Interface detached successfully<br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-10-3kvm虚拟机在线热添加内存">4.10.3kvm虚拟机在线热添加内存</h3>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#当前内存1G，可以减少，无法增加</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh setmem web01 512M</span><br><br>[root@kvm01 ~]<span class="hljs-comment"># virsh setmem web01 2048M</span><br>error: invalid argument: cannot <span class="hljs-built_in">set</span> memory higher than max memory<br><br><br><span class="hljs-comment">#原因：在刚开始的时候，设置了最大内存，现在已经最大了</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh edit web05</span><br>&lt;domain <span class="hljs-built_in">type</span>=<span class="hljs-string">'kvm'</span>&gt;<br>  &lt;name&gt;web05&lt;/name&gt;<br>  &lt;uuid&gt;c2201c1e-f0f0-4862-8d07-ad498d72ead5&lt;/uuid&gt;<br>  &lt;memory unit=<span class="hljs-string">'KiB'</span>&gt;1048576&lt;/memory&gt;<br>  &lt;currentMemory unit=<span class="hljs-string">'KiB'</span>&gt;1048576&lt;/currentMemory&gt;<br><br><br><span class="hljs-comment">#如何调整，关机调整最大内存</span><br><span class="hljs-comment">#不能超过宿主机内存</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh destroy web01</span><br>Domain web01 destroyed<br>[root@kvm01 ~]<span class="hljs-comment"># virsh setmaxmem web01 --size 2048</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh start web01</span><br><br><br><span class="hljs-comment">#创建虚拟机时配置参数</span><br>virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name web04 --memory 512,maxmemory=2048 --vcpus 1 --disk /data/web04.qcow2 --boot hd --network bridge=br0 --graphics vnc,listen=0.0.0.0 --noautoconsole<br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-10-4kvm虚拟机在线热添加cpu">4.10.4kvm虚拟机在线热添加cpu</h3>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#配置之前</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh edit web05</span><br>  &lt;vcpu placement=<span class="hljs-string">'static'</span>&gt;1&lt;/vcpu&gt;   <span class="hljs-comment">#只有1核</span><br><br>[root@localhost ~]<span class="hljs-comment"># lscpu|head -5</span><br>Architecture:          x86_64<br>CPU op-mode(s):        32-bit, 64-bit<br>Byte Order:            Little Endian<br>CPU(s):                1   <span class="hljs-comment">#1核</span><br>On-line CPU(s) list:   0<br><br><br><span class="hljs-comment">#关机调整cpu核数，再添加</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh destroy web05</span><br>Domain web05 destroyed<br>[root@kvm01 ~]<span class="hljs-comment"># virsh setvcpus web05  --maximum 4 --config</span><br><br><span class="hljs-comment">#调整完成后</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh edit web05</span><br>  &lt;vcpu placement=<span class="hljs-string">'static'</span> current=<span class="hljs-string">'1'</span>&gt;4&lt;/vcpu&gt;   <span class="hljs-comment">#现在1核，最大4核</span><br>[root@kvm01 ~]<span class="hljs-comment"># virsh start web05</span><br>Domain web05 started<br>[root@kvm01 ~]<span class="hljs-comment"># virsh setvcpus web05 2</span><br>[root@localhost ~]<span class="hljs-comment"># lscpu|head -5</span><br>Architecture:          x86_64<br>CPU op-mode(s):        32-bit, 64-bit<br>Byte Order:            Little Endian<br>CPU(s):                2<br>On-line CPU(s) list:   0,1<br><br><br><span class="hljs-comment">#注意：只能热添加，减少需要关机</span><br><br>[root@kvm01 ~]<span class="hljs-comment"># virsh setvcpus web05 1</span><br>error: unsupported configuration: failed to find appropriate hotpluggable vcpus to reach the desired target vcpu count<br></code></pre></td></tr></tbody></table></figure>
+<h2 id="4-11virt-manager和kvm虚拟机热迁移-共享的网络文件系统">4.11virt-manager和kvm虚拟机热迁移(共享的网络文件系统)</h2>
+<ul>
+<li>注意迁移的概念，就是迁移过去，原来的虚拟机不要了
+<ul>
+<li>冷迁移：迁移完成 ，确保无误之后，删除源文件</li>
+<li>热迁移：运行状态直接迁移过去（迁移完成之后，原虚拟机删除，新虚拟机会自动运行）</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-11-1冷迁移-kvm虚拟机-配置文件-磁盘文件">4.11.1冷迁移  kvm虚拟机:配置文件,磁盘文件</h3>
+<ul>
+<li>
+<p>准备另外一台宿主机**，开启cpu虚拟化功能**</p>
+</li>
+<li>
+<p>更新yum源，下载需要软件</p>
+<ul>
+<li>yum install libvirt virt-install  qemu-kvm -y</li>
+</ul>
+</li>
+<li>
+<p>启动软件服务</p>
+<ul>
+<li>[root@kvm02 ~]# systemctl start libvirtd.service</li>
+<li>[root@kvm02 ~]# systemctl enable libvirtd.service</li>
+</ul>
+</li>
+<li>
+<p>创建桥接网卡（环境要求一致）</p>
+<ul>
+<li>virsh iface-bridge eth0 br0</li>
+</ul>
+</li>
+<li>
+<p>传送磁盘文件 和 配置文件</p>
+<ul>
+<li>如果是完整虚拟机，传输磁盘文件和配置文件</li>
+<li>如果是连接克隆虚拟机，传输磁盘文件，<strong>和原磁盘文件</strong> 配置文件</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@kvm01 ~]<span class="hljs-comment"># cd /opt</span><br>[root@kvm01 opt]<span class="hljs-comment"># scp -rp web05.qcow2 web03.qcow2 root@10.0.0.12:/opt</span><br><br>[root@kvm01 opt]<span class="hljs-comment"># virsh dumpxml web05 &gt;vm_web05.xml</span><br>[root@kvm01 opt]<span class="hljs-comment"># scp -rp vm_web05.xml root@10.0.0.12:/opt</span><br></code></pre></td></tr></tbody></table></figure>
+<ul>
+<li>最后从kvm02上导入，启动虚拟机</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@kvm02 ~]<span class="hljs-comment"># cd /opt</span><br>[root@kvm02 opt]<span class="hljs-comment"># ll</span><br>total 1506120<br>-rw-r--r-- 1 root root       4189 Jan  9 17:11 vm_web05.xml<br>-rw------- 1 root root 1532821504 Jan  9 10:09 web03.qcow2<br>-rw-r--r-- 1 root root    9437184 Jan  9 16:40 web05.qcow2<br>[root@kvm02 opt]<span class="hljs-comment"># virsh define vm_web05.xml </span><br>Domain web05 defined from vm_web05.xml<br>[root@kvm02 opt]<span class="hljs-comment"># virsh start web05</span><br>Domain web05 started<br><br><span class="hljs-comment">#登录进去，看到桥接网段，则成功</span><br>[root@kvm02 opt]<span class="hljs-comment"># virsh console web05 </span><br>Connected to domain web05<br>Escape character is ^]<br><br>[root@localhost ~]<span class="hljs-comment"># ip addr|grep inet|grep 10.0.0.</span><br>    inet 10.0.0.99/24 brd 10.0.0.255 scope global noprefixroute eth0<br></code></pre></td></tr></tbody></table></figure>
+<h3 id="4-11-2-热迁移kvm虚拟机-配置文件-nfs共享">4.11.2 热迁移kvm虚拟机:配置文件,nfs共享</h3>
+<ul>
+<li>
+<p>原理</p>
+<ul>
+<li>通过nfs实现磁盘文件的共享，然后通过命令实现热迁移</li>
+</ul>
+</li>
+<li>
+<p>环境准备</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">主机名</th>
+<th style="text-align:left">ip</th>
+<th style="text-align:left">内存</th>
+<th style="text-align:left">网络</th>
+<th style="text-align:left">软件需求</th>
+<th style="text-align:left">虚拟化</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">kvm01</td>
+<td style="text-align:left">10.0.0.11</td>
+<td style="text-align:left">2G</td>
+<td style="text-align:left">创建br0桥接网卡</td>
+<td style="text-align:left">kvm和nfs</td>
+<td style="text-align:left">开启虚拟化</td>
+</tr>
+<tr>
+<td style="text-align:left">kvm02</td>
+<td style="text-align:left">10.0.0.12</td>
+<td style="text-align:left">2G</td>
+<td style="text-align:left">创建br0桥接网卡</td>
+<td style="text-align:left">kvm和nfs</td>
+<td style="text-align:left">开启虚拟化</td>
+</tr>
+<tr>
+<td style="text-align:left">nfs01</td>
+<td style="text-align:left">10.0.0.31</td>
+<td style="text-align:left">1G</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">nfs</td>
+<td style="text-align:left">无</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>实现nfs共享存储
+<ul>
+<li>nfs01配置</li>
+<li>kvm01  kvm02配置</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs sh"><span class="hljs-comment">#三台机器同时安装软件</span><br>yum  install nfs-utils rpcbind  -y<br><br><span class="hljs-comment">#nfs01操作</span><br>[root@nfs01 ~]<span class="hljs-comment"># vim /etc/exports</span><br>/data 10.0.0.0/24(rw,async,no_root_squash,no_all_squash)<br>[root@nfs01 ~]<span class="hljs-comment"># systemctl restart rpcbind</span><br>[root@nfs01 ~]<span class="hljs-comment"># systemctl enable rpcbind</span><br>[root@nfs01 ~]<span class="hljs-comment"># systemctl restart nfs</span><br>[root@nfs01 ~]<span class="hljs-comment"># systemctl enable nfs</span><br>[root@nfs01 ~]<span class="hljs-comment"># mkdir /data</span><br><br><br><span class="hljs-comment">#kvm01操作</span><br>[root@kvm01 vm.bak]<span class="hljs-comment"># #rm -fr /opt/*</span><br>[root@kvm01 vm.bak]<span class="hljs-comment"># #rm -rf /etc/libvirt/qemu/*.xml</span><br><span class="hljs-comment">#注意这个目录里面的network 不能删除</span><br>[root@kvm01 vm.bak]<span class="hljs-comment"># ls /etc/libvirt/qemu/</span><br>networks  web05.xml<br><span class="hljs-comment">#[root@kvm01 ~]# mount -t nfs 10.0.0.31:/data /opt</span><br><br><br><span class="hljs-comment">#kvm02操作</span><br>[root@kvm02 ~]<span class="hljs-comment"># #mv /opt/* /oldboy/</span><br>[root@kvm02 ~]<span class="hljs-comment"># #mount -t nfs 10.0.0.31:/data /opt</span><br>[root@kvm02 ~]<span class="hljs-comment"># #mv /oldboy/* /opt/</span><br><br><br><br><span class="hljs-comment">#最后执行命令，将kvm02上的虚拟机迁移到kvm01</span><br><span class="hljs-comment">#临时迁移</span><br>virsh migrate --live --verbose web02 qemu+ssh://10.0.0.11/system --unsafe<br><span class="hljs-comment">#永久迁移</span><br>virsh migrate --live --verbose web02 qemu+ssh://10.0.0.100/system --unsafe --persistent --undefinesource<br><br><span class="hljs-comment">#在执行迁移的过程中会有报错，配置域名解析</span><br>[root@kvm01 ~]<span class="hljs-comment"># cat /etc/hosts</span><br>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6<br>192.168.16.200 mirrors.aliyun.com<br>10.0.0.11 kvm01<br>10.0.0.12 kvm02<br></code></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/18/ceph+docker%E6%96%B9%E5%BC%8F%E6%90%AD%E5%BB%BAowncloud%E5%AE%9E%E7%8E%B0%E7%A7%81%E7%BD%91%E4%BA%91%E7%9B%98/">ceph+docker方式搭建owncloud实现私网云盘<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
