@@ -16,7 +16,7 @@
   <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
   
   <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,docker镜像加速（新建json文件）
-[root@..."> 
+123456..."> 
   
   <meta name="author" content="刘世亚"> 
 
@@ -161,25 +161,18 @@
       <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/26/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F-1/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/"
           class="leancloud" data-flag-title="国内镜像加速"></span></span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2807</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2826</span>
     </div>
   </div>
 </section>
   <section class="main">
     <section class="content">
-      <p>docker镜像加速（新建json文件）<br>
-[root@docker01 yum.repos.d]# cat /etc/docker/daemon.json<br>
-{<br>
-“registry-mirrors”: [<br>
-“<a href="https://registry.docker-cn.com" target="_blank" rel="noopener">https://registry.docker-cn.com</a>”,<br>
-“<a href="http://hub-mirror.c.163.com" target="_blank" rel="noopener">http://hub-mirror.c.163.com</a>”,<br>
-“<a href="https://docker.mirrors.ustc.edu.cn" target="_blank" rel="noopener">https://docker.mirrors.ustc.edu.cn</a>”<br>
-]<br>
-}</p>
-<p>重启docker<br>
-systemctl restart  docker</p>
-<p>测试<br>
-docker search  httpd</p>
+      <p>docker镜像加速（新建json文件）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 yum.repos.d]<span class="hljs-comment"># cat /etc/docker/daemon.json</span><br>{<br>  <span class="hljs-string">"registry-mirrors"</span>: [<br>    <span class="hljs-string">"https://registry.docker-cn.com"</span>,<br>    <span class="hljs-string">"http://hub-mirror.c.163.com"</span>,<br>    <span class="hljs-string">"https://docker.mirrors.ustc.edu.cn"</span><br>  ]<br>}<br></code></pre></td></tr></tbody></table></figure>
+<p>重启docker</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl restart  docker<br></code></pre></td></tr></tbody></table></figure>
+<p>测试</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker search  httpd<br></code></pre></td></tr></tbody></table></figure>
 <p>[root@docker01 yum.repos.d]# docker search  httpd<br>
 NAME  镜像名字                                  DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED<br>
 用户名 镜像名字</p>
@@ -237,7 +230,7 @@ NAME  镜像名字                                  DESCRIPTION                 
 <nav class="nav">
   
   
-    <a href="/2020/05/26/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/">国内镜像加速<i class="iconfont iconright"></i></a>
+    <a href="/2020/05/26/ESXI/">ESXI虚拟化<i class="iconfont iconright"></i></a>
   
 </nav>
 
