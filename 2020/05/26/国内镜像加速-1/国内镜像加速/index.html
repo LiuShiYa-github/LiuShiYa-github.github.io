@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>文章模板 - LiuShiYa-github</title>
+  <title>国内镜像加速 - LiuShiYa-github</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="google" content="notranslate" />
@@ -15,7 +15,8 @@
   
   <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
   
-  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,Welcome to Hexo! This is yo..."> 
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,docker镜像加速（新建json文件）
+[root@..."> 
   
   <meta name="author" content="刘世亚"> 
 
@@ -150,38 +151,56 @@
   <div class="container" id="container">
     <article class="article">
   <section class="head">
-  <img   class="lazyload" data-original="/images/theme/%E6%B0%B8%E4%B8%8D%E5%AE%95%E6%9C%BA.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
   <div class="head-mask">
-    <h1 class="head-title">文章模板</h1>
+    <h1 class="head-title">国内镜像加速</h1>
     <div class="head-info">
-      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-02</span
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-26</span
         class="post-info-item">
       
-      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/02/hello-world/"
-          class="leancloud" data-flag-title="文章模板"></span></span>
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/26/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F-1/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/"
+          class="leancloud" data-flag-title="国内镜像加速"></span></span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>1103</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2807</span>
     </div>
   </div>
 </section>
   <section class="main">
     <section class="content">
-      <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="这里是刘世亚的又一个博客">这里是刘世亚的又一个博客</h2>
-<h2 id="Quick-Start">Quick Start</h2>
-<h3 id="Create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">"My New Post"</span><br></code></pre></td></tr></tbody></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server">Run server</h3>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></tbody></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></tbody></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></tbody></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<script>
+      <p>docker镜像加速（新建json文件）<br>
+[root@docker01 yum.repos.d]# cat /etc/docker/daemon.json<br>
+{<br>
+“registry-mirrors”: [<br>
+“<a href="https://registry.docker-cn.com" target="_blank" rel="noopener">https://registry.docker-cn.com</a>”,<br>
+“<a href="http://hub-mirror.c.163.com" target="_blank" rel="noopener">http://hub-mirror.c.163.com</a>”,<br>
+“<a href="https://docker.mirrors.ustc.edu.cn" target="_blank" rel="noopener">https://docker.mirrors.ustc.edu.cn</a>”<br>
+]<br>
+}</p>
+<p>重启docker<br>
+systemctl restart  docker</p>
+<p>测试<br>
+docker search  httpd</p>
+<p>[root@docker01 yum.repos.d]# docker search  httpd<br>
+NAME  镜像名字                                  DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED<br>
+用户名 镜像名字</p>
+<p>方法一：</p>
+<p>Docker中国区官方镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">https://registry.docker-cn.com<br></code></pre></td></tr></tbody></table></figure>
+<p>网易</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">http://hub-mirror.c.163.com<br></code></pre></td></tr></tbody></table></figure>
+<p>ustc</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">https://docker.mirrors.ustc.edu.cn<br></code></pre></td></tr></tbody></table></figure>
+<p>中国科技大学</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">https://docker.mirrors.ustc.edu.cn<br></code></pre></td></tr></tbody></table></figure>
+<p>方法二：</p>
+<p>阿里云容器 生成自己的加速地址</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">登录：https://cr.console.aliyun.com/<br></code></pre></td></tr></tbody></table></figure>
+<p><img class="lazyload" data-original="%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/docker.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" alt="在这里插入图片描述"></p>
+<p>加载重启docker</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ sudo systemctl daemon-reload<br>$ sudo systemctl restart docker<br></code></pre></td></tr></tbody></table></figure>
+<p>查看是否成功</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ docker info<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 volumes]<span class="hljs-comment"># docker info</span><br>Client:<br> Debug Mode: <span class="hljs-literal">false</span><br><br>Server:<br> Containers: 5<br>  Running: 5<br>  Paused: 0<br>  Stopped: 0<br> Images: 8<br> Server Version: 19.03.9<br> Storage Driver: overlay2<br>  Backing Filesystem: xfs<br>  Supports d_type: <span class="hljs-literal">true</span><br>  Native Overlay Diff: <span class="hljs-literal">true</span><br> Logging Driver: json-file<br> Cgroup Driver: cgroupfs<br> Plugins:<br>  Volume: <span class="hljs-built_in">local</span><br>  Network: bridge host ipvlan macvlan null overlay<br>  Log: awslogs fluentd gcplogs gelf journald json-file <span class="hljs-built_in">local</span> logentries splunk syslog<br> Swarm: inactive<br> Runtimes: runc<br> Default Runtime: runc<br> Init Binary: docker-init<br> containerd version: 7ad184331fa3e55e52b890ea95e65ba581ae3429<br> runc version: dc9208a3303feef5b3839f4323d9beb36df0a9dd<br> init version: fec3683<br> Security Options:<br>  seccomp<br>   Profile: default<br> Kernel Version: 3.10.0-957.el7.x86_64<br> Operating System: CentOS Linux 7 (Core)<br> OSType: linux<br> Architecture: x86_64<br> CPUs: 1<br> Total Memory: 3.578GiB<br> Name: docker01<br> ID: EATY:RGMT:DFD7:5W2F:ZOAG:YTDC:D7Z6:EQV6:BLSV:V4AU:53IB:T54A<br> Docker Root Dir: /var/lib/docker<br> Debug Mode: <span class="hljs-literal">false</span><br> Registry: https://index.docker.io/v1/<br> Labels:<br> Experimental: <span class="hljs-literal">false</span><br> Insecure Registries:<br>  127.0.0.0/8<br> Registry Mirrors:<br>  https://registry.docker-cn.com/<br>  http://hub-mirror.c.163.com/<br>  https://docker.mirrors.ustc.edu.cn/<br> Live Restore Enabled: <span class="hljs-literal">false</span><br><br>[root@docker01 volumes]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
@@ -217,10 +236,8 @@
       
 <nav class="nav">
   
-    <a href="/2020/05/18/kvm/"><i class="iconfont iconleft"></i>KVM虚拟化</a>
   
-  
-    <a href="/2020/05/02/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F-1/">刘世亚声明文件<i class="iconfont iconright"></i></a>
+    <a href="/2020/05/26/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/">国内镜像加速<i class="iconfont iconright"></i></a>
   
 </nav>
 
