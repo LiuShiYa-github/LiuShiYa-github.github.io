@@ -160,7 +160,7 @@
       <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/26/docker%E9%83%A8%E7%BD%B2%E4%BB%A5%E5%8F%8A%E5%9F%BA%E6%9C%AC%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86/"
           class="leancloud" data-flag-title="docker部署以及基本镜像管理"></span></span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4483</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4588</span>
     </div>
   </div>
 </section>
@@ -192,65 +192,23 @@
 <p><u>传统docker和docker ce不兼容 所以在安装docker ce之前要检查一下环境中有没有传统docker</u></p>
 <h6 id="安装docker">安装docker</h6>
 <p>安装前检查环境中是否已经安装传统docker，以免不兼容问题</p>
-<p><code>wget -O /etc/yum.repos.d/docker-ce.repo https://download.docker.com/linux/centos/docker-ce.repo</code> 下载docker源<br>
-<code>sed -i 's+download.docker.com+mirrors.tuna.tsinghua.edu.cn/docker-ce+' /etc/yum.repos.d/docker-ce.repo</code>  修改为国内地址<br>
-<code>yum install docker-ce -y</code><br>
-<code>systemctl enable docker</code><br>
-<code>systemctl start docker</code><br>
-<code>docker version</code>  测试检查</p>
-<p>docker 是使用golang语言开发</p>
-<!--原本的base源里面就有docker  但是是传统版的-->
-<p>docker是一个CS架构：主要镜像  容器  仓库  网络 存储  监控</p>
-<p>docker 是一个软件的打包技术</p>
-<p>docker容器 安装好mysql5.7  打包成镜像  发不到docker仓库</p>
-<p>用户：下载docker镜像 mysql5.7，启动容器  启动mysql5.7</p>
-<p>类似功能：kvm也可以做到    在虚拟机中安装mysql5.7 然后导出kvm的磁盘文件，生成虚拟机配置文件  导入启动虚拟机</p>
-<p>pull镜像并运行容器</p>
-<p><code>docker  run -d  -p 80:80  nginx:latest</code><br>
-<code>run 创建并启动一个容器</code><br>
-<code>-d  放后台启动</code><br>
-<code>-p  端口映射</code><br>
-<code>nginx:latest docker镜像名称</code></p>
+<figure class="highlight plain"><figcaption><span>-O</span><a href="/etc/yum.repos.d/docker-ce.repo">https://download.docker.com/linux/centos/docker-ce.repo 下载docker源` </a></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs wget">`sed -i 's+download.docker.com+mirrors.tuna.tsinghua.edu.cn/docker-ce+' /etc/yum.repos.d/docker-ce.repo 修改为国内地址`  <br>`yum install docker-ce -y`<br>`systemctl enable docker`<br>`systemctl start docker`<br>`docker version 测试检查```  <br><br><br><br>docker 是使用golang语言开发<br><br><br><br>&lt;!--原本的base源里面就有docker  但是是传统版的--&gt;<br><br><br><br>docker是一个CS架构：主要镜像  容器  仓库  网络 存储  监控<br><br>docker 是一个软件的打包技术<br><br>docker容器 安装好mysql5.7  打包成镜像  发不到docker仓库<br><br><br><br>用户：下载docker镜像 mysql5.7，启动容器  启动mysql5.7<br><br><br><br>类似功能：kvm也可以做到    在虚拟机中安装mysql5.7 然后导出kvm的磁盘文件，生成虚拟机配置文件  导入启动虚拟机<br><br>pull镜像并运行容器<br><br>```docker  run -d  -p 80:80  nginx:latest<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><figcaption><span>创建并启动一个容器```</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs run">```-d  放后台启动<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight plain"><figcaption><span>端口映射```</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs -p">```nginx:latest docker镜像名称<br></code></pre></td></tr></tbody></table></figure>
 <p>搜索镜像（仓库地址在国外）</p>
-<p><code>docker search  httpd</code></p>
-<h6 id="配置docker镜像加速">配置docker镜像加速</h6>
-<p>1、docker镜像加速（新建json文件）</p>
-<p><code>[root@docker01 yum.repos.d]# cat /etc/docker/daemon.json {   "registry-mirrors": [     "https://registry.docker-cn.com",     "http://hub-mirror.c.163.com",     "https://docker.mirrors.ustc.edu.cn"   ] }</code></p>
+<figure class="highlight docker"><figcaption><span>search  httpd```</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs docker"><br><span class="hljs-comment">###### 配置docker镜像加速</span><br><br><span class="hljs-number">1</span>、docker镜像加速（新建json文件）<br><br>```[root@docker01 yum.repos.d]<span class="hljs-comment"># cat /etc/docker/daemon.json {   "registry-mirrors": [     "https://registry.docker-cn.com",     "http://hub-mirror.c.163.com",     "https://docker.mirrors.ustc.edu.cn"   ] }</span><br></code></pre></td></tr></tbody></table></figure>
 <p>2、重启docker</p>
-<p><code>systemctl restart  docker</code></p>
-<p>3、测试</p>
-<p><code>docker search  httpd</code></p>
+<figure class="highlight plain"><figcaption><span>restart  docker``` </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs systemctl"><br>3、测试 <br><br>```docker search  httpd<br></code></pre></td></tr></tbody></table></figure>
 <p>解释：</p>
-<p><code>[root@docker01 yum.repos.d]# docker search  httpd </code>NAME  镜像名字                                  DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED<code> 用户名 镜像名字                                  描述</code></p>
-<p>使用镜像时的原则：优先用官方的  星数多的</p>
-<p>下载镜像：不指定版本     默认下载最新版（Using default tag: latest）</p>
-<p><code>docker  image  pull  httpd</code></p>
-<p>登录官方网站 查看镜像的版本</p>
-<p><code>https://hub.docker.com/</code></p>
-<p>如果pull的版本不存在会报错：</p>
-<p><code>Error response from daemon: manifest for httpd:2.4.42 not found: manifest unknown: manifest unknown</code></p>
-<p>docker  pull  下载镜像</p>
-<p>docker   push  推送镜像</p>
-<p>查看 已有镜像</p>
-<p><code>[root@docker01 yum.repos.d]# docker  images REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE nginx               latest              9beeba249f3e        10 days ago         127MB httpd               2.4.43              d4e60c8eb27a        10 days ago         166MB httpd               latest              d4e60c8eb27a        10 days ago         166MB</code></p>
+<figure class="highlight plain"><figcaption><span>yum.repos.d]# docker search  httpd</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs [root@docker01">NAME  镜像名字                                  DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED<br>用户名 镜像名字                                  描述``` <br><br><br>使用镜像时的原则：优先用官方的  星数多的<br><br>下载镜像：不指定版本     默认下载最新版（Using default tag: latest）<br><br>```docker  image  pull  httpd``` <br><br>登录官方网站 查看镜像的版本<br><br>```https://hub.docker.com/``` <br><br>如果pull的版本不存在会报错：<br><br>```Error response from daemon: manifest for httpd:2.4.42 not found: manifest unknown: manifest unknown<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight angelscript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs angelscript"><br>docker  pull  下载镜像<br><br>docker   push  推送镜像 <br><br><br><br>查看 已有镜像<br><br>```[<span class="hljs-symbol">root@</span>docker01 yum.repos.d]# docker  images REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE nginx               latest              <span class="hljs-number">9</span>beeba249f3e        <span class="hljs-number">10</span> days ago         <span class="hljs-number">127</span>MB httpd               <span class="hljs-number">2.4</span><span class="hljs-number">.43</span>              d4e60c8eb27a        <span class="hljs-number">10</span> days ago         <span class="hljs-number">166</span>MB httpd               latest              d4e60c8eb27a        <span class="hljs-number">10</span> days ago         <span class="hljs-number">166</span>MB<br></code></pre></td></tr></tbody></table></figure>
 <p>导出镜像</p>
-<p><code>[root@docker01 yum.repos.d]# docker  image save  nginx:latest -o docker_nginx.tar.gz</code><br>
-<code>[root@docker01 yum.repos.d]# ll</code><br>
-<code>total 127572</code><br>
-<code>-rw-r--r--  1 root root      2523 May 26 10:23 CentOS-Base.repo</code><br>
-<code>-rw-r--r--  1 root root      2880 May 26 10:24 docker-ce.repo</code><br>
-<code>-rw-------  1 root root 130625536 May 26 11:21 docker_nginx.tar.gz</code><br>
-<code>drwxr-xr-x. 2 root root       187 May 26 10:23 test</code><br>
-<code>[root@docker01 yum.repos.d]#</code></p>
+<figure class="highlight plain"><figcaption><span>yum.repos.d]# docker  image save  nginx:latest -o docker_nginx.tar.gz</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs [root@docker01">[root@docker01 yum.repos.d]# ll<br>total 127572`<br>-rw-r--r--  1 root root      2523 May 26 10:23 CentOS-Base.repo<br>-rw-r--r--  1 root root      2880 May 26 10:24 docker-ce.repo<br>-rw-------  1 root root 130625536 May 26 11:21 docker_nginx.tar.gz<br>drwxr-xr-x. 2 root root       187 May 26 10:23 test`<br></code></pre></td></tr></tbody></table></figure>
 <p>镜像是把一堆文件打成的压缩包  可以解压</p>
 <p>导入镜像</p>
-<p><code>[root@docker02 ~]# docker image  load  -i docker_nginx.tar.gz</code></p>
-<p>docker pull拉取到本地的镜像 存放在本地路径：</p>
-<p><code>/var/lib/docker/overlay2/</code></p>
+<figure class="highlight plain"><figcaption><span>~]# docker image  load  -i docker_nginx.tar.gz``` </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs [root@docker02"><br><br><br>docker pull拉取到本地的镜像 存放在本地路径：<br><br>```/var/lib/docker/overlay2/<br></code></pre></td></tr></tbody></table></figure>
 <p>删除镜像</p>
-<p><code>docker image  rm  b7b28af77ffe  id方式  docker image rm  alpine:latest  名字方式</code></p>
-<p>查看镜像列表</p>
-<p><code>[root@docker01 ~]# docker images</code></p>
+<figure class="highlight docker"><figcaption><span>image  rm  b7b28af77ffe  id方式  docker image rm  alpine:latest  名字方式``` </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs docker"><br>查看镜像列表<br><br>```[root@docker01 ~]<span class="hljs-comment"># docker images</span><br></code></pre></td></tr></tbody></table></figure>
 <p>docker镜像名字 类似linux硬连接</p>
 <p>docker镜像id  类似linuxinode</p>
 <p>镜像在容器使用时 不能删除</p>
@@ -260,25 +218,9 @@
 <p>docker  volume  卷命令</p>
 <p>docker network  网络命令</p>
 <h6 id="docker-image">docker image</h6>
-<p>build      构建镜像</p>
-<p>import     导入镜像    不会导入镜像的名称和版本  不推荐</p>
-<p>load     导入镜像 会导入镜像的名称和版本</p>
-<p>prune  清理无效镜像</p>
-<p>push      推送</p>
-<p>save    导出</p>
-<p>history   构建镜像的历史命令</p>
-<p>inspect      镜像属性</p>
-<p>ls       查看镜像</p>
-<p>pull     拉取</p>
-<p>rm        删除镜像</p>
-<p>tag  打标签</p>
+<figure class="highlight plain"><figcaption><span>构建镜像</span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs build"><br>import     导入镜像    不会导入镜像的名称和版本  不推荐<br><br>load     导入镜像 会导入镜像的名称和版本<br><br>prune  清理无效镜像<br><br>push      推送<br><br>save    导出<br><br>history   构建镜像的历史命令<br><br>inspect      镜像属性<br><br>ls       查看镜像<br><br>pull     拉取<br><br>rm        删除镜像<br><br>tag  打标签<br></code></pre></td></tr></tbody></table></figure>
 <p>镜像打标签</p>
-<p><code>docker image   tag  a7fc88580f30 test:v1</code></p>
-<p>查看镜像属性</p>
-<p><code>docker image  inspect a7fc88580f30</code></p>
-<p>批量操作</p>
-<p>批量导入镜像</p>
-<p><code>for   n in ls *.tar.gz;do docker image  load  -i $n ; done</code></p>
+<figure class="highlight docker"><figcaption><span>image   tag  a7fc88580f30 test:v1``` </span></figcaption><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs docker"><br><br><br>查看镜像属性<br><br>```docker image  inspect a7fc88580f30``` <br><br><br><br>批量操作<br><br><br><br>批量导入镜像<br><br>```for   n in ls *.tar.gz;do docker image  load  -i $n ; done<br></code></pre></td></tr></tbody></table></figure>
 <p>将多个镜像打成一个包</p>
 <p><code>docker image  save   nginx:latest   centos  httpd -o test.tar.gz</code></p>
 <script>
