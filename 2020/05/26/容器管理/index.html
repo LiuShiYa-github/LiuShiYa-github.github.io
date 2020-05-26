@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>容器管理 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,docker  container run  等效于 ..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">容器管理</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-26</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/26/%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86/"
+          class="leancloud" data-flag-title="容器管理"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3418</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>docker  container run  等效于  docker  run</p>
+<p>docker  run 创建并启动容器<br>
+-d  守护进程方式<br>
+-p  端口映射<br>
+-it   分配一个交互式终端</p>
+<p>守护方式启动容器并指定端口映射</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run  -d  -p 80:80  nginx:latest<br></code></pre></td></tr></tbody></table></figure>
+<p>守护方式启动容器并指定端口映射并进入</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run  -d -it -p 80:80  nginx:latest /bin/bash<br></code></pre></td></tr></tbody></table></figure>
+<p>容器启动并进入</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  run -it  centos:6.9  /bin/bash</span><br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@2b7c08aec561 /]<span class="hljs-comment"># uname  -r</span><br>3.10.0-957.el7.x86_64<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@2b7c08aec561 /]<span class="hljs-comment"># cat /etc/redhat-release</span><br>CentOS release 6.9 (Final)<br></code></pre></td></tr></tbody></table></figure>
+<p>docker run  等于  docker   container  create  +  docker  start<br>
+创建容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  container  create  nginx:latest</span><br></code></pre></td></tr></tbody></table></figure>
+<p>查看容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  container ls  -a</span><br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">CONTAINER ID 容器ID       IMAGE使用的镜像               COMMAND  描述<br></code></pre></td></tr></tbody></table></figure>
+<p>docker run  等于  docker   container  create  +  docker  start<br>
+创建容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  container  create  nginx:latest</span><br></code></pre></td></tr></tbody></table></figure>
+<p>查看容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  container ls  -a</span><br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">CONTAINER ID 容器ID       IMAGE使用的镜像               COMMAND  描述                CREATED  时间            STATUS  状态                     PORTS  端口             NAMES 名字<br></code></pre></td></tr></tbody></table></figure>
+<p>启动容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  start  4201aa771789<br></code></pre></td></tr></tbody></table></figure>
+<p>查看容器列表  等效于 docker  container ls  -a<br>
+docker ps  -a</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run  -d  --name  lsy  nginx:lastest<br>docker   container create   --name  lsy  nginx:lastest<br></code></pre></td></tr></tbody></table></figure>
+<p>启动容器 start</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  start  lsy<br></code></pre></td></tr></tbody></table></figure>
+<p>停止容器 stop</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  stop  lsy<br></code></pre></td></tr></tbody></table></figure>
+<p>重启容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  restart  lsy<br></code></pre></td></tr></tbody></table></figure>
+<p>kill容器进程</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker container  <span class="hljs-built_in">kill</span>  lsy<br></code></pre></td></tr></tbody></table></figure>
+<p>删除容器（非运行状态）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker container rm lsy<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker container rm  -f   lsy 运行状态时 强制删除<br></code></pre></td></tr></tbody></table></figure>
+<p>启动容器并进入：<br>
+<strong>问题</strong>： docker  run -d  -it --name lsy  nginx:latest  /bin/bash   进入不了容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run  -it  --name  lsy -p 80:80  nginx:latest  /bin/bash<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>原因</strong>：-d 是守护方式进行 所以不能进入  取消-d    ok</p>
+<p>清理不是up状态的容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  container  prune<br></code></pre></td></tr></tbody></table></figure>
+<p>清理镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker image  prune  出现构建失败时使用<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker ps  -a -q<br></code></pre></td></tr></tbody></table></figure>
+<p>ps  默认是长格式<br>
+-q  指定短格式</p>
+<p><strong>批量删除容器</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  rm -f  `docker  ps -a  -q`<br></code></pre></td></tr></tbody></table></figure>
+<p>进入正在运行的容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker <span class="hljs-built_in">exec</span>  -it<br>docker  attche<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker create  创建容器 --name<br>docker start   启动容器<br>docker  stop   停止容器<br>docker  restart 重启容器<br>docker  <span class="hljs-built_in">kill</span>   强制停止容器<br>docker  ps     查看容器列表  -a 查看所有容器<br>docker  rm     删除容器<br>批量删除所有容器 docker rm -f `docker ps -a -q`<br>docker  <span class="hljs-built_in">exec</span>   进入正在运行的容器(分配一个新终端)<br>例子: docker <span class="hljs-built_in">exec</span>  -it  容器id/容器名字   /bin/bash(/bin/sh)<br>docker attach  进入正在运行的容器(使用相同的终端),偷偷离开的快捷键ctrl +p,ctrl +q<br></code></pre></td></tr></tbody></table></figure>
+<p>每个容器在启动时都要执行一个初始命令<br>
+容器在本质上就是一个进程（初始命令产生进程  初始命令必须要夯住）<br>
+每一个镜像默认都有一个初始命令<br>
+初始命令执行完  进程结束  容器死掉<br>
+完美解释：因为没有命令  但是为啥-d 了 还是这样：是因为nginx镜像中有守护进程，启动容器 自己就会一直运行  nginx是因为自身会产生进程</p>
+<p>显示最后一个容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  ps  -a  -l  显示最后一个<br></code></pre></td></tr></tbody></table></figure>
+<p>docker  -d  -it  centos:6.9  /bin/bash  这个命令是说  让centos容器夯住   作用点就是分配的交互式中端  但是我们也不进去</p>
+<p>每一个镜像都有默认的初始命令<br>
+启动容器没有在镜像后面指定初始命令  那么容器就会执行镜像默认的初始化命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">nginx -g  <span class="hljs-string">'daemon off;'</span>     nginx镜像不仅是夯住了 而且启动了服务<br></code></pre></td></tr></tbody></table></figure>
+<p>为了保证，docker镜像小 纯净  很多命令都没有安装<br>
+只要是使用linux内核的操作系统  都可以叫Linux系统</p>
+<p><strong>小技巧</strong>：查看</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">which</span>  ifconfig<br>rpm -qf  /usr/sbin/ifconfig<br></code></pre></td></tr></tbody></table></figure>
+<p>alpine  体积小  5M  因为docker才火的</p>
+<p>容器想要放在后台一直运行的化,那么容器的初始命令,必须夯住(前台运行),否则容器就会退出.<br>
+xxxxxxxxxx<br>
+前台运行</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">nginx -g <span class="hljs-string">'daemon off;'</span><br>/usr/sbin/php-fpm --nodaemonize<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+    <a href="/2020/05/26/%E7%BD%91%E7%BB%9C%E7%AB%AF%E5%8F%A3+%E6%8C%81%E4%B9%85%E5%8C%96%E5%8D%B7/"><i class="iconfont iconleft"></i>网络端口+持久化卷</a>
+  
+  
+    <a href="/2020/05/26/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F-1/%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/">国内镜像加速<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>

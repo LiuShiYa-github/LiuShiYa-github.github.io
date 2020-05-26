@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>网络端口+持久化卷 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,docker是一个软件打包的技术
+docker容器默认..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">网络端口+持久化卷</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-26</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/26/%E7%BD%91%E7%BB%9C%E7%AB%AF%E5%8F%A3+%E6%8C%81%E4%B9%85%E5%8C%96%E5%8D%B7/"
+          class="leancloud" data-flag-title="网络端口+持久化卷"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6633</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>docker是一个软件打包的技术<br>
+docker容器默认只有内网</p>
+<p>假设：启动了一个WordPress容器  只有宿主机可以访问这个WordPress。<br>
+容器没有桥接模式  做端口映射 用来让外界访问</p>
+<p>端口映射：<br>
+客户访问宿主机某个端口  宿主机做端口转发    将请求转发到容器的80端口<br>
+docker  run -d  -it  -p 80本地端口:80容器端口   nginx:latest  /bin/bash<br>
+企业级宽带   静态ip   公网ip<br>
+外网用户  路由器  端口映射    内网服务器</p>
+<p>容器的端口转发 是使用iptables端口映射的方式<br>
+iptables  -nL</p>
+<p>多个容器使用80端口（前提：多个ip）<br>
+添加一个外网ip</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">ifconfig   eth0:1 10.0.0.13/24 up<br></code></pre></td></tr></tbody></table></figure>
+<p>多个网卡的80端口对应多个容器的80端口（虽然是基于同一个镜像启动的容器）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  run -d  -p 10.0.0.11:80:80  nginx:latest</span><br>559c9057f46659b4b410f57ff1a9186bd3fade5ba06e3ae04299bdff93079475<br>[root@docker01 ~]<span class="hljs-comment"># docker  run -d  -p 10.0.0.13:80:80  nginx:latest</span><br>22872a511cc7c6e422f662b6cff9eed6c1c522b36e126010d92f101d2d760559<br>[root@docker01 ~]<span class="hljs-comment"># docker  ps -a</span><br>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES<br>22872a511cc7        nginx:latest        <span class="hljs-string">"nginx -g 'daemon of…"</span>   6 seconds ago       Up 5 seconds        10.0.0.13:80-&gt;80/tcp   epic_grothendieck<br>559c9057f466        nginx:latest        <span class="hljs-string">"nginx -g 'daemon of…"</span>   13 seconds ago      Up 12 seconds       10.0.0.11:80-&gt;80/tcp   epic_cohen<br></code></pre></td></tr></tbody></table></figure>
+<p>IP地址端不同  但是每个IP地址的端口和80容器端口对应  也就是说 一个web容器 允许多个 不同IP地址进行映射</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker  rm -f  `docker  ps -a -q`</span><br>22872a511cc7<br>559c9057f466<br>[root@docker01 ~]<span class="hljs-comment"># docker run -d  -p 10.0.0.11::80  -p 10.0.0.13::80 nginx:latest</span><br>14ec410a394bd4cd672a477f30320f2585fe9300aabfe1c7eeae11e2b1cfab29<br>[root@docker01 ~]<span class="hljs-comment"># docker ps -a</span><br>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                              NAMES<br>14ec410a394b        nginx:latest        <span class="hljs-string">"nginx -g 'daemon of…"</span>   6 seconds ago       Up 5 seconds        10.0.0.11:32768-&gt;80/tcp, 10.0.0.13:32768-&gt;80/tcp   gallant_lovelace<br>[root@docker01 ~]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>批量做端口映射</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run -d -p 10.0.0.12::80  -p 10.0.0.13::81  nginx:latest<br></code></pre></td></tr></tbody></table></figure>
+<p>前10个  后10个</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run -d -P   nginx:latest<br></code></pre></td></tr></tbody></table></figure>
+<p>自动做随机端口映射</p>
+<p>docker是一个软件打包技术<br>
+PaaS层主要使用docker技术<br>
+docker数据卷</p>
+<p>如果-v 指定宿主机的绝对目录  和    指定容器目录时  会持久化到卷里面</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># docker  run -d -P  -v /opt/xiaoniao:/usr/share/nginx/html  nginx:latest</span><br>d2a9a8d2e251246a9a42b41bfe2dd79c5a2b6c8b312c1e182c98088a69482ff6<br>[root@docker01 xiaoniao]<span class="hljs-comment"># -P    随机指定端口  如果是有多个网卡  那么也是多个IP地址 的同一个端口进行访问</span><br>[root@docker01 xiaoniao]<span class="hljs-comment">#     -v /opt/xiaoniao:/usr/share/nginx/html  </span><br> -v   /opt/xiaoniao是指定 本地的文件     /usr/share/nginx/html是容器的默认站点目录  <br>[root@docker01 xiaoniao]<span class="hljs-comment"># docker ps -a</span><br>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                              NAMES<br>d2a9a8d2e251        nginx:latest        <span class="hljs-string">"nginx -g 'daemon of…"</span>   7 seconds ago       Up 6 seconds        0.0.0.0:32769-&gt;80/tcp                              keen_johnson<br>14ec410a394b        nginx:latest        <span class="hljs-string">"nginx -g 'daemon of…"</span>   8 minutes ago       Up 8 minutes        10.0.0.11:32768-&gt;80/tcp, 10.0.0.13:32768-&gt;80/tcp   gallant_lovelace<br>[root@docker01 xiaoniao]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>10.0.0.13：32769<br>
+10.0.0.11:32769</p>
+<p>如果-v 只指定容器目录时  会持久化到卷里面</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># docker  run -d -P  -v  /usr/share/nginx/html  nginx:latest</span><br>b601a86e20b29b89f3f3572ff40b5fe82d1b60a03d39a98db0213b6448f33684<br>[root@docker01 xiaoniao]<span class="hljs-comment"># docker volume  ls</span><br>DRIVER              VOLUME NAME<br><span class="hljs-built_in">local</span>               9b2aac171a4a95e40c4d3ea2c07976c809bdc3ef90154fd78fc973db1438da60<br>[root@docker01 xiaoniao]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>容器删除  目录/usr/share/nginx/html下的数据文件会在本地宿主机的卷中</p>
+<p>数据卷持久化</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run -d -P  -v  /usr/share/nginx/html  nginx:latest<br> docker volume  ls<br>[root@docker01 volumes]<span class="hljs-comment"># docker  inspect  b601a86e20b2  |grep  -i volume</span><br>            <span class="hljs-string">"VolumeDriver"</span>: <span class="hljs-string">""</span>,<br>            <span class="hljs-string">"VolumesFrom"</span>: null,<br>                <span class="hljs-string">"Type"</span>: <span class="hljs-string">"volume"</span>,<br>                <span class="hljs-string">"Source"</span>: <span class="hljs-string">"/var/lib/docker/volumes/9b2aac171a4a95e40c4d3ea2c07976c809bdc3ef90154fd78fc973db1438da60/_data"</span>,<br>            <span class="hljs-string">"Volumes"</span>: {<br><br>[root@docker01 _data]<span class="hljs-comment"># echo "web01" &gt; index.html</span><br></code></pre></td></tr></tbody></table></figure>
+<p>数据卷持久化</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run -d -P  -v  /usr/share/nginx/html  nginx:latest<br> docker volume  ls<br>[root@docker01 volumes]<span class="hljs-comment"># docker  inspect  b601a86e20b2  |grep  -i volume</span><br>            <span class="hljs-string">"VolumeDriver"</span>: <span class="hljs-string">""</span>,<br>            <span class="hljs-string">"VolumesFrom"</span>: null,<br>                <span class="hljs-string">"Type"</span>: <span class="hljs-string">"volume"</span>,<br>                <span class="hljs-string">"Source"</span>: <span class="hljs-string">"/var/lib/docker/volumes/9b2aac171a4a95e40c4d3ea2c07976c809bdc3ef90154fd78fc973db1438da60/_data"</span>,<br>            <span class="hljs-string">"Volumes"</span>: {<br><br>[root@docker01 _data]<span class="hljs-comment"># echo "web01" &gt; index.html</span><br></code></pre></td></tr></tbody></table></figure>
+<p>docker run<br>
+-v  宿主机绝对目录:容器目录<br>
+-v  容器目录        #创建一个随机卷,来持久化容器的目录下的数据<br>
+-v  卷名:容器目录    #创建一个固定名字的卷,来持久化容器的目录下的数据<br>
+–volumes-from  跟某一个容器挂载所有相同的卷</p>
+<p>–from-volumes 的使用：本地目录（和from的容器相同） 容器目录（和from容器相同）<br>
+两个都挂载在本地  那么可以修改两个站点目录的页面嘛</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">挂载相同的站点目录，数据是同步的<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 _data]<span class="hljs-comment">#  docker volume  ls 查看volume</span><br>DRIVER              VOLUME NAME<br><span class="hljs-built_in">local</span>               9b2aac171a4a95e40c4d3ea2c07976c809bdc3ef90154fd78fc973db1438da60<br>[root@docker01 _data]<span class="hljs-comment">#</span><br>[root@docker01 _data]<span class="hljs-comment">#挂载volume 并指定卷名字</span><br>[root@docker01 _data]<span class="hljs-comment"># docker  run  -d -P  -v  lsy:/usr/share/nginx/html nginx:latest</span><br>bf23f266ca805e72c1b2acced4189396d879f8f66e05fac19d360c6448f81c00<br>             新建一个容器  使用上个容器卷<br>[root@docker01 _data]<span class="hljs-comment"># docker  run  -d -P  --volumes-from bf23f266ca805  nginx:latest</span><br>ce0a6c5943e273a8fb13e0154a02b9c7581e2abf4530eec4f0b9b24cbbccd813<br>[root@docker01 _data]<span class="hljs-comment"># docker volume ls</span><br>DRIVER              VOLUME NAME<br><span class="hljs-built_in">local</span>               9b2aac171a4a95e40c4d3ea2c07976c809bdc3ef90154fd78fc973db1438da60<br><span class="hljs-built_in">local</span>               lsy<br>                                指定容器id  inspect 查看容器属性  <br>[root@docker01 _data]<span class="hljs-comment"># docker inspect  ce0a6c5943e2  |grep  -i  volume</span><br>            <span class="hljs-string">"VolumeDriver"</span>: <span class="hljs-string">""</span>,<br>            <span class="hljs-string">"VolumesFrom"</span>: [<br>                <span class="hljs-string">"Type"</span>: <span class="hljs-string">"volume"</span>,<br>                <span class="hljs-string">"Source"</span>: <span class="hljs-string">"/var/lib/docker/volumes/lsy/_data"</span>,<br>            <span class="hljs-string">"Volumes"</span>: null,<br>[root@docker01 _data]<span class="hljs-comment"># docker inspect  bf23f266ca80  |grep  -i  volume</span><br>            <span class="hljs-string">"VolumeDriver"</span>: <span class="hljs-string">""</span>,<br>            <span class="hljs-string">"VolumesFrom"</span>: null,<br>                <span class="hljs-string">"Type"</span>: <span class="hljs-string">"volume"</span>,<br>                <span class="hljs-string">"Source"</span>: <span class="hljs-string">"/var/lib/docker/volumes/lsy/_data"</span>,<br>            <span class="hljs-string">"Volumes"</span>: null,<br>[root@docker01 _data]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>已经启动的容器 不能挂载  只能是在启动时挂载</p>
+<p>本地目录会覆盖 容器的目录</p>
+<p>卷的信息放在metadata.db</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/26/%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86/">容器管理<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
