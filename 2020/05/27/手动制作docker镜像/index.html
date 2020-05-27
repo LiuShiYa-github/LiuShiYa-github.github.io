@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>手动制作docker镜像 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,手动制作docker镜像（单个服务）的流程
+1、启动一..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">手动制作docker镜像</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-27</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/27/%E6%89%8B%E5%8A%A8%E5%88%B6%E4%BD%9Cdocker%E9%95%9C%E5%83%8F/"
+          class="leancloud" data-flag-title="手动制作docker镜像"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4228</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p><strong>手动制作docker镜像（单个服务）的流程</strong><br>
+1、启动一个纯净的容器 ，在容器中安装服务<br>
+2、把安装好服务的容器提交为镜像<br>
+3、测试镜像</p>
+<p>制作一个基于centos6系统的nginx镜像(单服务)</p>
+<p>1:启动一个纯净的centos:6.9容器,安装nginx</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>yum install nginx -y<br></code></pre></td></tr></tbody></table></figure>
+<p>2:把安装好服务的容器,提交为镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker container commit eb109f194821 centos6.9_nginx:v1<br></code></pre></td></tr></tbody></table></figure>
+<p>3:测试镜像的功能</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d  -p 82:80 centos6.9_nginx:v1 nginx -g <span class="hljs-string">'daemon off;'</span><br> <br> <br> curl -I  10.0.0.11:82<br>HTTP/1.1 200 OK<br>Server: nginx/1.10.3<br>Date: Wed, 27 May 2020 02:26:26 GMT<br>Content-Type: text/html<br>Content-Length: 3698<br>Last-Modified: Tue, 07 May 2019 06:09:40 GMT<br>Connection: keep-alive<br>ETag: <span class="hljs-string">"5cd12124-e72"</span><br>Accept-Ranges: bytes<br></code></pre></td></tr></tbody></table></figure>
+<p>手动做的镜像不能修改初始命令  自动的可以修改</p>
+<p><strong>手动制作镜像（双服务）</strong><br>
+启动一个已经安装nginx的容器  安装ssh<br>
+1、启动一个nginx基础容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker  run -it  -p 88:80  -p 1022:22 centos6.9_nginx:v1 /bin/bash<br>yum install -y  openssh-server <br>service sshd restart<br><span class="hljs-built_in">echo</span> <span class="hljs-string">'123456'</span>|passwd  --stdin root<br></code></pre></td></tr></tbody></table></figure>
+<p>指定进程  不会秒死</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d  -it  -p 89:80 -p 1022:22 centos6.9_nginx_ssh:v2<br></code></pre></td></tr></tbody></table></figure>
+<p>进入容器之后<br>
+启动双服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@b464d8664f20 /]<span class="hljs-comment"># /etc/init.d/sshd start</span><br>Starting sshd:                                             [  OK  ]<br>[root@b464d8664f20 /]<span class="hljs-comment"># nginx</span><br></code></pre></td></tr></tbody></table></figure>
+<p>在制作镜像之前<br>
+写一个脚本</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@1b8dfe535159 ~]<span class="hljs-comment"># cat /init.sh</span><br><span class="hljs-meta">#!/bin/bash</span><br>/etc/init.d/sshd  start<br>nginx -g <span class="hljs-string">'daemon  off;'</span><br></code></pre></td></tr></tbody></table></figure>
+<p>并授权可执行</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">chmod  +x   /init.sh<br></code></pre></td></tr></tbody></table></figure>
+<p>执行尝试一下</p>
+<p>没有问题  退出  制作镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker container  commit d063154e7962 lsy_test:v1</span><br>sha256:715c718400b2b33abaf2b03fe853aad6856c87e6d9edafb6da2d53270afab108<br>[root@docker01 ~]<span class="hljs-comment"># docker rm -f `docker ps -a -q`</span><br>d063154e7962<br></code></pre></td></tr></tbody></table></figure>
+<p>运行镜像 启动容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker run -d -p 90:80 -p 1024:22  lsy_test:v1   /init.sh</span><br>1b8dfe535159c05abac6551b21a4ed0e9512c511874b87af191fbd63175f1d31<br>[root@docker01 ~]<span class="hljs-comment"># docker ps -a</span><br>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                                      NAMES<br>1b8dfe535159        lsy_test:v1         <span class="hljs-string">"/init.sh"</span>          6 seconds ago       Up 4 seconds        0.0.0.0:1024-&gt;22/tcp, 0.0.0.0:90-&gt;80/tcp   hungry_lamarr<br>[root@docker01 ~]<span class="hljs-comment"># ssh  root@10.0.0.11 -p 1024  测试</span><br>root@10.0.0.11<span class="hljs-string">'s password:</span><br><span class="hljs-string">Last login: Wed May 27 03:17:32 2020 from 10.0.0.11 </span><br><span class="hljs-string">[root@1b8dfe535159 ~]# exit</span><br><span class="hljs-string">logout</span><br><span class="hljs-string">Connection to 10.0.0.11 closed.</span><br><span class="hljs-string"> 测试</span><br><span class="hljs-string">[root@docker01 ~]# curl  -I  10.0.0.11:90</span><br><span class="hljs-string">HTTP/1.1 200 OK</span><br><span class="hljs-string">Server: nginx/1.10.3</span><br><span class="hljs-string">Date: Wed, 27 May 2020 03:22:29 GMT</span><br><span class="hljs-string">Content-Type: text/html</span><br><span class="hljs-string">Content-Length: 3698</span><br><span class="hljs-string">Last-Modified: Tue, 07 May 2019 06:09:40 GMT</span><br><span class="hljs-string">Connection: keep-alive</span><br><span class="hljs-string">ETag: "5cd12124-e72"</span><br><span class="hljs-string">Accept-Ranges: bytes</span><br></code></pre></td></tr></tbody></table></figure>
+<p>docker  共用宿主机内核  直接启动自己的服务  不走开机启动流程<br>
+容器的初始命令只能执行一条</p>
+<p><strong>部署有道云盘并制作镜像</strong><br>
+注释：有道云网盘不需要后端数据库服务</p>
+<p>制作一个kodexplorer镜像(nginx+php)<br>
+1：启动一个基础环境的容器，在容器中安装服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -it -p 80:80 centos6.9_nginx:v1 /bin/bash<br>yum install php-fpm php-gd php-mbstring -y<br></code></pre></td></tr></tbody></table></figure>
+<p>修改PHP配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi /etc/php-fpm.d/www.conf<br>user = nginx<br>group = nginx<br></code></pre></td></tr></tbody></table></figure>
+<p>写入nginx配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi /etc/nginx/conf.d/default.conf<br>server {<br>    listen 80;<br>    server_name localhost;<br>    root /code;<br>    location / {<br>        index index.php index.html index.htm;<br>    }<br><br>    location ~ \.php$ {<br>        fastcgi_pass 127.0.0.1:9000;<br>        fastcgi_param SCRIPT_FILENAME <span class="hljs-variable">$document_root</span><span class="hljs-variable">$fastcgi_script_name</span>;<br>                include fastcgi_params;<br>    }<br>}<br></code></pre></td></tr></tbody></table></figure>
+<p>创建站点目录</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkdir /code<br></code></pre></td></tr></tbody></table></figure>
+<p>宿主机操作：将本地的有道代码文件放入到容器中</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker cp kodexplorer4.40.zip f12048d09d53:/code<br></code></pre></td></tr></tbody></table></figure>
+<p>解压并授权</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install unzip -y<br>unzip kodexplorer4.40.zip<br>chown -R nginx:ngin<br></code></pre></td></tr></tbody></table></figure>
+<p>编写一个自动启动脚本</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi /init.sh<br><span class="hljs-meta">#!/bin/bash</span><br><br>service php-fpm start<br>nginx -g <span class="hljs-string">'daemon off;'</span><br></code></pre></td></tr></tbody></table></figure>
+<p>2：把安装好服务的容器提交为镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker commit f12048d09d53 kod:v1<br></code></pre></td></tr></tbody></table></figure>
+<p>3：测试docker run</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d -p 81:80 kod:v1 /bin/bash /init.sh<br></code></pre></td></tr></tbody></table></figure>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/27/kvm%E5%9F%BA%E6%9C%AC%E7%AE%A1%E7%90%86/">KVM基本管理<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
