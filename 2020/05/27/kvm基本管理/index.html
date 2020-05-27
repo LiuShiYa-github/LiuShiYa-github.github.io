@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>KVM基本管理 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,介绍云计算
+云计算和虚拟化有什么不同？
+没有可比性  ..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/kvm.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">KVM基本管理</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-27</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/27/kvm%E5%9F%BA%E6%9C%AC%E7%AE%A1%E7%90%86/"
+          class="leancloud" data-flag-title="KVM基本管理"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>10920</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p><strong>介绍云计算</strong><br>
+云计算和虚拟化有什么不同？<br>
+没有可比性  ；<br>
+<code>云计算是一种按量付费的模式，云计算的底层是由虚拟化技术来实现的</code>。<br>
+<code>一个是模式  一个是技术</code></p>
+<p>最先提出云计算概念，亚马逊 从2006年开始提供云计算<br>
+阿里云 2008年创建团队  2011年正式对外提供服务</p>
+<p>按量付费的模式</p>
+<p>没有云计算之前 ，运维的工作非常杂</p>
+<p>硬件  服务器型号  raid知识  网络知识  对运维人员的身体素质都有要求的   等<br>
+物理服务器</p>
+<p>数据库服务器要做raid10  存储服务器做raid5    web服务器raid5</p>
+<p>硬件性能特别高 ，需要对服务器做虚拟化</p>
+<p>服务器配置  4课CPU  40核心   内存2T  硬盘2.5 可以插很多块12x4T</p>
+<p>这么高配置的服务器  只运行一个ftp的话  过多的性能浪费<br>
+多运行一些 来提高资源的利用率<br>
+很多服务 运行环境不同  彼此冲突<br>
+jumpserver 和ansible相互冲突    依赖的python模块版本不同  环境乱 管理难度很大</p>
+<p>虚拟化切分成一个一个独立运行环境的虚拟机</p>
+<p>没有云计算之前 运维就是打杂的  什么都得会</p>
+<p>服务类型</p>
+<p>iaas 底层硬件+操作系统    运维的工作：部署运维环境lnmp  放入服务代码<br>
+paas  底层硬件+操作系统+运维行业 运维：放入服务代码   备份数据<br>
+saas:  底层硬件+操作系统+运行环境+服务代码+数据   运维：掏钱买服务</p>
+<p>有了云计算之后  运维更加专注网站架构设置</p>
+<p>为什么要用云计算？<br>
+小公司：游戏公司  研发一款游戏  上线  有玩家充值了  才算是有收入；托管到IDC机房<br>
+大公司：每年都会有一些大型活动，活动过后 造成资源闲置   出现大量闲置的计算资源</p>
+<p>阿里云最挣钱   前期低价吸引用户  后期涨价</p>
+<p>IDC机房  ：互联网数据中心  微软 腾讯  阿里</p>
+<p>容器 ：进程级别虚拟化<br>
+KVM：虚拟化技术</p>
+<p><strong>什么是虚拟化？</strong><br>
+虚拟化，通过模拟计算机的硬件，来实现同一台计算机上</p>
+<p>物理服务器：称为宿主机<br>
+通过VMware 模拟一台物理服务器，来实现同一台同时运行多个不同的操作系统的技术</p>
+<p><strong>linux虚拟化软件：</strong></p>
+<p>1、qemu 软件纯模拟全虚拟化软件 特变慢  兼容性好（因为全部都是虚拟模拟的，不基于硬件）   qemu是虚拟化技术的鼻祖   qemu可以运行一切的操作系统</p>
+<p>2、xen（半）   性能特别好 需要使用专门修改后的内核，兼容性差  Redhat5.5  xen  kvm  xen没有模拟全部的硬件  直接使用物理机的CPU  ；为了避免虚拟机里面执行reboot命令 导致宿主机也胡重启<br>
+xen  的虚拟机需要使用专门的内核，这个操作系统内核会翻译转换一些指令。</p>
+<p>3、KVM 全虚拟机  他有硬件支持CPU   基于内核，而且不需要使用专门的内核，centos6 kvm 性能好  兼容性较好     内置在linux的内核模块的</p>
+<p>VMware  workstations   需要linux的安装centos为 图形界面</p>
+<p>virtual  box    图形界面  Oracle</p>
+<p>安装一个KVM的管理工具  因为已经是基于内核了<br>
+kvm全称：Kernel-based Virtual Machine  属于内核的模块<br>
+linux都是通过应用程序来调用内核的      通过内核来 调用硬件<br>
+qemu-kvm    管理虚拟机的虚拟磁盘</p>
+<p>关闭tab 滴滴的声音</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@virtualization ~]<span class="hljs-comment"># cat /etc/inputrc</span><br><span class="hljs-comment"># do not bell on tab-completion</span><br><span class="hljs-built_in">set</span> bell-style none<br></code></pre></td></tr></tbody></table></figure>
+<p>为什么要使用vnc  ？<br>
+linux是一个纯命令行的系统 不支持图形界面<br>
+kvm启动虚拟机之后 将虚拟机的控制台通过vnc协议输出 相当与启动了一个vnc服务端<br>
+vnc分为客户端和服务端</p>
+<p>注意：安装centos7系统时  没有勾选中文支持会导致Jenkins无法汉化</p>
+<p>安装kvm虚拟化管理工具</p>
+<p>环境要求：</p>
+<p>centos 7.4   7.6</p>
+<p>vmware   宿主机  kvm虚拟机</p>
+<p>内存4G，cpu开启虚拟化</p>
+<p>echo  ‘192.168.12.201  <a href="http://mirrors.aliyun.com" target="_blank" rel="noopener">mirrors.aliyun.com</a>’ &gt;&gt;/etc/hosts</p>
+<p>curl -o /etc/yum.repos.d/CentOS-Base.repo <a href="http://mirrors.aliyun.com/repo/Centos-7.repo" target="_blank" rel="noopener">http://mirrors.aliyun.com/repo/Centos-7.repo</a></p>
+<p>安装软件包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install libvirt virt-install qemu-kvm -y<br></code></pre></td></tr></tbody></table></figure>
+<p>解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">libvirt  作用：虚拟机的管理软件<br>libvirt: kvm,xen,qemu,lxc....<br><br>virt   virt-install virt-clone   作用：虚拟机的安装工具和克隆工具<br>qemu-kvm  qemu-img (qcow2,raw)作用：管理虚拟机的虚拟磁盘<br></code></pre></td></tr></tbody></table></figure>
+<p>开启服务  并设置为开机自启</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl start libvirtd.service<br>systemctl status libvirtd.service<br></code></pre></td></tr></tbody></table></figure>
+<p>查看加载的内核模块</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># lsmod |grep kvm</span><br>kvm_intel             183621  3<br>kvm                   586948  1 kvm_intel<br>irqbypass              13503  1 kvm<br></code></pre></td></tr></tbody></table></figure>
+<p>qemu 是管理虚拟机进程的</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"> netstat  -ntpl<br>Active Internet connections (only servers)<br>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name<br>tcp        0      0 0.0.0.0:5900            0.0.0.0:*               LISTEN      18096/qemu-kvm<br>tcp        0      0 192.168.122.1:53        0.0.0.0:*               LISTEN      10752/dnsmasq<br>tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      8635/sshd<br>tcp6       0      0 :::22                   :::*                    LISTEN      8635/sshd<br>[root@kvmnode01 qemu]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>启动虚拟机时 自动检查端口   5900</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">shutdown： 关机速度慢  安全<br>destroy:  关机速度快  不安全 异常关机  容易造成mysql启动失败<br>reboot： virsh stop  virsh  start<br></code></pre></td></tr></tbody></table></figure>
+<p>kvm虚拟机主要有配置文件和磁盘文件组成<br>
+修改配置之前进行备份</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh   dumpxml centos7 输出配置文件<br>virsh  dumpxml  centos7 &gt;centos8 备份配置文件<br></code></pre></td></tr></tbody></table></figure>
+<p>配置文件 决定了虚拟机的硬件配置</p>
+<p>文件名字是给自己看的  起名字一定要见名知意</p>
+<p><strong>kvm虚拟机管理操作：</strong></p>
+<p>创建虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virt-install --virt-type kvm --os-type=linux --os-variant rhel7 --name centos7 --memory 1024 --vcpus 1 --disk /opt/centos2.raw,format=raw,size=10 --cdrom /opt/CentOS-7-x86_64-DVD-1708.iso --network network=default --graphics vnc,listen=0.0.0.0 --noautoconsole<br></code></pre></td></tr></tbody></table></figure>
+<p>解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">vnc：10.0.0.11:5900  默认vnc的连接登录端口 <br>--virt-type kvm 虚拟化的类型(qemu)  <br>--os-type=linux 系统类型<br> --os-variant rhel7 系统版本 查看支持的系统版本 osinfo-query os<br> --name centos7 虚拟机的名字 必须唯一<br> --memory 1024 虚拟机的内存<br> --vcpus 1 虚拟cpu的核数 <br>--disk /opt/centos2.raw,format=raw,size=10  虚拟硬盘 每个虚拟机的磁盘文件必须唯一<br>--cdrom /opt/CentOS-7-x86_64-DVD-1708.iso   镜像源<br>--network network=default 使用默认NAT的网络<br> --graphics vnc,listen=0.0.0.0  配置虚拟机显示设置 vnc协议  监听0.0.0.0<br> --noautoconsole  不要自动尝试连接到客户端控制台<br></code></pre></td></tr></tbody></table></figure>
+<p>kvm虚拟机默认配置文件位置</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 qemu]<span class="hljs-comment"># pwd</span><br>/etc/libvirt/qemu<br>[root@kvmnode01 qemu]<span class="hljs-comment"># ls</span><br>centos7.xml  networks<br>[root@kvmnode01 qemu]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>virsh version 查看kvm的版本信息</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">Compiled against library: libvirt 4.5.0<br>Using library: libvirt 4.5.0<br>Using API: QEMU 4.5.0<br>Running hypervisor: QEMU 1.5.3<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 ~]<span class="hljs-comment"># virsh vcpuinfo  centos7  查看虚拟机的CPU信息</span><br>VCPU:           0<br>CPU:            0<br>State:          running<br>CPU time:       119.8s<br>CPU Affinity:   y<br></code></pre></td></tr></tbody></table></figure>
+<p>查看kvm 虚拟机列表</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 qemu]<span class="hljs-comment"># virsh list 显示正在运行的虚拟机</span><br> Id    Name                           State<br>----------------------------------------------------<br> 2     centos7                        running<br><br>[root@kvmnode01 qemu]<span class="hljs-comment"># virsh list --all</span><br> Id    Name                           State<br>----------------------------------------------------<br> 2     centos7                        running<br></code></pre></td></tr></tbody></table></figure>
+<p>启动centos7虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  start  centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>设置虚拟机跟随系统启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  autostart  centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>关闭虚拟机自启</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  autostart --<span class="hljs-built_in">disable</span> centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>关闭centos7的虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh shutdown centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>拔出电源关闭centos7的虚拟机  什么情况下使用这种方式关机    当虚拟机还有装系统的时候使用这样方式</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  destory centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>移除centos7的虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  undefine  centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>设置centos7虚拟机开机启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh   autostart  centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>默认情况下 virsh工具不能对linux虚拟机进行关机操作（在虚拟机内部进行关机操作）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install -y  acpid<br>/etc/init.d/acpid  start<br></code></pre></td></tr></tbody></table></figure>
+<p>通过配置文件启动虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh   create  /etc/libvirt/qemu/centos7.xml<br></code></pre></td></tr></tbody></table></figure>
+<p>挂起回复virsh命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh   <span class="hljs-built_in">suspend</span>  centos7  挂起<br>virsh  resume  centos7    恢复<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>修改虚拟机名字</strong></p>
+<p>修改虚拟机名字<br>
+1、导出虚拟机配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  dumpxml centos7 &gt; <span class="hljs-built_in">test</span>-centos7.xml<br></code></pre></td></tr></tbody></table></figure>
+<p>2、更改配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sed -i <span class="hljs-string">'s/centos7/test-centos7/g'</span> <span class="hljs-built_in">test</span>-centos7.xml<br></code></pre></td></tr></tbody></table></figure>
+<p>3、移除原有的虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  undefine  <span class="hljs-built_in">test</span>-centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>4、通过配置文件  导入虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  define <span class="hljs-built_in">test</span>-centos7.xml<br></code></pre></td></tr></tbody></table></figure>
+<p>5、启动虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  start  centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>问题1：可以命令方式修改主机名吗<br>
+可以</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh  domrename centos7  centos2  将centos7修改名为centos2<br></code></pre></td></tr></tbody></table></figure>
+<p>如果修改了虚拟机的文件 再启动不可以吗  为什么要移除原来的虚拟机</p>
+<p>是因为已经加载了配置文件，需要重新导入</p>
+<p>虚拟机的IP地址可以修改吗</p>
+<p>默认的配置信息是dhcp 并不代表是不能设置为static 手动设置</p>
+<p>显示虚拟机信息</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 qemu]<span class="hljs-comment"># virsh  dominfo  centos7</span><br>Id:             2<br>Name:           centos7<br>UUID:           ee1fb9d9-0df9-4b38-aeb7-afef00a39247<br>OS Type:        hvm<br>State:          running<br>CPU(s):         1<br>CPU time:       584.4s<br>Max memory:     1048576 KiB<br>Used memory:    1048576 KiB<br>Persistent:     yes<br>Autostart:      <span class="hljs-built_in">disable</span><br>Managed save:   no<br>Security model: none<br>Security DOI:   0<br><br>[root@kvmnode01 qemu]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>查看虚拟机内存和CPU使用情况</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum  install -y  virt-top<br>virt-top<br></code></pre></td></tr></tbody></table></figure>
+<p>查看虚拟机的分区情况</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 qemu]<span class="hljs-comment"># virt-df centos7</span><br>Filesystem                           1K-blocks       Used  Available  Use%<br>libguestfs: error: list_filesystems: sgdisk: Invalid partition data!<br>[root@kvmnode01 qemu]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>修改配置文件  默认会检查语法</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh edit centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>这样修改不需要重新define。 但是需要手动shutdown 和  start 不能reboot 是因为进程需要重新生成才可以</p>
+<p>在kvm虚拟机关机状态下  可以在线状态下修改名字</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">virsh domrename centos2  centos7<br></code></pre></td></tr></tbody></table></figure>
+<p>挂起操作：以及状态</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># virsh  suspend   centos7</span><br>Domain centos7 suspended<br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh   list  --all</span><br> Id    Name                           State<br>----------------------------------------------------<br> 12    centos7                        paused<br></code></pre></td></tr></tbody></table></figure>
+<p>解放挂起</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># virsh resume  centos7</span><br>Domain centos7 resumed<br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh list  --all</span><br> Id    Name                           State<br>----------------------------------------------------<br> 12    centos7                        running<br><br>[root@kvmnode01 opt]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>虚拟机挂起    会导致时间不一致的问题<br>
+虚拟机模拟的时钟频率    虚拟机运行时间一长   就容易导致时间不对<br>
+需要做时间同步</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install -y  chronyd <br>systemctl  restart  chronyd<br></code></pre></td></tr></tbody></table></figure>
+<p>查看时间同步</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># timedatectl</span><br>      Local time: Thu 2020-05-21 17:33:49 CST<br>  Universal time: Thu 2020-05-21 09:33:49 UTC<br>        RTC time: Thu 2020-05-21 09:33:48<br>       Time zone: Asia/Shanghai (CST, +0800)<br>     NTP enabled: yes<br>NTP synchronized: yes<br> RTC <span class="hljs-keyword">in</span> <span class="hljs-built_in">local</span> TZ: no<br>      DST active: n/a<br>[root@kvmnode01 opt]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>查看kvm虚拟机端口  是vnc的最后一位端口数  5900 最后一位就是0  第二台5901 就是1</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># virsh  list  --all</span><br> Id    Name                           State<br>----------------------------------------------------<br> 12    centos7                        running<br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh   vncdisplay  centos7</span><br>:0<br><br>[root@kvmnode01 opt]<span class="hljs-comment">#</span><br><br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh vncdisplay  1</span><br>:0<br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh vncdisplay  centos2.raw</span><br>:0<br><br>[root@kvmnode01 opt]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>服务器，通电后 自动启动</p>
+<p>配置虚拟机随宿主机启动而启动</p>
+<p>配置开机自启动<br>
+virsh  autostart   centos7</p>
+<p>设置了开机自启动的都在autostart中有软连接</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 qemu]<span class="hljs-comment"># ll</span><br>total 16<br>drwxr-xr-x 2 root root    6 May 21 17:49 autostart<br>-rw------- 1 root root 4521 May 21 17:41 centos2.raw.xml<br>-rw------- 1 root root 4513 May 21 17:20 centos7.xml<br>drwx------ 3 root root   42 May 21 12:24 networks<br>[root@kvmnode01 qemu]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>或者使用这个命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 autostart]<span class="hljs-comment"># virsh   list  --autostart</span><br> Id    Name                           State<br>----------------------------------------------------<br> 1     centos2.raw                    running<br> 2     centos7                        running<br></code></pre></td></tr></tbody></table></figure>
+<p>测试</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 autostart]<span class="hljs-comment"># systemctl restart  libvirtd.service</span><br>[root@kvmnode01 autostart]<span class="hljs-comment"># virsh   list</span><br> Id    Name                           State<br>----------------------------------------------------<br> 1     centos2.raw                    running<br> 2     centos7                        running<br></code></pre></td></tr></tbody></table></figure>
+<p>关闭开机自启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># virsh   autostart   --disable  centos7</span><br>Domain centos7 unmarked as autostarted<br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh  list   --autostart</span><br> Id    Name                           State<br>----------------------------------------------------<br> 1     centos2.raw                    running<br></code></pre></td></tr></tbody></table></figure>
+<p>开启开机自启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 opt]<span class="hljs-comment"># virsh   autostart   centos7</span><br>Domain centos7 marked as autostarted<br><br>[root@kvmnode01 opt]<span class="hljs-comment"># virsh   list  --autostart</span><br> Id    Name                           State<br>----------------------------------------------------<br> 1     centos2.raw                    running<br> 2     centos7                        running<br></code></pre></td></tr></tbody></table></figure>
+<p>ssh登录到kvm虚拟机<br>
+只能是本地宿主机登录 ，需要提前到vnc查看IP地址</p>
+<p>在kvm虚拟机进行操作<br>
+修改内核命令  使用console命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">grubby --update-kernel=ALL --args=<span class="hljs-string">"console=ttyS0,115200n8"</span><br>reboot<br></code></pre></td></tr></tbody></table></figure>
+<p>console登录到虚拟机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@kvmnode01 autostart]<span class="hljs-comment"># virsh console  centos7</span><br>Connected to domain centos7<br>Escape character is ^]<br><br>CentOS Linux 7 (Core)<br>Kernel 3.10.0-957.el7.x86_64 on an x86_64<br><br>localhost login: root<br>Password:<br>Last login: Thu May 21 17:57:44 from gateway<br>[root@localhost ~]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>ctrl1  +】 回到宿主机上</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">CentOS Linux 7 (Core)<br>Kernel 3.10.0-957.el7.x86_64 on an x86_64<br><br>localhost login:<br>[root@kvmnode01 autostart]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>再次console是不需要重新登录</p>
+<p>只要保存一个centos7.raw 和vm_centos7.xml 配置文件 就可以了 不用以后再使用vnc去安装系统了。</p>
+<p>关于磁盘文件格式的问题：</p>
+<p>因为xfs文件系统的原因，他们实例占用空间不多  ，qemu-img info  看到的理论上的10G 未必是真实的    用du就能看到他们实际占用大小</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/26/%E7%BD%91%E7%BB%9C%E7%AB%AF%E5%8F%A3+%E6%8C%81%E4%B9%85%E5%8C%96%E5%8D%B7/">网络端口+持久化卷<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
