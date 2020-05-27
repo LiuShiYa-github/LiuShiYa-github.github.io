@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>dockerfile编写 - LiuShiYa-github</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,docker镜像  — 启动容器
+v1—上传仓库   ..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">dockerfile编写</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-27</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/27/dockerfile%E7%BC%96%E5%86%99/"
+          class="leancloud" data-flag-title="dockerfile编写"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6162</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>docker镜像  — 启动容器<br>
+v1—上传仓库   ----下载镜像   ----启动容器<br>
+v2 —上传仓库  -----下载镜像   —启动容器</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">dockerfile 配方v1  --用户----&gt;构建镜像---启动容器<br>dockerfile 配方v2  ---用户  -----&gt; 构架镜像---启动容器<br></code></pre></td></tr></tbody></table></figure>
+<p>手动制作镜像和dockerfile的区别：<br>
+1、传输方便<br>
+2、支持自定义镜像的初始命令</p>
+<p><strong>指令</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">FROM  基础镜像<br>RUN   制作镜像过程中需要的执行命令(安装服务)<br>CMD   容器启动的时候执行的初始命令，容易被替换(启动服务)<br>ENTRYPOINT  容器启动的时候执行的初始命令，不能被替换，如果同时使用CMD和ENTRYPOINT，cmd命令将作为ENTRYPOINT命令的参数<br>ADD   把dockerfile当前目录下的文件拷贝到容器中（自动解压tar包）<br>COPY  把dockerfile当前目录下的文件拷贝到容器中（不解压tar包）<br>WORKDIR 指定容器的默认工作目录<br>EXPOSE  镜像要暴露的端口<br>VOLUME  持久化卷<br>ENV     环境变量(ssh的密码,数据库的密码)<br>LABEL       镜像的属性标签<br>MAINTAINER  管理者标识<br></code></pre></td></tr></tbody></table></figure>
+<p>自动构建dockerfile镜像时需要一个dockerfile文件<br>
+一个镜像一个目录  一个镜像一个dockerfile</p>
+<p><strong>简单构建一个基于centos6.9的nginx镜像</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 centos_nginx]<span class="hljs-comment"># cat dockerfile</span><br>FROM centos:6.9<br>RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>RUN curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>RUN yum install nginx -y<br>CMD [<span class="hljs-string">"nginx"</span>,<span class="hljs-string">"-g"</span>,<span class="hljs-string">"daemon off;"</span>]  容器启动后的初始化命令<br></code></pre></td></tr></tbody></table></figure>
+<p>构建镜像命令        buibuibuibui</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker image build  -t  centos6.9_nginx:lsy .<br></code></pre></td></tr></tbody></table></figure>
+<p>给构建的镜像命名   要有版本号</p>
+<p><strong>自动构建dockerfile镜像步骤：</strong><br>
+1、手动制作一次docker镜像，记录历史命令<br>
+2、根据历史命令 编写dockerfile文件<br>
+3、docker build 构建镜像<br>
+4、测试docker镜像</p>
+<p>每个镜像构建时都单独创建一个目录 在目录下编写dockerfile</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># cat dockerfile</span><br>FROM centos:6.9  基于当前docker images 中的镜像进行构建<br>RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>RUN curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>RUN yum install nginx -y  运行的命令<br>COPY  xiaoniao  /usr/share/nginx/html  不解压tar包<br>CMD [<span class="hljs-string">"nginx"</span>,<span class="hljs-string">"-g"</span>,<span class="hljs-string">"daemon off;"</span>]  容器运行时执行的命令 也是初始化命令<br></code></pre></td></tr></tbody></table></figure>
+<p>docker 底层linux系统镜像 centos， Ubuntu，Debian，Alpine</p>
+<p>清除构建失败的镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker image prune<br></code></pre></td></tr></tbody></table></figure>
+<p>查看镜像构建的过程</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 lsy]<span class="hljs-comment"># docker image history  xiaoniao:v1 </span><br> IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT<br>b28a88f6d669        20 minutes ago      /bin/sh -c <span class="hljs-comment">#(nop)  CMD ["nginx" "-g" "daemon…   0B</span><br>3eb1210beb00        20 minutes ago      /bin/sh -c <span class="hljs-comment">#(nop) ADD dir:7f68cc1ed7946d74d3…   162kB</span><br>c49ca361424f        39 minutes ago      /bin/sh -c yum install nginx -y                 265MB<br>35c010dc84c5        41 minutes ago      /bin/sh -c curl -o /etc/yum.repos.d/epel.rep…   664B<br>dfcf950e01d9        41 minutes ago      /bin/sh -c curl -o /etc/yum.repos.d/CentOS-B…   2.52kB<br><br>adf829198a7f        21 months ago       /bin/sh -c <span class="hljs-comment">#(nop)  CMD ["/bin/bash"]            0B</span><br>&lt;missing&gt;           21 months ago       /bin/sh -c <span class="hljs-comment">#(nop)  LABEL name=CentOS Base Im…   0B</span><br>&lt;missing&gt;           21 months ago       /bin/sh -c <span class="hljs-comment">#(nop) ADD file:b99efdfca7b4df4ef…   195MB</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>构建最基础的镜像</strong><br>
+1、获取一个最小的镜像到本地</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wget  https://mirrors.tuna.tsinghua.edu.cn/lxc-images/images/alpine/3.11/amd64/default/20200526_13%3A00/rootfs.tar.xz<br></code></pre></td></tr></tbody></table></figure>
+<p>2、移动路径到dockerfile目录下（ADD只能使用相对路径）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mv  /root/rootfs.tar.xz  .<br></code></pre></td></tr></tbody></table></figure>
+<p>3、编写dockerfile文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">FROM scratch<br>ADD rootfs.tar.xz /<br>CMD  [<span class="hljs-string">"/bin/sh"</span>]  注意这里是/bin/sh！！是因为最小系统 没有/bin/bash<br></code></pre></td></tr></tbody></table></figure>
+<p>4、构建docker镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker image build  -t alipen:lsy .<br></code></pre></td></tr></tbody></table></figure>
+<p>5、启动容器并登录测试</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run -d -it  alipen:lsy   /bin/sh 构建最基础的镜像时没有指定初始化夯住命令<br>docker <span class="hljs-built_in">exec</span> -it   b655b22d29ee /bin/sh<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>WORKDIR指令作用</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">FROM centos:6.9<br>RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>RUN curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>RUN yum install nginx -y<br>ADD  xiaoniao.tar.gz  /usr/share/nginx/html<br>WORKDIR /usr/share/nginx/html  切换登录时的目录<br>CMD [<span class="hljs-string">"nginx"</span>,<span class="hljs-string">"-g"</span>,<span class="hljs-string">"daemon off;"</span>]<br></code></pre></td></tr></tbody></table></figure>
+<p>指定端口</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># cat dockerfile</span><br>FROM centos:6.9<br>RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>RUN curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>RUN yum install nginx -y<br>ADD  xiaoniao.tar.gz  /usr/share/nginx/html<br>WORKDIR /usr/share/nginx/html<br>EXPOSE  80 22 开放端口  和docker run  -P 使用时起作用<br>CMD [<span class="hljs-string">"nginx"</span>,<span class="hljs-string">"-g"</span>,<span class="hljs-string">"daemon off;"</span>]<br></code></pre></td></tr></tbody></table></figure>
+<p>结合端口使用</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># docker ps -a -l</span><br>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                          NAMES<br>f7af944b7804        xiaoniao:v6         <span class="hljs-string">"nginx -g 'daemon of…"</span>   7 seconds ago       Up 6 seconds        0.0.0.0:32769-&gt;22/tcp, 0.0.0.0:32768-&gt;80/tcp   bold_snyder<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>volume  创建随机名字的卷</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">FROM centos:6.9<br>RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>RUN curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>RUN yum install nginx -y<br>ADD  xiaoniao.tar.gz  /usr/share/nginx/html<br>WORKDIR /usr/share/nginx/html<br>EXPOSE  80 22<br>VOLUME /usr/share/nginx/html 将容器的目录持久化到宿主机的随机卷<br>CMD [<span class="hljs-string">"nginx"</span>,<span class="hljs-string">"-g"</span>,<span class="hljs-string">"daemon off;"</span>]<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># docker run -d -P  xiaoniao:v7</span><br>9f7366ddf4209b4e3147d884b6b5e427fed55ca5d0ed10bc411e5ce3cab79543<br>[root@docker01 xiaoniao]<span class="hljs-comment"># docker volume ls</span><br>DRIVER              VOLUME NAME<br><span class="hljs-built_in">local</span>               590db49fbecbe1614928b0bf1452c35eecb95bcdc4428129dc1a41a3ad21b657<br>[root@docker01 xiaoniao]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>ENV指定环境变量</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">FROM centos:6.9<br>RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-6.repo<br>RUN curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-6.repo<br>RUN yum install nginx -y<br>ADD  xiaoniao.tar.gz  /usr/share/nginx/html<br>WORKDIR /usr/share/nginx/html<br>EXPOSE  80 22<br>VOLUME /usr/share/nginx/html<br>ENV LIUSHIYA 123456<br>CMD [<span class="hljs-string">"nginx"</span>,<span class="hljs-string">"-g"</span>,<span class="hljs-string">"daemon off;"</span>]<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 xiaoniao]<span class="hljs-comment"># docker run -it  xiaoniao:v8   /bin/bash</span><br>[root@7f229d087161 html]<span class="hljs-comment"># env</span><br>....<br>LIUSHIYA=123456<br></code></pre></td></tr></tbody></table></figure>
+<p>docker不走开机启动  /etc/profile不会被加载</p>
+<p>docker不走 开机启动流程 是优势  启动快 劣势是不加载开机启动时的文件  但是ENV等指令可以补这个缺点</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/27/ssh%E6%8A%A5%E9%94%99/">WARNING REMOTE HOST IDENTIFICATION HAS CHANGED<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=894519210 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="javascript:; " target="_blank" onMouseOver="this.style.color= '#09BB07'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconwechat-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://www.instagram.com/izhaoo/ " target="_blank" onMouseOver="this.style.color= '#DA2E76'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconinstagram "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/izhaoo " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="mailto:izhaoo@163.com " target="_blank" onMouseOver="this.style.color='#FFBE5B'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconmail"></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="https://liushiya-github.github.io/">刘世亚</a> .AllRightsReserved</p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
