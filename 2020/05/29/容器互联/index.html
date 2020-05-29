@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>容器互联 - 北国红豆飘</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,现状：每次启动镜像容器  容器的IP地址都不相同
+导致..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">容器互联</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-29</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/29/%E5%AE%B9%E5%99%A8%E4%BA%92%E8%81%94/"
+          class="leancloud" data-flag-title="容器互联"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6083</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>现状：每次启动镜像容器  容器的IP地址都不相同<br>
+导致问题：使用容器搭建一个架构 相互无法通讯</p>
+<p>容器之间互联：<br>
+容器和容器之间可以ping同    主要问题是容器的IP地址不固定 每启一个容器IP地址都会随机</p>
+<p>互联过程：<br>
+容器的link web01(源容器)需要启动状态<br>
+容器web02 link到web01容器  实现互联：web02在hosts中加入web01的IP地址信息<br>
+注意一点：web02中单项解析到web01   web01中不会解析到web02</p>
+<p>操作：</p>
+<p>启动容器web01并linkweb02</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 word]<span class="hljs-comment"># docker run -d -it  --name web01   kode:v1  /bin/bash</span><br>a9c8b9ec66ed84e485ea73d5afe3281156bbb7d79903ac92cea74d1cdd4414ba<br>[root@docker01 word]<span class="hljs-comment"># docker run -it --link web01:web01_lsy kode:v1  /bin/bash</span><br></code></pre></td></tr></tbody></table></figure>
+<p>登录web02查看hosts文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 word]<span class="hljs-comment"># docker run -it --link web01:web01_lsy kode:v1  /bin/bash</span><br>[root@1ecca6a6e0d2 /]<span class="hljs-comment"># cat /etc/hosts</span><br>127.0.0.1       localhost<br>::1     localhost ip6-localhost ip6-loopback<br>fe00::0 ip6-localnet<br>ff00::0 ip6-mcastprefix<br>ff02::1 ip6-allnodes<br>ff02::2 ip6-allrouters<br>172.17.0.2      web01_lsy a9c8b9ec66ed web01<br>172.17.0.3      1ecca6a6e0d2<br></code></pre></td></tr></tbody></table></figure>
+<p>登录web01查看hosts文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 word]<span class="hljs-comment"># docker exec -it web01 /bin/bash</span><br>[root@a9c8b9ec66ed /]<span class="hljs-comment"># cat /etc/hosts</span><br>127.0.0.1       localhost<br>::1     localhost ip6-localhost ip6-loopback<br>fe00::0 ip6-localnet<br>ff00::0 ip6-mcastprefix<br>ff02::1 ip6-allnodes<br>ff02::2 ip6-allrouters<br>172.17.0.2      a9c8b9ec66ed<br>[root@a9c8b9ec66ed /]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>命令行方式启动容器互联</strong></p>
+<p>导入镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># ll</span><br>total 657864<br>-rw-r--r-- 1 root root 392823296 May 28 12:20 docker-mysql-5.7.tar.gz<br>-rw-r--r-- 1 root root 153172992 May 28 12:20 zabbix-java-gateway.tar.gz<br>-rw-r--r-- 1 root root 110936576 May 28 12:20 zabbix-server-mysql.tar.gz<br>-rw-r--r-- 1 root root  12779520 May 28 12:20 zabbix-web-nginx-mysql.tar.gz<br>[root@docker01 ~]<span class="hljs-comment"># for i in `ls *.tar.gz` ;do docker load -i $i ;done</span><br></code></pre></td></tr></tbody></table></figure>
+<p>启动容器互联</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker run --name mysql-server -it \<br>      -e MYSQL_DATABASE=<span class="hljs-string">"zabbix"</span> \<br>      -e MYSQL_USER=<span class="hljs-string">"zabbix"</span> \<br>      -e MYSQL_PASSWORD=<span class="hljs-string">"zabbix_pwd"</span> \<br>      -e MYSQL_ROOT_PASSWORD=<span class="hljs-string">"root_pwd"</span> \<br>      -d mysql:5.7 \<br>      --character-set-server=utf8 --collation-server=utf8_bin<br><br>docker run --name zabbix-java-gateway -t \<br>      -d zabbix/zabbix-java-gateway:latest<br><br>docker run --name zabbix-server-mysql -t \<br>      -e DB_SERVER_HOST=<span class="hljs-string">"mysql-server"</span> \<br>      -e MYSQL_DATABASE=<span class="hljs-string">"zabbix"</span> \<br>      -e MYSQL_USER=<span class="hljs-string">"zabbix"</span> \<br>      -e MYSQL_PASSWORD=<span class="hljs-string">"zabbix_pwd"</span> \<br>      -e MYSQL_ROOT_PASSWORD=<span class="hljs-string">"root_pwd"</span> \<br>      -e ZBX_JAVAGATEWAY=<span class="hljs-string">"zabbix-java-gateway"</span> \<br>      --link mysql-server:mysql \<br>      --link zabbix-java-gateway:zabbix-java-gateway \<br>      -p 10051:10051 \<br>      -d zabbix/zabbix-server-mysql:latest<br><br>docker run --name zabbix-web-nginx-mysql -t \<br>      -e DB_SERVER_HOST=<span class="hljs-string">"mysql-server"</span> \<br>      -e MYSQL_DATABASE=<span class="hljs-string">"zabbix"</span> \<br>      -e MYSQL_USER=<span class="hljs-string">"zabbix"</span> \<br>      -e MYSQL_PASSWORD=<span class="hljs-string">"zabbix_pwd"</span> \<br>      -e MYSQL_ROOT_PASSWORD=<span class="hljs-string">"root_pwd"</span> \<br>      --link mysql-server:mysql \<br>      --link zabbix-server-mysql:zabbix-server \<br>      -p 80:80 \<br>      -d zabbix/zabbix-web-nginx-mysql:latest<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>容器编排（yaml）</strong><br>
+作用：实现容器的批量管理<br>
+批量启动容器<br>
+批量停止容器<br>
+批量重启容器</p>
+<p>docker-compose 单机容器编排(epel)</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl  -o /etc/yum.repos.d/epel.repo  http://mirrors.aliyun.com/repo/epel-7.repo<br></code></pre></td></tr></tbody></table></figure>
+<p>安装docker-compose</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum  install -y  docker-compose<br></code></pre></td></tr></tbody></table></figure>
+<p>docker-compose 有三个版本 v1 v2 v3 不同版本yaml语法不同</p>
+<p>docker 重启 会死掉</p>
+<p>设置容器随着docker启动而启动</p>
+<p>设置容器随着docker启动而启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 yum.repos.d]<span class="hljs-comment"># docker run -d -it --restart always  wordpress:v1 tail -f /etc/hosts</span><br>21986a40f52fc415d3a77d1aa0ecab13c971ce0c214d44257b19611ca5e20109<br></code></pre></td></tr></tbody></table></figure>
+<p>查看启动情况</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 yum.repos.d]<span class="hljs-comment"># docker ps -a -l</span><br>CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS               NAMES<br>21986a40f52f        wordpress:v1        <span class="hljs-string">"tail -f /etc/hosts"</span>   8 seconds ago       Up 8 seconds                            reverent_goldwasser<br></code></pre></td></tr></tbody></table></figure>
+<p>重启docker服务并查看</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 yum.repos.d]<span class="hljs-comment"># systemctl restart docker</span><br>[root@docker01 yum.repos.d]<span class="hljs-comment"># docker ps -a -l</span><br>CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS               NAMES<br>21986a40f52f        wordpress:v1        <span class="hljs-string">"tail -f /etc/hosts"</span>   28 seconds ago      Up 1 second                             reverent_goldwasser<br>[root@docker01 yum.repos.d]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>通过yaml配置文件docker-compose 如何调用docker启动容器<br>
+每个docker-compose 单独一个目录<br>
+每个单独的docker-compose下只能一个docker-compose.yaml文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker-compose up   -d 后台创建并运行容器<br>docker-compose  down  停止并删除容器<br>docker-compose  start  批量启动容器<br>docker-compose stop   批量停止容器<br>docker-compose  restart  批量重启容器<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs bash">version: <span class="hljs-string">'3'</span><br><br>services:<br>   mysql-server:<br>     image: mysql:5.7<br>     restart: always<br>     environment:<br>       MYSQL_ROOT_PASSWORD: root_pwd<br>       MYSQL_DATABASE: zabbix<br>       MYSQL_USER: zabbix<br>       MYSQL_PASSWORD: zabbix_pwd<br>     <span class="hljs-built_in">command</span>: --character-set-server=utf8 --collation-server=utf8_bin<br>     <br>   zabbix-java-gateway:<br>     image: zabbix/zabbix-java-gateway:latest<br>     restart: always<br>     <br>   zabbix-server:<br>     depends_on:<br>       - mysql-server<br>     image: zabbix/zabbix-server-mysql:latest<br>     restart: always<br>     environment:<br>       DB_SERVER_HOST: mysql-server<br>       MYSQL_DATABASE: zabbix<br>       MYSQL_USER: zabbix<br>       MYSQL_PASSWORD: zabbix_pwd<br>       MYSQL_ROOT_PASSWORD: root_pwd<br>       ZBX_JAVAGATEWAY: zabbix-java-gateway<br>     ports:<br>       - <span class="hljs-string">"10051:10051"</span><br>       <br>   zabbix-web-nginx-mysql:<br>     depends_on:<br>       - zabbix-server<br>     image: zabbix/zabbix-web-nginx-mysql:latest<br>     ports:<br>       - <span class="hljs-string">"80:80"</span><br>     restart: always<br>     environment:<br>       DB_SERVER_HOST: mysql-server<br>       MYSQL_DATABASE: zabbix<br>       MYSQL_USER: zabbix<br>       MYSQL_PASSWORD: zabbix_pwd<br>       MYSQL_ROOT_PASSWORD: root_pwd<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/28/dockerfile%E7%BC%96%E5%86%99%E9%A1%B9%E7%9B%AE/">dockerfile编写项目<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
