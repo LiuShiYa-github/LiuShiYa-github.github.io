@@ -161,7 +161,7 @@
       <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/30/OpenStack%E7%BB%84%E4%BB%B6%E4%B9%8Bkeystone%E8%AE%A4%E8%AF%81%E6%9C%8D%E5%8A%A1/"
           class="leancloud" data-flag-title="keystone认证服务"></span></span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6284</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6389</span>
     </div>
   </div>
 </section>
@@ -234,7 +234,7 @@
 <p>keystone服务本身和其他组件不存放同一个项目中</p>
 <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">openstack project create --domain default \<br>  --description <span class="hljs-string">"Service Project"</span> service<br></code></pre></td></tr></tbody></table></figure>
 <p><strong>创建环境变量脚本</strong></p>
-<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi admin-openrc<br><br><span class="hljs-built_in">export</span> OS_PROJECT_DOMAIN_NAME=default<br><span class="hljs-built_in">export</span> OS_USER_DOMAIN_NAME=default<br><span class="hljs-built_in">export</span> OS_PROJECT_NAME=admin<br><span class="hljs-built_in">export</span> OS_USERNAME=admin<br><span class="hljs-built_in">export</span> OS_PASSWORD=ADMIN_PASS<br><span class="hljs-built_in">export</span> OS_AUTH_URL=http://controller:35357/v3<br><span class="hljs-built_in">export</span> OS_IDENTITY_API_VERSION=3<br><span class="hljs-built_in">export</span> OS_IMAGE_API_VERSION=2<br></code></pre></td></tr></tbody></table></figure><script>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi admin-openrc<br><br><span class="hljs-built_in">export</span> OS_TOKEN=ADMIN_TOKEN<br><span class="hljs-built_in">export</span> OS_URL=http://controller:35357/v3<br><span class="hljs-built_in">export</span> OS_IDENTITY_API_VERSION=3<br><span class="hljs-built_in">export</span> OS_PROJECT_DOMAIN_NAME=default<br><span class="hljs-built_in">export</span> OS_USER_DOMAIN_NAME=default<br><span class="hljs-built_in">export</span> OS_PROJECT_NAME=admin<br><span class="hljs-built_in">export</span> OS_USERNAME=admin<br><span class="hljs-built_in">export</span> OS_PASSWORD=ADMIN_PASS<br><span class="hljs-built_in">export</span> OS_AUTH_URL=http://controller:35357/v3<br><span class="hljs-built_in">export</span> OS_IDENTITY_API_VERSION=3<br><span class="hljs-built_in">export</span> OS_IMAGE_API_VERSION=2<br></code></pre></td></tr></tbody></table></figure><script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
             if (!el.dataset.src) { return; }
