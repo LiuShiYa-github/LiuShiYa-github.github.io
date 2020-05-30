@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>linuxACL控制 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,1.ACL访问控制概述
+2.ACL高级特性MASK
+3..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/linux%E5%9F%BA%E7%A1%80.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">linuxACL控制</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-30</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/30/linuxACL%E6%8E%A7%E5%88%B6/"
+          class="leancloud" data-flag-title="linuxACL控制"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6651</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>1.ACL访问控制概述<br>
+2.ACL高级特性MASK<br>
+3.ACL高级特性Default<br>
+4.ACL访问控制实践案例</p>
+<h2 id="1-ACL访问控制概述">1.ACL访问控制概述</h2>
+<p>在普通权限中，用户对文件只有三种身份，就是属主、属组和其他人；每种用户身份拥有读（read）、写（write）和执行（execute）三种权限。但是在实际工作中，这三种身份实在是不够用<br>
+ACL是Access Control List（访问控制列表）的缩写，不过在Linux系统中，ACL用于设定用户针对文件的权限</p>
+<p><strong>acl基本使用方式</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">//环境准备<br>[root@xuliangwei ~]<span class="hljs-comment"># cp /etc/passwd /root/passwd</span><br>//文件在没有设定acl, 看到的和传统权限是一样<br>[root@xuliangwei ~]<span class="hljs-comment"># ll passwd</span><br>-rw-r--r-- 1 root root 0 10-26 13:59 /home/test.txt<br><br>//使用getacl查看权限<br>[root@xuliangwei ~]<span class="hljs-comment"># getfacl passwd </span><br><span class="hljs-comment"># file: passwd</span><br><span class="hljs-comment"># owner: root</span><br><span class="hljs-comment"># group: root</span><br>user::rw-   //文件owner权限<br>group::r--  //文件拥有组权限<br>other::r--  //其他人权限<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>1.设定acl权限案例如下</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs bash">-rw-r--r-- 1 root root 1380 Feb 27 11:25 passwd<br><br>alice 拥有读写权限    rw<br>bgx  没有任何权限     -<br>jack 组拥有读权限     r<br>匿名用户拥有读写权限  rw<br><br><br>//建立相关用户<br>[root@xuliangwei ~]<span class="hljs-comment"># useradd alice</span><br>[root@xuliangwei ~]<span class="hljs-comment"># useradd bgx</span><br>[root@xuliangwei ~]<span class="hljs-comment"># useradd jack</span><br><br>//增加用户 alice 权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -m u:alice:rw passwd</span><br><br>//增加用户 bgx 权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -m u:bgx:- passwd</span><br><br>//增加匿名用户权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -m o::rw passwd</span><br><br>//增加组权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -m g:jack:r passwd</span><br><br><br>注意: 如果用户同时属于不同的两个组，并且两个组设定了acl访问控制<br>    1.根据acl访问控制优先级进行匹配规则<br>    2.如有用户拥有多个组的权限不同的权限，优先使用最高权限（模糊匹配）<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>2.查看acl权限</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@xuliangwei ~]<span class="hljs-comment"># ll passwd</span><br>-rw-rw-rw-+ 1 root root 1531 Jan 26 07:52 passwd<br><br>[root@xuliangwei ~]<span class="hljs-comment"># getfacl passwd</span><br><span class="hljs-comment"># file: passwd</span><br><span class="hljs-comment"># owner: root</span><br><span class="hljs-comment"># group: root</span><br>user::rw-<br>user:bgx:---<br>user:alice:rw-<br>group::r--<br>group:jack:r--<br>mask::rw-<br>other::rw-<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>3.移除acl权限</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">//移除jack组的acl权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -x g:jack passwd</span><br><br>//移除bgx用户的acl权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -x u:bgx passwd</span><br><br>//移除文件和目录所有acl权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -b passwd</span><br><br>//移除默认的acl<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -k dir</span><br></code></pre></td></tr></tbody></table></figure>
+<p>4.查看acl帮助</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">//EXAMPLES 示例文档<br>[root@xuliangwei ~]<span class="hljs-comment"># man setfacl</span><br><br>//复制 file1 的 ACL 权限给 file2<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -m u:alice:rw,u:bgx:r,g:jack:rw file1</span><br>[root@xuliangwei ~]<span class="hljs-comment"># getfacl file1 |setfacl --set-file=- file2</span><br></code></pre></td></tr></tbody></table></figure>
+<h2 id="2-ACL高级特性MASK">2.ACL高级特性MASK</h2>
+<p>mask用于临时降低用户或组的权限，但不包括文件的所有者和其他人。<br>
+mask最主要的作用是用来决定用户的最高权限。</p>
+<p>mask默认不会对匿名用户降低权限，所以为了便于管理文件的访问控制，建议匿名用户的权限置为空</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">//临时降低用户或组权限<br>[root@xuliangwei ~]<span class="hljs-comment"># setfacl -m mask::rw filename</span><br></code></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>小结<br>
+1.mask会影响哪些用户，除了所有者和其他人。<br>
+2.mask权限决定了用户访问文件时的最高权限。(如何影响)<br>
+3.mask用于临时降低用户访问文件的权限。(mask做什么)<br>
+4.任何重新设置acl访问控制会清理mask所设定的权限。</p>
+</blockquote>
+<h2 id="3-ACL高级特性Default">3.ACL高级特性Default</h2>
+<p>default: 继承(默认)</p>
+<p>alice能够对/opt目录以及以后在/opt目录下新建的文件有读、写、执行权限</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs bash">//赋予 alice 对/home 读写执行权限 <br>[root@xuliangwei ~]<span class="hljs-comment">## setfacl -R -m u:alice:rwX /opt</span><br>//赋予 alice 对以后在/home 下新建的文件有读写执行权限(使 alice 的权限继承) <br>[root@xuliangwei ~]<span class="hljs-comment">## setfacl -m d:u:alice:rwX /opt</span><br><br>//检查对应的权限<br>[root@linux-node1 ~]<span class="hljs-comment"># getfacl /opt/</span><br>getfacl: Removing leading <span class="hljs-string">'/'</span> from absolute path names<br><span class="hljs-comment"># file: opt/</span><br><span class="hljs-comment"># owner: root</span><br><span class="hljs-comment"># group: bgx</span><br>user::rwx<br>user:alice:rwx<br>group::rwx<br>mask::rwx<br>other::rwx<br>default:user::rwx<br>default:user:alice:rwx<br>default:group::rwx<br>default:mask::rwx<br>default:other::rwx<br></code></pre></td></tr></tbody></table></figure>
+<h2 id="4-ACL访问控制实践案例">4.ACL访问控制实践案例</h2>
+<p><strong>案例1: 将新建文件的属性修改tom:admin, 权限默认为644</strong><br>
+要求: tom对该文件有所有的权限, mary可以读写该文件, admin组可以读写执行该文件, jack只读该文件, 其他人一律不能访问该文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs bash">//实验前, 建立几个普通用户<br>[root@xuliangwei ~]<span class="hljs-comment"># useradd tom</span><br>[root@xuliangwei ~]<span class="hljs-comment"># useradd bean</span><br>[root@xuliangwei ~]<span class="hljs-comment"># useradd mary</span><br>[root@xuliangwei ~]<span class="hljs-comment"># useradd jack</span><br>[root@xuliangwei ~]<span class="hljs-comment"># useradd sutdent</span><br>[root@xuliangwei ~]<span class="hljs-comment"># groupadd admin</span><br>[root@xuliangwei ~]<span class="hljs-comment"># gpasswd -a mary admin</span><br>[root@xuliangwei ~]<span class="hljs-comment"># gpasswd -a bean admin</span><br><br>//检查用户属性<br>[root@linux-node1 ~]<span class="hljs-comment"># id tom</span><br>uid=1004(tom) gid=1004(tom) groups=1004(tom)<br>[root@linux-node1 ~]<span class="hljs-comment"># id mary</span><br>uid=1006(mary) gid=1006(mary) groups=1006(mary),1007(admin)<br>[root@linux-node1 ~]<span class="hljs-comment"># id bean</span><br>uid=1005(bean) gid=1005(bean) groups=1005(bean),1007(admin)<br>[root@linux-node1 ~]<span class="hljs-comment"># id jack</span><br>uid=1002(jack) gid=1002(jack) groups=1002(jack)<br>[root@linux-node1 ~]<span class="hljs-comment"># id sutdent</span><br>uid=1007(sutdent) gid=1008(sutdent) groups=1008(sutdent)<br><br>//准备相关文件<br>[root@linux-node1 ~]<span class="hljs-comment"># cp /etc/passwd /root/</span><br>[root@linux-node1 ~]<span class="hljs-comment"># chown tom:admin passwd</span><br>[root@linux-node1 ~]<span class="hljs-comment"># chmod 644 passwd</span><br><br>//检查设定前的acl列表<br>[root@linux-node1 ~]<span class="hljs-comment"># getfacl passwd</span><br><span class="hljs-comment"># file: passwd</span><br><span class="hljs-comment"># owner: tom</span><br><span class="hljs-comment"># group: admin</span><br>user::rw-<br>group::r--<br>other::r--<br><br>//设定acl权限<br>[root@linux-node1 ~]<span class="hljs-comment"># setfacl -m u::rwx,u:mary:rw,u:jack:r,g:admin:rwx,o::- passwd</span><br><br>//检查acl权限<br>[root@linux-node1 ~]<span class="hljs-comment"># getfacl passwd</span><br><span class="hljs-comment"># file: passwd</span><br><span class="hljs-comment"># owner: tom</span><br><span class="hljs-comment"># group: admin</span><br>user::rwx<br>user:jack:r--<br>user:mary:rw-<br>group::r--<br>group:admin:rwx<br>mask::rwx<br>other::---<br></code></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>acl的控制规则是从上往下匹配<br>
+1.tom由于是文件的拥有者，所以直接按照user::rwx指定的权限去操作<br>
+2.mary用户从上往下寻找匹配规则，发现user:mary:rw-能够精确匹配mary用户，尽管mary属于admin组，同时admin组有rwx的权限，但是由于mary用户的规则在前面，所有优先生效。<br>
+3.bean由于找不到精确匹配的规则，而bean是属于admin组，根据文件的定义，该文件是属于admin组，所以bean的权限是按照group:admin:rwx的权限去操作。<br>
+4.jack用户从上往下寻找匹配规则，发现user:jack:r–能够精确匹配jack用户。<br>
+5.student用户找不到精确匹配的user定义规则, 也找不到相关组的定义规则，最后属于other。</p>
+</blockquote>
+<p><strong>案例2: lab acl setup</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">controller组成员有:student<br>sodor组成员有:thomas,james<br><br>目录: /shares/steamies<br>文件: /shares/steamies/file<br>脚本: /shares/steamies/test.sh<br><br>controller属于该目录的所属组, 新建文件必须属于controller组<br>sodor组的成员对该目录拥有rwx权限<br>sodor组成员james对该目录及子目录(包括以后新建立的文件)没有任何权限<br></code></pre></td></tr></tbody></table></figure>
+<p>实际操作</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs bash">//准备用户<br>[root@linux-node1 ~]<span class="hljs-comment"># groupadd controller</span><br>[root@linux-node1 ~]<span class="hljs-comment"># groupadd sodor</span><br>[root@linux-node1 ~]<span class="hljs-comment"># useradd student -G controller</span><br>[root@linux-node1 ~]<span class="hljs-comment"># useradd thomas -G sodor</span><br>[root@linux-node1 ~]<span class="hljs-comment"># useradd james -G sodor</span><br><br>//准备目录<br>[root@linux-node1 ~]<span class="hljs-comment"># mkdir /shares/steamies -p</span><br>[root@linux-node1 ~]<span class="hljs-comment"># echo "file" &gt;&gt; /shares/steamies/file</span><br>[root@linux-node1 ~]<span class="hljs-comment"># echo "echo 123" &gt;&gt; /shares/steamies/test.sh</span><br>[root@linux-node1 ~]<span class="hljs-comment"># chmod 755 /shares/steamies/test.sh</span><br>[root@linux-node1 ~]<span class="hljs-comment"># chown -R  :controller /shares/steamies/</span><br>[root@linux-node1 ~]<span class="hljs-comment"># chmod g+s /shares/steamies/</span><br><br><br>//设定权限(X表示,如果原本有执行权限就保留,如果没有则不添加)<br>[root@linux-node1 ~]<span class="hljs-comment"># setfacl -R -m g:sodor:rwX,u:james:- /shares/steamies/</span><br><br>//设定继承规则<br>[root@linux-node1 ~]<span class="hljs-comment"># setfacl -R -m d:g:sodor:rwX,d:u:james:- /shares/steamies/</span><br><br><br>[root@linux-node1 steamies]<span class="hljs-comment"># getfacl /shares/steamies/</span><br>getfacl: Removing leading <span class="hljs-string">'/'</span> from absolute path names<br><span class="hljs-comment"># file: shares/steamies/</span><br><span class="hljs-comment"># owner: root</span><br><span class="hljs-comment"># group: controller</span><br><span class="hljs-comment"># flags: -s-</span><br>user::rwx<br>user:james:---<br>group::r-x<br>group:sodor:rwx<br>mask::rwx<br>other::r-x<br>default:user::rwx<br>default:group::r-x<br>default:group:sodor:rwx<br>default:mask::rwx<br>default:other::r-x<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/30/linux%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/">linux计划任务<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
