@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>harbor+registry - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,docker私有仓库  registry
+12dock..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/docker.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">harbor+registry</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-30</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/30/harbor+registry/"
+          class="leancloud" data-flag-title="harbor+registry"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4949</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p><strong>docker私有仓库  registry</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker pull registry:latest<br>docker run -d -p 5000:5000  --restart=always  --name  registry -v /opt/myregistry/:/var/lib/registry registry<br></code></pre></td></tr></tbody></table></figure>
+<p>从私有仓库pull镜像会有域名</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker pull  index.tenxcloud.com/system_containers/metrics-server-amd64:v0.3.1<br></code></pre></td></tr></tbody></table></figure>
+<p><a href="http://xn--docker-vy7iv52dee467b751a.io" target="_blank" rel="noopener">官方地址为docker.io</a></p>
+<p>私有仓库用的是http协议<br>
+客户端默认是用HTTPS协议<br>
+报错：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">Get https://10.0.0.11:5000/v2/: http: server gave HTTP response to HTTPS client<br></code></pre></td></tr></tbody></table></figure>
+<p>解决方法：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># cat /etc/docker/daemon.json</span><br>{<br>  <span class="hljs-string">"registry-mirrors"</span>: [<span class="hljs-string">"https://registry.docker-cn.com"</span>],<br>  <span class="hljs-string">"insecure-registries"</span>: [<span class="hljs-string">"10.0.0.11:5000"</span>]<br>}<br></code></pre></td></tr></tbody></table></figure>
+<p>重启docker</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># systemctl restart  docker</span><br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker push   10.0.0.11:5000/centos6.9_nginx:lsy</span><br></code></pre></td></tr></tbody></table></figure>
+<p>记得带上<br>
+push镜像的步骤<br>
+1、打标签tag<br>
+2、push</p>
+<p><strong>web页面获取registry仓库中有哪些镜像</strong><br>
+<a href="http://10.0.0.11:5000/v2/_catalog" target="_blank" rel="noopener">http://10.0.0.11:5000/v2/_catalog</a><br>
+web页面获取registry仓库中镜像的标签（不好用）<br>
+<a href="http://10.0.0.11:5000/v2/image_name/tags/list" target="_blank" rel="noopener">http://10.0.0.11:5000/v2/image_name/tags/list</a></p>
+<p><strong>registry删除镜像</strong></p>
+<p>docker  registry：功能弱 ，占用资源少</p>
+<p>查看 registry的ID</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker ps -a</span><br>CONTAINER ID        IMAGE                                  COMMAND                  CREATE<br>b527b0e7b9a2        registry                               <span class="hljs-string">"/entrypoint.sh /etc…"</span>   6 hour<br>8d0033ddd574        wordpress:latest                       <span class="hljs-string">"docker-entrypoint.s…"</span>   24 hou<br>6e259fb0cd13        mysql:5.7                              <span class="hljs-string">"docker-entrypoint.s…"</span>   24 hou<br>d26d86b6e13a        zabbix/zabbix-web-nginx-mysql:latest   <span class="hljs-string">"/bin/bash /run_zabb…"</span>   25 houql_1<br>08fac4684e98        zabbix/zabbix-server-mysql:latest      <span class="hljs-string">"/bin/bash /run_zabb…"</span>   25 hou<br>d21c6baf0a23        zabbix/zabbix-java-gateway:latest      <span class="hljs-string">"/bin/bash /run_zabb…"</span>   25 hou1<br>835662f0d3af        mysql:5.7                              <span class="hljs-string">"docker-entrypoint.s…"</span>   25 hou<br></code></pre></td></tr></tbody></table></figure>
+<p>进入registry容器查看系统信息</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker exec -it b527b0e7b9a2 /bin/sh</span><br>/ <span class="hljs-comment"># su - root</span><br>b527b0e7b9a2:~<span class="hljs-comment">#</span><br>b527b0e7b9a2:~<span class="hljs-comment">#</span><br>b527b0e7b9a2:~<span class="hljs-comment">#</span><br>b527b0e7b9a2:~<span class="hljs-comment">#</span><br>b527b0e7b9a2:~<span class="hljs-comment"># cat /etc/os-release</span><br>NAME=<span class="hljs-string">"Alpine Linux"</span><br>ID=alpine<br>VERSION_ID=3.8.5<br>PRETTY_NAME=<span class="hljs-string">"Alpine Linux v3.8"</span><br>HOME_URL=<span class="hljs-string">"http://alpinelinux.org"</span><br>BUG_REPORT_URL=<span class="hljs-string">"http://bugs.alpinelinux.org"</span><br>b527b0e7b9a2:~<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>进入目录查看大小</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">b527b0e7b9a2:~<span class="hljs-comment"># cd /var/lib/registry/docker/registry/v2/</span><br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># ls</span><br>blobs         repositories<br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># du -smh *</span><br>276.6M  blobs<br>108.0K  repositories<br></code></pre></td></tr></tbody></table></figure>
+<p>删除镜像（但是有时不会释放空间）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># rm -rf repositories/centos</span><br>centos/           centos6.9_nginx/  centos_test/<br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># rm -rf repositories/centos</span><br>centos/           centos6.9_nginx/  centos_test/<br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># rm -rf repositories/centos6.9_nginx</span><br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># du -smh *</span><br>276.6M  blobs<br>72.0K   repositories<br><br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># registry garbage-collect /etc/docker/re</span><br>gistry/config.yml<br>blobs/         repositories/<br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># registry garbage-collect /etc/docker/re</span><br>gistry/config.yml<br></code></pre></td></tr></tbody></table></figure>
+<p>查看大小</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment"># du -smh *</span><br>276.6M  blobs<br>72.0K   repositories<br>b527b0e7b9a2:/var/lib/registry/docker/registry/v2<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>官方仓库使用</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">docker登录官方仓库<br>docker login<br></code></pre></td></tr></tbody></table></figure>
+<p>打标签上传</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker01 ~]<span class="hljs-comment"># docker tag  alpine:latest  17695691664/alpine:latest</span><br>[root@docker01 ~]<span class="hljs-comment"># docker push   17695691664/alpine:latest</span><br>The push refers to repository [docker.io/17695691664/alpine]<br>1bfeebd65323: Pushed<br>latest: digest: sha256:57334c50959f26ce1ee025d08f136c2292c128f84e7b229d1b0da5dac89e9866 size: 528<br>[root@docker01 ~]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>访问指定uri信息 web方式查看镜像</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">http://10.0.0.11:5000/v2/_catalog<br></code></pre></td></tr></tbody></table></figure>
+<p>harbor  docker registry  基础上扩展了很多功能</p>
+<p>docker  registry 安装在11上面  harbor安装12<br>
+harbor是在registry基础上 使用仓库<br>
+使用harbor是基于 registry的  首先registry要配置好</p>
+<p>重新安装</p>
+<p>修改为HTTPS方式<br>
+vim  harbor.yml</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">https:<br>  <span class="hljs-comment"># port for http, default is 80. If https enabled, this port will redirect to https port</span><br>  port: 443<br>  certificate: /opt/cert/Nginx/1_blog.oldqiang.com_bundle.crt<br>  private_key: /opt/cert/Nginx/2_blog.oldqiang.com.key<br></code></pre></td></tr></tbody></table></figure>
+<p>使用强的密钥</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker02 harbor]<span class="hljs-comment"># cat /etc/docker/daemon.json</span><br>{<br>  <span class="hljs-string">"registry-mirrors"</span>: [<span class="hljs-string">"https://registry.docker-cn.com"</span>],<br>  <span class="hljs-string">"insecure-registries"</span>: [<span class="hljs-string">"10.0.0.12:5000"</span>]<br>}<br></code></pre></td></tr></tbody></table></figure>
+<p>镜像推送到harbor</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@docker02 harbor]<span class="hljs-comment"># docker tag  nginx:latest   blog.oldqiang.com/library/nginx:latest</span><br>[root@docker02 harbor]<span class="hljs-comment"># docker push  blog.oldqiang.com/library/nginx:latest</span><br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/29/docker%E6%80%BB%E8%A7%88/">docker总览<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
