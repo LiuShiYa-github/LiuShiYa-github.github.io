@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>OpenStack基础服务安装 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,CentOS Linux release 7.6.18..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/OpenStack.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">OpenStack基础服务安装</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-30</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/30/OpenStack%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%AE%89%E8%A3%85/"
+          class="leancloud" data-flag-title="OpenStack基础服务安装"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>5831</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>CentOS Linux release 7.6.1810 (Core)<br>
+OpenStack安装M版</p>
+<h2 id="规划">规划</h2>
+<p>controller  内存3G  CPU虚拟化开启  IP地址 10.0.0.11<br>
+compute1  内存1G  CPU虚拟化开启 IP地址hi  10.0.0.31<br>
+网关地址为10.0.0.2</p>
+<p><strong>环境准备</strong></p>
+<p>1、修改主机名 IP地址  hosts解析  ping百度测试网络<br>
+controller节点：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs bash">hostnamectl  <span class="hljs-built_in">set</span>-hostname  controller<br>bash<br>[root@controller ~]<span class="hljs-comment"># cat /etc/sysconfig/network-scripts/ifcfg-eth0</span><br>TYPE=Ethernet<br>BOOTPROTO=none<br>NAME=eth0<br>DEVICE=eth0<br>ONBOOT=yes<br>IPADDR=10.0.0.11<br>NETMASK=255.255.255.0<br>GATEWAY=10.0.0.2<br>DNS1=180.76.76.76<br>DNS2=223.5.5.5<br><br>[root@controller ~]<span class="hljs-comment"># cat /etc/hosts</span><br>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6<br>10.0.0.11  controller<br>10.0.0.31  compute1<br>[root@controller ~]<span class="hljs-comment">#</span><br><br>[root@controller ~]<span class="hljs-comment"># ping baidu.com</span><br>PING baidu.com (220.181.38.148) 56(84) bytes of data.<br>64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=1 ttl=128 time=6.92 ms<br>^C<br>--- baidu.com ping statistics ---<br>1 packets transmitted, 1 received, 0% packet loss, time 0ms<br>rtt min/avg/max/mdev = 6.920/6.920/6.920/0.000 ms<br></code></pre></td></tr></tbody></table></figure>
+<p>compute1节点</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs bash">hostnamectl  <span class="hljs-built_in">set</span>-hostname  compute1<br>[root@compute1 ~]<span class="hljs-comment"># cat   /etc/hosts</span><br>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4<br>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6<br>10.0.0.11  controller<br>10.0.0.31  compute1<br>[root@compute1 ~]<span class="hljs-comment"># cat /etc/sysconfig/network-scripts/ifcfg-eth0</span><br>TYPE=Ethernet<br>BOOTPROTO=none<br>NAME=eth0<br>DEVICE=eth0<br>ONBOOT=yes<br>IPADDR=10.0.0.31<br>NETMASK=255.255.255.0<br>GATEWAY=10.0.0.2<br>DNS1=180.76.76.76<br>DNS2=223.5.5.5<br><br><br>[root@compute1 ~]<span class="hljs-comment"># ping baidu.com</span><br>PING baidu.com (39.156.69.79) 56(84) bytes of data.<br>64 bytes from 39.156.69.79 (39.156.69.79): icmp_seq=1 ttl=128 time=8.15 ms<br>^C<br>--- baidu.com ping statistics ---<br>1 packets transmitted, 1 received, 0% packet loss, time 0ms<br>rtt min/avg/max/mdev = 8.157/8.157/8.157/0.000 ms<br></code></pre></td></tr></tbody></table></figure>
+<p>2、配置yum源 （双节点执行）<br>
+mount /dev/cdrom /mnt<br>
+rz 上传openstack_rpm.tar.gz到/opt，并解压<br>
+生成repo配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">'[local]</span><br><span class="hljs-string">name=local</span><br><span class="hljs-string">baseurl=file:///mnt</span><br><span class="hljs-string">gpgcheck=0</span><br><span class="hljs-string"></span><br><span class="hljs-string">[openstack]</span><br><span class="hljs-string">name=openstack</span><br><span class="hljs-string">baseurl=file:///opt/repo</span><br><span class="hljs-string">gpgcheck=0'</span> &gt;/etc/yum.repos.d/local.repo<br><br><span class="hljs-built_in">echo</span> <span class="hljs-string">'mount /dev/cdrom /mnt'</span> &gt;&gt;/etc/rc.local<br>chmod +x /etc/rc.d/rc.local<br><br>[root@compute1 opt]<span class="hljs-comment"># yum repolist</span><br>Loaded plugins: fastestmirror<br>Loading mirror speeds from cached hostfile<br>openstack                                                          | 2.9 kB  00:00:00<br>openstack/primary_db                                               | 398 kB  00:00:00<br>repo id                                   repo name                                 status<br><span class="hljs-built_in">local</span>                                     <span class="hljs-built_in">local</span>                                     4,021<br>openstack                                 openstack                                   598<br>repolist: 4,619<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>在线源安装</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">  <span class="hljs-built_in">cd</span> /etc/yum.repos.d/<br>  rm -rf ./*<br>  curl -o /etc/yum.repos.d/CentOS-Base.repo  http://mirrors.aliyun.com/repo/Centos-7.repo<br>  ls<br>    yum  makecache<br>  yum list |grep  openstack<br>  yum install -y  centos-release-openstack-train.noarch<br><br>[root@controller yum.repos.d]<span class="hljs-comment"># ls</span><br>CentOS-Base.repo            CentOS-OpenStack-train.repo<br>CentOS-Ceph-Nautilus.repo   CentOS-QEMU-EV.repo<br>CentOS-NFS-Ganesha-28.repo  CentOS-Storage-common.repo<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>基础服务安装</strong></p>
+<p>1、所有节点安装时间服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install chrony -y<br></code></pre></td></tr></tbody></table></figure>
+<p>客户端 监听  323<br>
+服务端监听  123<br>
+controller节点同步阿里云时间</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim /etc/chrony.conf<br>server ntp5.aliyun.com iburst<br>allow 10.0.0.0/24<br><br>systemctl restart   chronyd.service<br></code></pre></td></tr></tbody></table></figure>
+<p>compute1同步controller时间</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@compute1 ~]<span class="hljs-comment"># vim /etc/chrony.conf</span><br>[root@compute1 ~]<span class="hljs-comment"># grep  -Ev "^$|#"  /etc/chrony.conf</span><br>server 10.0.0.11 iburst<br>[root@compute1 ~]<span class="hljs-comment"># systemctl restart  chronyd.service</span><br></code></pre></td></tr></tbody></table></figure>
+<p>安装openstack客户端和openstack-selinux 所有节点执行</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install python-openstackclient -y<br>yum install openstack-selinux -y<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>仅控制节点执行 ：安装配置mariadb</strong><br>
+存储各个组件的信息</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install mariadb mariadb-server python2-PyMySQL -y<br>cat /etc/my.cnf.d/openstack.cnf<br></code></pre></td></tr></tbody></table></figure>
+<p>python2-PyMySQL ：帮助python连接mysql的模块</p>
+<p>配置</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@controller ~]<span class="hljs-comment"># cd /etc/my.cnf.d/</span><br>[root@controller my.cnf.d]<span class="hljs-comment"># vim openstack.cnf</span><br>[root@controller my.cnf.d]<span class="hljs-comment"># cat /etc/my.cnf.d/openstack.cnf</span><br>[mysqld]<br><span class="hljs-built_in">bind</span>-address = 10.0.0.11<br>default-storage-engine = innodb<br>innodb_file_per_table<br>max_connections = 4096<br>collation-server = utf8_general_ci<br>character-set-server = utf8<br></code></pre></td></tr></tbody></table></figure>
+<p>重启数据库并执行安全初始化</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#启动</span><br>systemctl start mariadb<br>systemctl <span class="hljs-built_in">enable</span> mariadb<br><span class="hljs-comment">#安全初始化</span><br>mysql_secure_installation<br>回车<br>n  不设置数据库密码<br>y<br>y<br>y<br>y<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>安装消息队列服务  controller节点</strong><br>
+使得各个组件之间互相调用</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">安装rabbitmq并创建用户    监听5672  15672  25672   端口<br>yum install rabbitmq-server -y<br>systemctl start rabbitmq-server.service <br>systemctl <span class="hljs-built_in">enable</span> rabbitmq-server.service<br>rabbitmqctl add_user openstack RABBIT_PASS  OpenStack用户设置密码为  RABBIT_PASS<br>rabbitmqctl set_permissions openstack <span class="hljs-string">".*"</span> <span class="hljs-string">".*"</span> <span class="hljs-string">".*"</span>  给OpenStack用户授权<br></code></pre></td></tr></tbody></table></figure>
+<p>启动rabbitmq 插件  监听15672<br>
+用于监控页面查看</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">rabbitmq-plugins  <span class="hljs-built_in">enable</span>  rabbitmq_management<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">登录rabbitmqweb页面<br>http://10.0.0.11:15672/<br>默认用户名和密码<br>guest<br>guest<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>memcached缓存token</strong><br>
+缓存token  监听11211</p>
+<p>安装</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install memcached python-memcached -y<br></code></pre></td></tr></tbody></table></figure>
+<p>python-memcached      python连接memcache的模块</p>
+<p>配置 监听10.0.0.11的主机</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@controller my.cnf.d]<span class="hljs-comment"># cat /etc/sysconfig/memcached</span><br>PORT=<span class="hljs-string">"11211"</span><br>USER=<span class="hljs-string">"memcached"</span><br>MAXCONN=<span class="hljs-string">"1024"</span><br>CACHESIZE=<span class="hljs-string">"64"</span><br>OPTIONS=<span class="hljs-string">"-l 10.0.0.11,::1"</span><br></code></pre></td></tr></tbody></table></figure>
+<p>启动并开机启动</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl restart memcached.service <br>systemctl <span class="hljs-built_in">enable</span> memcached.service<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/30/linuxACL%E6%8E%A7%E5%88%B6/">linuxACL控制<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
