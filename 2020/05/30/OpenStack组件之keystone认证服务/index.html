@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>OpenStack组件之keystone认证服务 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,keystone 认证服务
+功能：认证管理  授权管理..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/OpenStack.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">OpenStack组件之keystone认证服务</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-30</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/30/OpenStack%E7%BB%84%E4%BB%B6%E4%B9%8Bkeystone%E8%AE%A4%E8%AF%81%E6%9C%8D%E5%8A%A1/"
+          class="leancloud" data-flag-title="OpenStack组件之keystone认证服务"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>6284</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>keystone 认证服务<br>
+功能：认证管理  授权管理  服务目录</p>
+<p>认证：账号密码<br>
+授权管理：为其他组件授权  qq授权其他应用的web页面登录<br>
+服务目录： 电话本功能</p>
+<h2 id="安装keystone">安装keystone</h2>
+<p><strong>创库授权</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">CREATE DATABASE keystone;<br>GRANT ALL PRIVILEGES ON keystone.* TO <span class="hljs-string">'keystone'</span>@<span class="hljs-string">'localhost'</span> \<br>  IDENTIFIED BY <span class="hljs-string">'KEYSTONE_DBPASS'</span>;<br>GRANT ALL PRIVILEGES ON keystone.* TO <span class="hljs-string">'keystone'</span>@<span class="hljs-string">'%'</span> \<br>  IDENTIFIED BY <span class="hljs-string">'KEYSTONE_DBPASS'</span>;<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>安装keystone相关软件包</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install openstack-keystone httpd mod_wsgi -y<br></code></pre></td></tr></tbody></table></figure>
+<p>软件包解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">openstack-keystone   OpenStack服务<br>httpd   Apache网站服务<br>mod_wsgi    Apache的扩展模块wsgi，用于python（OpenStack使用python编写）连接Apache<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>修改配置文件</strong><br>
+配置文件路径：/etc/keystone/keystone.conf</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install openstack-utils.noarch -y<br>\cp /etc/keystone/keystone.conf{,.bak}<br>grep -Ev <span class="hljs-string">'^$|#'</span> /etc/keystone/keystone.conf.bak &gt;/etc/keystone/keystone.conf<br>openstack-config --<span class="hljs-built_in">set</span> /etc/keystone/keystone.conf DEFAULT admin_token  ADMIN_TOKEN<br>openstack-config --<span class="hljs-built_in">set</span> /etc/keystone/keystone.conf database connection  mysql+pymysql://keystone:KEYSTONE_DBPASS@controller/keystone<br>openstack-config --<span class="hljs-built_in">set</span> /etc/keystone/keystone.conf token provider  fernet<br></code></pre></td></tr></tbody></table></figure>
+<p><code>openstack-utils.noarch  用于OpenStack命令行方式修改配置文件</code></p>
+<p><strong>校验</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@controller ~]<span class="hljs-comment"># md5sum /etc/keystone/keystone.conf</span><br>d5acb3db852fe3f247f4f872b051b7a9  /etc/keystone/keystone.conf<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>配置文件解释</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[DEFAULT]<br>admin_token = ADMIN_TOKEN<br>[database]<br>connection = mysql+pymysql://keystone:KEYSTONE_DBPASS@controller/keystone<br>[token]<br>provider = fernet<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>[DEFAULT]</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">admin_token = ADMIN_TOKEN  在没有管理员时 使用admin的token进行 创建 注册 等操作<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>[database] 部分</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">mysql+pymysql://     连接协议<br>keystone:KEYSTONE_DBPASS  连接数据库的账号密码  <br>@ <br>controller 连接数据库的主机  （controller 会使用本地解析为10.0.0.11）<br>/keystone   使用名为keystone的库<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>[token]部分</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">provider = fernet 定义令牌提供者  fernet生成的令牌方式<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>扩展部分</strong></p>
+<p>keystone 认证方式：UUID 、  PKI 、Fernet<br>
+都是生成一段随机字符串的方法   保证唯一</p>
+<p>token 就是一段随机字符串  用于标识服务，类似于linux用户的UUID 进程号码等</p>
+<h2 id="同步数据库">同步数据库</h2>
+<p>在同步数据库之前查看keystone的表</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@controller my.cnf.d]<span class="hljs-comment"># mysql keystone  -e   "show tables;"</span><br></code></pre></td></tr></tbody></table></figure>
+<p>使用keystone身份同步数据库</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">su -s /bin/sh -c <span class="hljs-string">"keystone-manage db_sync"</span> keystone<br></code></pre></td></tr></tbody></table></figure>
+<p>命令解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">su  切换用户  <br>-s  指定bash<br>-c 指定 运行的命令<br>keystone   用户<br>有些情况下  必须切换到指定用户身份下才可以执行命令<br> <br>keystone-manage是用来同keystone服务进行交互的命令行工具，通常该命令只用于不能通过HTTP API完成的操作<br>db_sync　　　　同步数据库<br></code></pre></td></tr></tbody></table></figure>
+<p>检查</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mysql keystone -e <span class="hljs-string">'show tables;'</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>初始化fernet</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone<br></code></pre></td></tr></tbody></table></figure>
+<p>会在/etc/keystone/目录下生成fernet-keys目录</p>
+<h2 id="配置httpd">配置httpd</h2>
+<p>优化HTTP服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">"ServerName controller"</span> &gt;&gt;/etc/httpd/conf/httpd.conf<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs bash"><br><span class="hljs-built_in">echo</span> <span class="hljs-string">'Listen 5000</span><br><span class="hljs-string">Listen 35357</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;VirtualHost *:5000&gt;</span><br><span class="hljs-string">    WSGIDaemonProcess keystone-public processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}</span><br><span class="hljs-string">    WSGIProcessGroup keystone-public</span><br><span class="hljs-string">    WSGIScriptAlias / /usr/bin/keystone-wsgi-public</span><br><span class="hljs-string">    WSGIApplicationGroup %{GLOBAL}</span><br><span class="hljs-string">    WSGIPassAuthorization On</span><br><span class="hljs-string">    ErrorLogFormat "%{cu}t %M"</span><br><span class="hljs-string">    ErrorLog /var/log/httpd/keystone-error.log</span><br><span class="hljs-string">    CustomLog /var/log/httpd/keystone-access.log combined</span><br><span class="hljs-string"></span><br><span class="hljs-string">    &lt;Directory /usr/bin&gt;</span><br><span class="hljs-string">        Require all granted</span><br><span class="hljs-string">    &lt;/Directory&gt;</span><br><span class="hljs-string">&lt;/VirtualHost&gt;</span><br><span class="hljs-string"></span><br><span class="hljs-string">&lt;VirtualHost *:35357&gt;</span><br><span class="hljs-string">    WSGIDaemonProcess keystone-admin processes=5 threads=1 user=keystone group=keystone display-name=%{GROUP}</span><br><span class="hljs-string">    WSGIProcessGroup keystone-admin</span><br><span class="hljs-string">    WSGIScriptAlias / /usr/bin/keystone-wsgi-admin</span><br><span class="hljs-string">    WSGIApplicationGroup %{GLOBAL}</span><br><span class="hljs-string">    WSGIPassAuthorization On</span><br><span class="hljs-string">    ErrorLogFormat "%{cu}t %M"</span><br><span class="hljs-string">    ErrorLog /var/log/httpd/keystone-error.log</span><br><span class="hljs-string">    CustomLog /var/log/httpd/keystone-access.log combined</span><br><span class="hljs-string"></span><br><span class="hljs-string">    &lt;Directory /usr/bin&gt;</span><br><span class="hljs-string">        Require all granted</span><br><span class="hljs-string">    &lt;/Directory&gt;</span><br><span class="hljs-string">&lt;/VirtualHost&gt;'</span>  &gt;/etc/httpd/conf.d/wsgi-keystone.conf<br></code></pre></td></tr></tbody></table></figure>
+<p>校验</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@controller ~]<span class="hljs-comment"># md5sum /etc/httpd/conf.d/wsgi-keystone.conf </span><br>8f051eb53577f67356ed03e4550315c2  /etc/httpd/conf.d/wsgi-keystone.conf<br></code></pre></td></tr></tbody></table></figure>
+<p>启动httpd</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl <span class="hljs-built_in">enable</span> httpd.service<br>systemctl start httpd.service<br></code></pre></td></tr></tbody></table></figure>
+<p>HTTP监听5000端口（普通用户访问）和35357端口（管理员访问）</p>
+<p><strong>创建服务和注册api：</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> OS_TOKEN=ADMIN_TOKEN<br><span class="hljs-built_in">export</span> OS_URL=http://controller:35357/v3<br><span class="hljs-built_in">export</span> OS_IDENTITY_API_VERSION=3<br><br>openstack service create \<br>  --name keystone --description <span class="hljs-string">"OpenStack Identity"</span> identity<br>openstack endpoint create --region RegionOne \<br>  identity public http://controller:5000/v3  <br>openstack endpoint create --region RegionOne \<br>  identity internal http://controller:5000/v3<br>openstack endpoint create --region RegionOne \<br>  identity admin http://controller:35357/v3<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>解释：</strong><br>
+1、定义环境变量</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> OS_TOKEN=ADMIN_TOKEN  指定使用admin  token管理操作<br><span class="hljs-built_in">export</span> OS_URL=http://controller:35357/v3 指定keystone本身的URL信息<br><span class="hljs-built_in">export</span> OS_IDENTITY_API_VERSION=3  指定API的版本信息<br></code></pre></td></tr></tbody></table></figure>
+<p>2、创建服务 创建端点</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">openstack service create \<br>  --name keystone --description <span class="hljs-string">"OpenStack Identity"</span> identity  创建 服务名称为keystone  描述信息 为 OpenStack Identity<br> 关联到认证    identity<br>openstack endpoint create --region RegionOne \<br>  identity public http://controller:5000/v3 创建公共端点 走5000端口<br>openstack endpoint create --region RegionOne \<br>  identity internal http://controller:5000/v3  创建内部端点 走5000端口<br>openstack endpoint create --region RegionOne \<br>  identity admin http://controller:35357/v3  创建管理员端点 走35357端口<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>创建域 项目 用户</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">openstack domain create --description <span class="hljs-string">"Default Domain"</span> default<br>openstack project create --domain default \<br>  --description <span class="hljs-string">"Admin Project"</span> admin<br>openstack user create --domain default \<br>  --password 123456 admin<br>openstack role create admin<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>关联项目，用户，角色</strong><br>
+在admin项目上，给admin项目赋予admin角色</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">openstack role add --project admin --user admin admin<br></code></pre></td></tr></tbody></table></figure>
+<p>创建service的项目 给其他组件使用，存放其他组件的系统账号</p>
+<p>keystone服务本身和其他组件不存放同一个项目中</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">openstack project create --domain default \<br>  --description <span class="hljs-string">"Service Project"</span> service<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>创建环境变量脚本</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">vi admin-openrc<br><br><span class="hljs-built_in">export</span> OS_PROJECT_DOMAIN_NAME=default<br><span class="hljs-built_in">export</span> OS_USER_DOMAIN_NAME=default<br><span class="hljs-built_in">export</span> OS_PROJECT_NAME=admin<br><span class="hljs-built_in">export</span> OS_USERNAME=admin<br><span class="hljs-built_in">export</span> OS_PASSWORD=ADMIN_PASS<br><span class="hljs-built_in">export</span> OS_AUTH_URL=http://controller:35357/v3<br><span class="hljs-built_in">export</span> OS_IDENTITY_API_VERSION=3<br><span class="hljs-built_in">export</span> OS_IMAGE_API_VERSION=2<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/30/OpenStack%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1%E5%AE%89%E8%A3%85/">OpenStack基础服务安装<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
