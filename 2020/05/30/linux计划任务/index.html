@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>linux计划任务 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,1、计划任务基本概述
+2、计划任务时间管理
+3、计划任..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/linux%E5%9F%BA%E7%A1%80.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">linux计划任务</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-05-30</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/05/30/linux%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1/"
+          class="leancloud" data-flag-title="linux计划任务"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4440</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>1、计划任务基本概述<br>
+2、计划任务时间管理<br>
+3、计划任务编写实践<br>
+4、计划任务如何调试</p>
+<h2 id="1、计划任务基本概述">1、计划任务基本概述</h2>
+<p><strong>1、什么是crond</strong><br>
+crond就是计划任务，类似于我们平时生活中的闹钟，定点执行<br>
+<strong>2、为什么要用crond</strong><br>
+crond主要做一些周期性的任务，比如凌晨3点定时备份数据。比如：11点开启网站抢购接口，12点关闭网站抢购接口<br>
+<strong>3、计划任务主要分为以下两种情况：</strong><br>
+1、系统级别的定时任务：临时文件清理、系统信息采集、日志文件切割<br>
+用户级别的定时任务：定时向互联网同步时间、定时备份系统配置文件、定时备份数据库的数据。</p>
+<h2 id="2、计划任务时间管理">2、计划任务时间管理</h2>
+<p><strong>1.Crontab配置文件记录了时间周期的含义</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@xuliangwei ~]<span class="hljs-comment"># vim /etc/crontab</span><br>SHELL=/bin/bash                     <span class="hljs-comment">#执行命令的解释器</span><br>PATH=/sbin:/bin:/usr/sbin:/usr/bin  <span class="hljs-comment">#环境变量</span><br>MAILTO=root                         <span class="hljs-comment">#邮件发给谁</span><br><span class="hljs-comment"># Example of job definition:</span><br><span class="hljs-comment"># .---------------- minute (0 - 59) #分钟</span><br><span class="hljs-comment"># |  .------------- hour (0 - 23)   #小时</span><br><span class="hljs-comment"># |  |  .---------- day of month (1 - 31)   #日期</span><br><span class="hljs-comment"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr #月份</span><br><span class="hljs-comment"># |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat  #星期</span><br><span class="hljs-comment"># |  |  |  |  |</span><br><span class="hljs-comment"># *  *  *  *  *   command to be executed</span><br><br><span class="hljs-comment"># *  表示任意的(分、时、日、月、周)时间都执行</span><br><span class="hljs-comment"># -  表示一个时间范围段, 如5-7点</span><br><span class="hljs-comment"># ,  表示分隔时段, 如6,0,4表示周六、日、四</span><br><span class="hljs-comment"># /1 表示每隔n单位时间, 如*/10 每10分钟</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>2.了解crontab的时间编写规范</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs bash">00 02 * * * ls      <span class="hljs-comment">#每天的凌晨2点整执行</span><br>00 02 1 * * ls      <span class="hljs-comment">#每月的1日的凌晨2点整执行</span><br>00 02 14 2 * ls     <span class="hljs-comment">#每年的2月14日凌晨2点执行</span><br>00 02 * * 7 ls      <span class="hljs-comment">#每周天的凌晨2点整执行</span><br>00 02 * 6 5 ls      <span class="hljs-comment">#每年的6月周五凌晨2点执行</span><br>00 02 14 * 7 ls     <span class="hljs-comment">#每月14日或每周日的凌晨2点都执行</span><br>00 02 14 2 7 ls     <span class="hljs-comment">#每年的2月14日或每年2月的周天的凌晨2点执行   </span><br>*/10  02 * * * ls   <span class="hljs-comment">#每天凌晨2点，每隔10分钟执行一次</span><br>* * * * *  ls       <span class="hljs-comment">#每分钟都执行</span><br>00 00 14 2 *  ls    <span class="hljs-comment">#每年2月14日的凌晨执行命令 </span><br>*/5 * * * *  ls     <span class="hljs-comment">#每隔5分钟执行一次</span><br>00 02 * 1,5,8 * ls  <span class="hljs-comment">#每年的1月5月8月凌晨2点执行</span><br>00 02 1-8 * *  ls    <span class="hljs-comment">#每月1号到8号凌晨2点执行</span><br>0 21 * * * ls       <span class="hljs-comment">#每天晚上21:00执行</span><br>45 4 1,10,22 * * ls <span class="hljs-comment">#每月1、10、22日的4:45执行</span><br>45 4 1-10 * * l     <span class="hljs-comment">#每月1到10日的4:45执行</span><br>3,15 8-11 */2 * * ls <span class="hljs-comment">#每隔两天的上午8点到11点的第3和第15分钟执行</span><br>0 23-7/1 * * * ls   <span class="hljs-comment">#晚上11点到早上7点之间，每隔一小时执行</span><br>15 21 * * 1-5 ls    <span class="hljs-comment">#周一到周五每天晚上21:15执行</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>3.使用crontab编写cron定时任务</strong></p>
+<p>参数	 含义<br>
+-e	     编辑定时任务<br>
+-l	    查看定时任务<br>
+-r	    删除定时任务<br>
+-u   	指定其他用户</p>
+<h2 id="3-计划任务编写实践">3.计划任务编写实践</h2>
+<p><strong>1.使用root用户每5分钟执行一次时间同步</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#1.如何同步时间</span><br>[root@xuliangwei ~]<span class="hljs-comment"># ntpdate time.windows.com &amp;&gt;/dev/null</span><br><span class="hljs-comment">#2.配置定时任务</span><br>[root@xuliangwei ~]<span class="hljs-comment"># crontab -e -u root</span><br>[root@xuliangwei ~]<span class="hljs-comment"># crontab -l -u root</span><br>*/5 * * * * ntpdate time.windows.com &amp;&gt;/dev/null<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>2.每天的下午3,5点，每隔半小时执行一次sync命令</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@xuliangwei ~]<span class="hljs-comment"># crontab -l</span><br>*/30 15,17 * * * sync &amp;&gt;/dev/null<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>3.案例：每天凌晨3点做一次备份？备份/etc/目录到/backup下面</strong></p>
+<ol>
+<li>将备份命令写入一个脚本中</li>
+<li>每天备份文件名要求格式: 2019-05-01_hostname_etc.tar.gz</li>
+<li>在执行计划任务时，不要输出任务信息</li>
+<li>存放备份内容的目录要求只保留三天的数据</li>
+</ol>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#1.实现如上备份需求</span><br>[root@xuliangwei ~]<span class="hljs-comment"># mkdir /backup</span><br>[root@xuliangwei ~]<span class="hljs-comment"># tar zcf $(date +%F)_$(hostname)_etc.tar.gz /etc</span><br>[root@xuliangwei ~]<span class="hljs-comment"># find /backup -name “*.tar.gz” -mtime +3 -exec rm -f {}\;</span><br><br><span class="hljs-comment">#2.将命令写入至一个文件中</span><br>[root@xuliangwei ~]<span class="hljs-comment"># vim /root/back.sh</span><br>mkdir /backup<br>tar zcf $(date +%F)_$(hostname)_etc.tar.gz /etc<br>find /backup -name “*.tar.gz” -mtime +3 -<span class="hljs-built_in">exec</span> rm -f {}\;<br><br><span class="hljs-comment">#3.配置定时任务</span><br>[root@xuliangwei ~]<span class="hljs-comment"># crontab -l</span><br>00 03 * * * bash /root/back.sh  &amp;&gt;/dev/null<br><br><span class="hljs-comment">#3.备份脚本</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>4.crond注意的事项</strong></p>
+<ol>
+<li>给定时任务注释</li>
+<li>将需要定期执行的任务写入Shell脚本中，避免直接使用命令无法执行的情况tar date</li>
+<li>定时任务的结尾一定要有&amp;&gt;/dev/null或者将结果追加重定向&gt;&gt;/tmp/date.log文件</li>
+<li>注意有些命令是无法成功执行的 echo “123” &gt;&gt;/tmp/test.log &amp;&gt;/dev/null<br>
+5.如果一定要是用命令，命令必须使用绝对路径</li>
+</ol>
+<p><strong>5.crond如何备份</strong></p>
+<ol>
+<li>通过查找/var/log/cron中执行的记录，去推算任务执行的时间</li>
+<li>定时的备份/var/spool/cron/{usernmae}</li>
+</ol>
+<p><strong>6.crond如何拒绝某个用户使用</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#1.使用root将需要拒绝的用户加入/etc/cron.deny</span><br>[root@xuliangwei ~]<span class="hljs-comment"># echo "xuliangwei" &gt;&gt; /etc/cron.deny</span><br><br><span class="hljs-comment">#2.登陆该普通用户，测试是否能编写定时任务</span><br>[oldboy@xuliangwei ~]$ crontab -e<br>You (xuliangwei) are not allowed to use this program (crontab)<br>See crontab(1) <span class="hljs-keyword">for</span> more information<br></code></pre></td></tr></tbody></table></figure>
+<h2 id="4-计划任务如何调试">4.计划任务如何调试</h2>
+<p><strong>1.crond调试</strong></p>
+<ol>
+<li>调整任务每分钟执行的频率, 以便做后续的调试。</li>
+<li>如果使用cron运行脚本，请将脚本执行的结果写入指定日志文件, 观察日志内容是否正常。</li>
+<li>命令使用绝对路径, 防止无法找到命令导致定时任务执行产生故障。</li>
+<li>通过查看/var/log/cron日志，以便检查我们执行的结果，方便进行调试。</li>
+</ol>
+<p><strong>2.crond编写思路</strong></p>
+<p>1.手动执行命令，然后保留执行成功的结果。<br>
+2.编写脚本<br>
+脚本需要统一路径/scripts<br>
+脚本内容复制执行成功的命令(减少每个环节出错几率)<br>
+脚本内容尽可能的优化, 使用一些变量或使用简单的判断语句<br>
+脚本执行的输出信息可以重定向至其他位置保留或写入/dev/null<br>
+3.执行脚本<br>
+使用bash命令执行, 防止脚本没有增加执行权限(/usr/bin/bash)<br>
+执行脚本成功后，复制该执行的命令，以便写入cron<br>
+4.编写计划任务<br>
+加上必要的注释信息, 人、时间、任务<br>
+设定计划任务执行的周期<br>
+粘贴执行脚本的命令(不要手敲)<br>
+5.调试计划任务<br>
+增加任务频率测试<br>
+检查环境变量问题<br>
+检查crond服务日志</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/05/30/harbor+registry/">harbor+registry<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
