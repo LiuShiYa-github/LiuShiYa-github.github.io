@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>kubernetes安装部署 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,https://images.cnblogs.com/..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/k8s.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">kubernetes安装部署</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-06-02</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/06/02/kubernetes%E7%9A%84%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"
+          class="leancloud" data-flag-title="kubernetes安装部署"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>8342</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p><a href="https://images.cnblogs.com/cnblogs_com/liushiya/1778423/o_20060116390401.jpg" target="_blank" rel="noopener">https://images.cnblogs.com/cnblogs_com/liushiya/1778423/o_20060116390401.jpg</a></p>
+<p>kubernetes 分为两个节点  master 和node节点<br>
+可以有多个node节点；master 可以有两个 做高可用<br>
+master 节点只是管理功能  真正运行容器的是在node节点</p>
+<p>1、如何控制kubernetes   都是由master的节点的api-server 服务接受请求  进行分配<br>
+2、如果是在kubernetes 中创建资源  首先会在api-server接受请求后  会在etcd数据库（nosql）中加入此资源<br>
+3、scheduler调度器   启动容器  会调度分配  查看各个节点的信息  在那个节点上启用容器比较合适<br>
+4、在node节点的kubelet 本身没有容器技术  调用docker创建容器，如果docker启动失败  那么kubelet 也会创建失败<br>
+5、容器都被封装在pod资源里面  通过pod资源进行管理容器<br>
+6、cadvisor 被集成在kubelet中  是一个监控组件  进行监控容器<br>
+7、plugin  network  网络查看  容器的跨宿主机间的通讯<br>
+8、controller  manager  保证指定数量的容器始终运行 某个节点的容器挡掉了  但是会有其他的节点容器顶上来  进行自动修复<br>
+9、容器如何被外界访问   用户访问kube-proxy  然后kube-proxy做负载均衡  将请求分发到不同的node的容器上面  主要是实现服务的自动发现 以及 负载均衡</p>
+<p>master节点有四个服务：<br>
+1、api-server<br>
+2、controller manager  保证有指定数量的容器始终运行<br>
+3、scheduler 调度 选择合适的node创建资源<br>
+4、etcd数据库  存储数据</p>
+<p>node节点：<br>
+1、kubelet 组件  docker作为kubelet的依赖被装上<br>
+2、kube-proxy  可以装也可以不装   做负载均衡高可用作用</p>
+<p>kubernetes的其他组件：都是可以使用容器再运行的</p>
+<h2 id="kubernetes的安装部署（yum方式）">kubernetes的安装部署（yum方式）</h2>
+<p><strong>1、修改IP地址、主机名和hosts解析</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">10.0.0.11  k8s-master<br>10.0.0.12  k8s-node-1<br>10.0.0.13  k8s-node-2<br></code></pre></td></tr></tbody></table></figure>
+<p>所有节点需要做hosts解析</p>
+<p><strong>2、master节点安装etcd</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install etcd -y<br><br>vim /etc/etcd/etcd.conf<br>6行：ETCD_LISTEN_CLIENT_URLS=<span class="hljs-string">"http://0.0.0.0:2379"</span>  <br>21行：ETCD_ADVERTISE_CLIENT_URLS=<span class="hljs-string">"http://10.0.0.11:2379"</span>  <br><br>systemctl start etcd.service<br>systemctl <span class="hljs-built_in">enable</span> etcd.service<br><br>测试etcd数据库是否可用<br>etcdctl <span class="hljs-built_in">set</span> testdir/testkey0 0<br>etcdctl get testdir/testkey0<br><br>etcdctl -C http://10.0.0.11:2379 cluster-health<br></code></pre></td></tr></tbody></table></figure>
+<p>etcd 原生态支持做集群，监听2379端口 2380端口做数据同步使用的 如果只是一个etcd节点的话 不做数据同步；key vue 方式存储数据</p>
+<p>监测集群是否健康的命令</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@k8s-master ~]<span class="hljs-comment"># etcdctl  -C  http://10.0.0.11:2379 cluster-health</span><br>member 8e9e05c52164694d is healthy: got healthy result from http://10.0.0.11:2379<br>cluster is healthy<br></code></pre></td></tr></tbody></table></figure>
+<p>etcd配置文件解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">ETCD_DATA_DIR=<span class="hljs-string">"/var/lib/etcd/default.etcd"</span>  数据存放位置<br>ETCD_LISTEN_CLIENT_URLS=<span class="hljs-string">"http://0.0.0.0:2379"</span>  数据库的监听地址  允许所有节点连接<br>ETCD_ADVERTISE_CLIENT_URLS=<span class="hljs-string">"http://10.0.0.11:2379"</span>etcd数据库的名字  每个节点都不相同<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>3、master节点安装kubernetes 服务</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install kubernetes-master.x86_64 -y<br><br>vim /etc/kubernetes/apiserver <br>8行:  KUBE_API_ADDRESS=<span class="hljs-string">"--insecure-bind-address=0.0.0.0"</span><br>11行：KUBE_API_PORT=<span class="hljs-string">"--port=8080"</span><br>14行: KUBELET_PORT=<span class="hljs-string">"--kubelet-port=10250"</span><br>17行：KUBE_ETCD_SERVERS=<span class="hljs-string">"--etcd-servers=http://10.0.0.11:2379"</span><br>23行：KUBE_ADMISSION_CONT：ROL=<span class="hljs-string">"--admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"</span><br><br>vim /etc/kubernetes/config<br>22行：KUBE_MASTER=<span class="hljs-string">"--master=http://10.0.0.11:8080"</span>   <br><br>systemctl <span class="hljs-built_in">enable</span> kube-apiserver.service<br>systemctl restart kube-apiserver.service<br>systemctl <span class="hljs-built_in">enable</span> kube-controller-manager.service<br>systemctl restart kube-controller-manager.service<br>systemctl <span class="hljs-built_in">enable</span> kube-scheduler.service<br>systemctl restart kube-scheduler.service<br></code></pre></td></tr></tbody></table></figure>
+<p>检查服务是否正常</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@k8s-master ~]<span class="hljs-comment"># kubectl get componentstatus</span><br>NAME                 STATUS    MESSAGE             ERROR<br>controller-manager   Healthy   ok<br>scheduler            Healthy   ok<br>etcd-0               Healthy   {<span class="hljs-string">"health"</span>:<span class="hljs-string">"true"</span>}<br>[root@k8s-master ~]<span class="hljs-comment">#</span><br></code></pre></td></tr></tbody></table></figure>
+<p>为什么服务列表里面没有apiserver ？<br>
+因为apiserver是接受命令的 如果apiserver宕掉  那么执行任何命令都会报错</p>
+<p>api-server的配置文件解释：/etc/kubernetes/apiserver</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">KUBE_API_ADDRESS=<span class="hljs-string">"--insecure-bind-address=0.0.0.0"</span> 监听地址<br>KUBE_API_PORT=<span class="hljs-string">"--port=8080"</span> 监听端口  8080<br>KUBELET_PORT=<span class="hljs-string">"--kubelet-port=10250"</span> kubelet的监听端口<br>KUBE_ETCD_SERVERS=<span class="hljs-string">"--etcd-servers=http://10.0.0.11:2379"</span> 指定etcd集群的节点<br>KUBE_SERVICE_ADDRESSES=<span class="hljs-string">"--service-cluster-ip-range=10.254.0.0/16"</span>kubernetes的server资源vip地址范围<br>KUBE_ADMISSION_CONTROL=<span class="hljs-string">"--admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"</span>kubernetes的管<br></code></pre></td></tr></tbody></table></figure>
+<p>扩展：<br>
+1、etcd可以单独安装在一个节点<br>
+2、scheduler和controller-manager共用一个配置文件：/etc/kubernetes/config<br>
+解释：<br>
+–master地址 一般就是apiserver服务的节点</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">KUBE_LOGTOSTDERR=<span class="hljs-string">"--logtostderr=true"</span>日志存放在manager中<br>KUBE_LOG_LEVEL=<span class="hljs-string">"--v=0"</span>默认开启debug模式<br>KUBE_ALLOW_PRIV=<span class="hljs-string">"--allow-privileged=false"</span> 是否允许运行特权容器<br>KUBE_MASTER=<span class="hljs-string">"--master=http://10.0.0.11:8080"</span>帮助 controller-manager找到apiserv<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>node节点安装</strong><br>
+kube-proxy 使用的配置文件也是 /etc/kubernetes/config<br>
+默认会把docker作为依赖安装上</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install kubernetes-node.x86_64 -y<br><br>vim /etc/kubernetes/config <br>22行：KUBE_MASTER=<span class="hljs-string">"--master=http://10.0.0.11:8080"</span><br><br>vim /etc/kubernetes/kubelet<br>5行：KUBELET_ADDRESS=<span class="hljs-string">"--address=0.0.0.0"</span><br>8行：KUBELET_PORT=<span class="hljs-string">"--port=10250"</span><br>11行：KUBELET_HOSTNAME=<span class="hljs-string">"--hostname-override=10.0.0.12"</span><br>14行：KUBELET_API_SERVER=<span class="hljs-string">"--api-servers=http://10.0.0.11:8080"</span><br><br>systemctl <span class="hljs-built_in">enable</span> kubelet.service<br>systemctl restart kubelet.service<br>systemctl <span class="hljs-built_in">enable</span> kube-proxy.service<br>systemctl restart kube-proxy.service<br></code></pre></td></tr></tbody></table></figure>
+<p>在master节点检查是否已经将node节点加入进来</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@k8s-master ~]<span class="hljs-comment"># kubectl get nodes</span><br>NAME        STATUS    AGE<br>10.0.0.12   Ready     12h<br>10.0.0.13   Ready     12h<br></code></pre></td></tr></tbody></table></figure>
+<p>配置文件作用解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/etc/kubernetes/config：<br>KUBE_MASTER=<span class="hljs-string">"--master=http://10.0.0.11:8080"</span>告诉node节点找到apiserver的地址<br></code></pre></td></tr></tbody></table></figure>
+<p>etc/kubernetes/kubelet：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">KUBELET_ADDRESS=<span class="hljs-string">"--address=0.0.0.0"</span>node监听IP地址<br>KUBELET_PORT=<span class="hljs-string">"--port=10250"</span> 监听端口  和master保持一致<br>KUBELET_HOSTNAME=<span class="hljs-string">"--hostname-override=10.0.0.12"</span> 每个节点的名字<br>KUBELET_API_SERVER=<span class="hljs-string">"--api-servers=http://10.0.0.11:8080"</span> kubelet找apiserver的地址<br>基础容器的地址信息<br>KUBELET_POD_INFRA_CONTAINER=<span class="hljs-string">"--pod-infra-container-image=10.0.0.11:5000/docker.io/tianyebj/pod-infrastructure:latest"</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>所有节点安装flannel网络</strong><br>
+flannel插件的目的：实现容器跨宿主机进行通讯</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install flannel -y<br>sed -i <span class="hljs-string">'s#http://127.0.0.1:2379#http://10.0.0.11:2379#g'</span> /etc/sysconfig/flanneld<br><br><span class="hljs-comment">##master节点：</span><br>etcdctl mk /atomic.io/network/config   <span class="hljs-string">'{ "Network": "172.18.0.0/16" }'</span><br><br>yum install docker -y<br>systemctl <span class="hljs-built_in">enable</span> flanneld.service <br>systemctl restart flanneld.service <br>systemctl  restart  docker<br>systemctl  <span class="hljs-built_in">enable</span>  docker<br>systemctl restart kube-apiserver.service<br>systemctl restart kube-controller-manager.service<br>systemctl restart kube-scheduler.service<br><br><span class="hljs-comment">##node节点：</span><br>systemctl <span class="hljs-built_in">enable</span> flanneld.service <br>systemctl restart flanneld.service <br>systemctl  restart  docker<br>systemctl restart kubelet.service<br>systemctl restart kube-proxy.service<br><br>vim /usr/lib/systemd/system/docker.service<br><span class="hljs-comment">#在[Service]区域下增加一行（修改掉小bug）</span><br>ExecStartPost=/usr/sbin/iptables -P FORWARD ACCEPT<br>systemctl daemon-reload <br>systemctl restart docker<br></code></pre></td></tr></tbody></table></figure>
+<p>flannel网络是需要数据库（etcd）的  不会出现分配的IP地址出现冲突的问题<br>
+flannel网络的原理：会在docker下生成一个配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">cat /usr/lib/systemd/system/docker.service.d/flannel.conf<br>[Service]<br>EnvironmentFile=-/run/flannel/docker<br></code></pre></td></tr></tbody></table></figure>
+<p>docker的网段范围</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@k8s-master systemd]<span class="hljs-comment"># cat /run/flannel/docker</span><br>DOCKER_OPT_BIP=<span class="hljs-string">"--bip=172.18.66.1/24"</span><br>DOCKER_OPT_IPMASQ=<span class="hljs-string">"--ip-masq=true"</span><br>DOCKER_OPT_MTU=<span class="hljs-string">"--mtu=1472"</span><br>DOCKER_NETWORK_OPTIONS=<span class="hljs-string">" --bip=172.18.66.1/24 --ip-masq=true --mtu=1472"</span><br></code></pre></td></tr></tbody></table></figure>
+<p>flannel配置文件/etc/sysconfig/flanneld</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">FLANNEL_ETCD_ENDPOINTS=<span class="hljs-string">"http://10.0.0.11:2379"</span>etcd数据库的地址<br>FLANNEL_ETCD_PREFIX=<span class="hljs-string">"/atomic.io/network"</span> 配置flannel的key<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>配置master为镜像仓库</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#所有节点</span><br><br>vi /etc/docker/daemon.json<br>{<br><span class="hljs-string">"registry-mirrors"</span>: [<span class="hljs-string">"https://registry.docker-cn.com"</span>],<br><span class="hljs-string">"insecure-registries"</span>: [<span class="hljs-string">"10.0.0.11:5000"</span>]<br>}<br><br>systemctl restart docker<br><br><span class="hljs-comment">#master节点</span><br>docker run -d -p 5000:5000 --restart=always --name registry -v /opt/myregistry:/var/lib/registry<br></code></pre></td></tr></tbody></table></figure>
+<p>为什么要用镜像仓库  因为kubernetes启动容器时 使用的镜像就是使用的私有仓库</p>
+<p><strong>kubernetes的功能：</strong><br>
+docker的集群管理工具  类似于kvm多了 使用OpenStack集群平台管理工具一样<br>
+kubernetes还是一个容器的编排工具<br>
+docker-compose也是容器的编排工具  区别在于 docker-compose是单机编排工具 （只能管理自己的容器）<br>
+kubernetes是集群编排管理工具</p>
+<p>1、自愈:  重新启动失败的容器，在节点不可用时，替换和重新调度节点上的容器，对用户定义的健康检查不响应的容器会被中止，并且在容器准备好服务之前不会把其向客户端广播。<br>
+2、弹性伸缩:  通过监控容器的cpu的负载值,如果这个平均高于80%,增加容器的数量,如果这个平均低于10%,减少容器的数量<br>
+3、服务的自动发现和负载均衡: 不需要修改您的应用程序来使用不熟悉的服务发现机制，Kubernetes 为容器提供了自己的 IP 地址和一组容器的单个 DNS 名称，并可以在它们之间进行负载均衡。<br>
+4、滚动升级和一键回滚:    Kubernetes 逐渐部署对应用程序或其配置的更改，同时监视应用程序运行状况，以确保它不会同时终止所有实例。 如果出现问题，Kubernetes会为您恢复更改，利用日益增长的部署解决方案的生态系统。<br>
+5、私密配置文件管理. web容器里面,数据库的账户密码(测试库密码)</p>
+<p><strong>k8s的安装方式</strong><br>
+yum安装    1.5    最容易安装成功，最适合学习的<br>
+源码编译安装—难度最大  可以安装最新版<br>
+二进制安装—步骤繁琐    可以安装最新版       shell,ansible,saltstack<br>
+kubeadm    安装最容易, 网络    可以安装最新版<br>
+minikube    适合开发人员体验k8s,  网络</p>
+<p><strong>k8s的应用场景</strong><br>
+k8s最适合跑微服务项目!</p>
+<p>微服务架构：微小的服务  是一种软件的开发架构   一个模块使用一套架构，微服务能够支撑足够大的用户；业务的稳定性更强；代码的更新发布更加快捷；对于运维来说  代码上线更复杂 节点变多，使用自动化代码上线</p>
+<p>MVC架构：在微服务架构之前    MVC架构比较火  所有模块（秒杀、抢购等）都是一个站点，在站点中分目录  在一个站点中实现所有功能  用户访问量大的时候 容易扛不住</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/06/02/kubernetes%E5%B8%B8%E7%94%A8%E7%9A%84%E8%B5%84%E6%BA%90/">kubernetes常用的资源<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>

@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>kubernetes常用的资源 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,创建pod资源
+pod是最小资源单位.
+任何的一个k8..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/k8s.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">kubernetes常用的资源</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-06-02</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/06/02/kubernetes%E5%B8%B8%E7%94%A8%E7%9A%84%E8%B5%84%E6%BA%90/"
+          class="leancloud" data-flag-title="kubernetes常用的资源"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3418</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p><strong>创建pod资源</strong></p>
+<p>pod是最小资源单位.<br>
+任何的一个k8s资源都可以由yml清单文件来定义</p>
+<p>k8s yaml的主要组成</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">apiVersion: v1  api版本<br>kind: pod   资源类型<br>metadata:   属性<br>spec:       详细<br></code></pre></td></tr></tbody></table></figure>
+<p>master节点编写pod.yaml文档<br>
+vi  k8s_pod.yaml</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs bash">apiVersion: v1<br>kind: Pod<br>metadata:<br>  name: nginx<br>  labels:<br>    app: web<br>spec:<br>  containers:<br>    - name: nginx<br>      image: 10.0.0.11:5000/nginx:1.13<br>      ports:<br>        - containerPort: 80<br></code></pre></td></tr></tbody></table></figure>
+<p>创建pod资源并查看pod资源</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl create -f k8s_pod.yml<br>kubectl get pod <br>kubectl describe pod nginx<br></code></pre></td></tr></tbody></table></figure>
+<p>node节点:根据镜像的pod-infrastructure:latest       image的具体地址进行填写进行填写</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">vim /etc/kubernetes/kubelet<br>KUBELET_POD_INFRA_CONTAINER=<span class="hljs-string">"--pod-infra-container-image=10.0.0.11:5000/pod-infrastructure:latest"</span><br>systemctl restart kubelet.service<br></code></pre></td></tr></tbody></table></figure>
+<p>查看是否启动成功</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl get pod -o  wide<br> kubectl describe pod nginx<br></code></pre></td></tr></tbody></table></figure>
+<p><strong>pod和容器的关系：</strong><br>
+为什么创建一个pod资源，需要至少启动两个容器？<br>
+pod基础容器 实现k8s的高级功能+<br>
+nginx容器   实现业务功能</p>
+<p><code>pod资源中，多个业务容器的端口不能冲突</code></p>
+<p>pod资源:至少由两个容器组成,pod基础容器和业务容器组成(最多1+4)</p>
+<p>只要创建一个pod资源，都会启动一个pod基础容器+pod资源中的业务容器</p>
+<p>curl -I 172.18.78.2 访问pod的ip地址，pod里面的nginx可以被访问，nginx容器和pod-infrastructure<br>
+172.18.78.2 究竟是哪一个容器的ip地址？<br>
+172.18.78.2是pod基础容器的ip<br>
+nginx容器和pod基础容器共用ip地址</p>
+<p><strong>ReplicationController资源</strong><br>
+rc:保证指定数量的pod始终存活,rc通过标签选择器来关联pod<br>
+启动5个相同的pod，pod 5个副本</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs bash">apiVersion: v1<br>kind: ReplicationController<br>metadata:<br>  name: nginx<br>spec:<br>  replicas: 5  <span class="hljs-comment">#副本5</span><br>  selector:<br>    app: myweb<br>  template:  <span class="hljs-comment">#模板</span><br>    metadata:<br>      labels:<br>        app: myweb<br>    spec:<br>      containers:<br>      - name: myweb<br>        image: 10.0.0.11:5000/nginx:1.13<br>        ports:<br>        - containerPort: 80<br></code></pre></td></tr></tbody></table></figure>
+<p>启动一个rc  并查看rc信息</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl   create -f  k8s_rc.yaml<br>kubectl  get  rc<br></code></pre></td></tr></tbody></table></figure>
+<p>删除一个  又会创建一个新的</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl   delete  pod  nginx-9kstr<br></code></pre></td></tr></tbody></table></figure>
+<p>每一个pod名字，必须唯一<br>
+k8s 不断的检查不可用的节点，驱逐pod</p>
+<p>停止node节点的服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl stop  kubelet.service<br></code></pre></td></tr></tbody></table></figure>
+<p>删除节点</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl  delete node   10.0.0.12<br></code></pre></td></tr></tbody></table></figure>
+<p>会在另外的节点上新建  一直保持rc始终运行</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@k8s-master rc]<span class="hljs-comment"># kubectl   get pod -o wide</span><br>NAME          READY     STATUS    RESTARTS   AGE       IP            NODE<br>nginx-1zgwx   1/1       Running   0          32s       172.18.10.8   10.0.0.13<br>nginx-kt27z   1/1       Running   0          8m        172.18.10.5   10.0.0.13<br>nginx-qq1sc   1/1       Running   0          32s       172.18.10.7   10.0.0.13<br>nginx-st72b   1/1       Running   0          8m        172.18.10.4   10.0.0.13<br>nginx-tvf09   1/1       Running   0          32s       172.18.10.6   10.0.0.13<br><span class="hljs-built_in">test</span>          2/2       Running   14         7h        172.18.10.2   10.0.0.13<br></code></pre></td></tr></tbody></table></figure>
+<p>查看标签pod的</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl   get pod -o wide   --show-labels<br></code></pre></td></tr></tbody></table></figure>
+<p>查看节点使用那些标签</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl     get rc  -o wide<br></code></pre></td></tr></tbody></table></figure>
+<p>修改pod 标签为myweb  会出现少了一个，删除了最年轻的</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl   edit   pod  <span class="hljs-built_in">test</span><br></code></pre></td></tr></tbody></table></figure>
+<p>宏观世界，pod都是同一秒创建<br>
+微观世界，pod创建相隔几毫米</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubectl   create  -f   xxx.yaml   创建资源<br>kubectl   get  pod|rc             查看某一个资源列表<br>kubectl  describe  pod  nginx      查看某一个具体资源的详细信息<br>kubectl  delete   pod  nginx        删除某一个具体资源<br> 或者kubectl delete  -f  xxx.yaml<br>kubectl  edit  pod   nginx          编辑某一个资源的配置文件<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+    <a href="/2020/06/02/kubernetes%E7%9A%84%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/"><i class="iconfont iconleft"></i>kubernetes安装部署</a>
+  
+  
+    <a href="/2020/05/31/glance%E9%95%9C%E5%83%8F/">glance镜像服务<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
