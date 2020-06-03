@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>zabbix ReplicationController模板 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,在11节点执行如下的yaml文件  分别是zabbix..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/k8s.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">zabbix ReplicationController模板</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-06-03</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/06/03/zabbix%20ReplicationController%E6%A8%A1%E6%9D%BF/"
+          class="leancloud" data-flag-title="zabbix ReplicationController模板"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4570</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>在11节点执行如下的yaml文件  分别是zabbix的rc文件和zabbix的svc文件</p>
+<p>在13节点 上传rc中所需要的镜像  因为使用分配策略时指定了是在13节点本地获取镜像  如果有 就不从私有仓库拉去镜像</p>
+<p>always ：总是从镜像仓库上拉取最新镜像<br>
+never：从不从私有仓库拉取镜像<br>
+ifnotpresent：如果本地有镜像，就不从私有仓库拉取镜像</p>
+<p>多个服务写在一个资源yaml中<br>
+三个短横杆隔开</p>
+<p><strong>zabbix-rc.yml</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><code class="hljs bash">apiVersion: v1<br>kind: ReplicationController<br>metadata:<br>  name: mysql-server<br>spec:<br>  replicas: 1<br>  selector:<br>    app: mysql-server<br>  template:<br>    metadata:<br>      labels:<br>        app: mysql-server<br>    spec:<br>      nodeName: 10.0.0.13<br>      containers:<br>        - name: mysql<br>          image: 10.0.0.11:5000/mysql:5.7<br>          imagePullPolicy: IfNotPresent<br>          ports:<br>          - containerPort: 3306<br>          args: [<span class="hljs-string">"--character-set-server=utf8"</span>,<span class="hljs-string">"--collation-server=utf8_bin"</span>]<br>          env:<br>          - name: MYSQL_ROOT_PASSWORD<br>            value: <span class="hljs-string">'root_pwd'</span><br>          - name: MYSQL_DATABASE<br>            value: <span class="hljs-string">'zabbix'</span><br>          - name: MYSQL_USER<br>            value: <span class="hljs-string">'zabbix'</span><br>          - name: MYSQL_PASSWORD<br>            value: <span class="hljs-string">'zabbix_pwd'</span><br>---<br>apiVersion: v1<br>kind: ReplicationController<br>metadata:<br>  name: zabbix-java-gateway<br>spec:<br>  replicas: 1<br>  selector:<br>    app: zabbix-java-gateway<br>  template:<br>    metadata:<br>      labels:<br>        app: zabbix-java-gateway<br>    spec:<br>      nodeName: 10.0.0.13<br>      containers:<br>        - name: zabbix-java-gateway<br>          imagePullPolicy: IfNotPresent<br>          image: 10.0.0.11:5000/zabbix-java-gateway:latest<br>---<br>apiVersion: v1<br>kind: ReplicationController<br>metadata:<br>  name: zabbix-server<br>spec:<br>  replicas: 1<br>  selector:<br>    app: zabbix-server<br>  template:<br>    metadata:<br>      labels:<br>        app: zabbix-server<br>    spec:<br>      nodeName: 10.0.0.13<br>      containers:<br>        - name: zabbix-server<br>          imagePullPolicy: IfNotPresent<br>          image: 10.0.0.11:5000/zabbix-server-mysql:latest<br>          ports:<br>          - containerPort: 10051<br>          env:<br>          - name: DB_SERVER_HOST<br>            value: <span class="hljs-string">'mysql-server'</span><br>          - name: MYSQL_DATABASE<br>            value: <span class="hljs-string">'zabbix'</span><br>          - name: MYSQL_USER<br>            value: <span class="hljs-string">'zabbix'</span><br>          - name: MYSQL_PASSWORD<br>            value: <span class="hljs-string">'zabbix_pwd'</span><br>          - name: MYSQL_ROOT_PASSWORD<br>            value: <span class="hljs-string">'root_pwd'</span><br>          - name: ZBX_JAVAGATEWAY<br>            value: <span class="hljs-string">'zabbix-java-gateway'</span><br>---<br>apiVersion: v1<br>kind: ReplicationController<br>metadata:<br>  name: zabbix-web-nginx-mysql<br>spec:<br>  replicas: 1<br>  selector:<br>    app: zabbix-web-nginx-mysql<br>  template:<br>    metadata:<br>      labels:<br>        app: zabbix-web-nginx-mysql<br>    spec:<br>      nodeName: 10.0.0.13<br>      containers:<br>        - name: zabbix-web-nginx-mysql<br>          imagePullPolicy: IfNotPresent<br>          image: 10.0.0.11:5000/zabbix-web-nginx-mysql:latest<br>          ports:<br>          - containerPort: 80<br>          env:<br>          - name: DB_SERVER_HOST<br>            value: <span class="hljs-string">'mysql-server'</span><br>          - name: MYSQL_DATABASE<br>            value: <span class="hljs-string">'zabbix'</span><br>          - name: MYSQL_USER<br>            value: <span class="hljs-string">'zabbix'</span><br>          - name: MYSQL_PASSWORD<br>            value: <span class="hljs-string">'zabbix_pwd'</span><br>          - name: MYSQL_ROOT_PASSWORD<br>            value: <span class="hljs-string">'root_pwd'</span><br></code></pre></td></tr></tbody></table></figure>
+<p><strong>zabbix-svc.yml</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><code class="hljs bash">apiVersion: v1<br>kind: Service<br>metadata:<br>  name: mysql-server<br>spec:<br>  ports:<br>    - port: 3306<br>      targetPort: 3306<br>  selector:<br>    app: mysql-server<br>---<br>apiVersion: v1<br>kind: Service<br>metadata:<br>  name: zabbix-java-gateway<br>spec:<br>  ports:<br>    - port: 10052<br>      targetPort: 10052<br>  selector:<br>    app: zabbix-java-gateway<br>---<br>apiVersion: v1<br>kind: Service<br>metadata:<br>  name: zabbix-server<br>spec:<br>  <span class="hljs-built_in">type</span>: NodePort<br>  ports:<br>    - port: 10051<br>      nodePort: 10051<br>      targetPort: 10051<br>  selector:<br>    app: zabbix-server<br>---<br>apiVersion: v1<br>kind: Service<br>metadata:<br>  name: zabbix-web-nginx-mysql<br>spec:<br>  <span class="hljs-built_in">type</span>: NodePort<br>  ports:<br>    - port: 80<br>      nodePort: 30007<br>      targetPort: 80<br>  selector:<br>    app: zabbix-web-nginx-mysql<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/06/03/Kubernetes%20Deployment%20%E6%A8%A1%E6%9D%BF/">Kubernetes Deployment 模板<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
