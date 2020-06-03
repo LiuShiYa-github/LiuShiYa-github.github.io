@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Kubernetes Deployment 模板 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,123456789101112131415161718..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/k8s.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">Kubernetes Deployment 模板</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-06-03</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/06/03/Kubernetes%20Deployment%20%E6%A8%A1%E6%9D%BF/"
+          class="leancloud" data-flag-title="Kubernetes Deployment 模板"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2801</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><code class="hljs bash">apiVersion: v1  <span class="hljs-comment">#版本号</span><br>kind: Pod    <span class="hljs-comment"># kind定义这个一个pod资源</span><br>metadata:<br>  name: myweb   <span class="hljs-comment">#定义pod名字</span><br>  namespace: string <span class="hljs-comment">#命名空间</span><br>  labels:       <span class="hljs-comment">#定义标签</span><br>    name:myweb<br>spec:     <span class="hljs-comment">#定义pod里容器属性</span><br>  containers:<br>  - name: myweb   <span class="hljs-comment">#定义容器名</span><br>    image: kuberguide/tomcat-app:v1   <span class="hljs-comment">#定义容器使用镜像</span><br>    imagePullPolicy:[Always|Never|IfNotPresent]每次都重新下载镜像|仅使用本地镜像|先使用本地镜像，不存在再下载镜像。默认每次重新下载镜像Always<br>    <span class="hljs-built_in">command</span>:[string] <span class="hljs-comment">#容器启动命令列表</span><br>    args:[string]<span class="hljs-comment">#容器启动命令参数列表</span><br>    workingDir:string <span class="hljs-comment">#容器工作目录</span><br>    volumeMounts: <span class="hljs-comment">#挂载到容器的存储卷</span><br>      - name: string  <span class="hljs-comment">#使用pod定义的共享存储卷名称</span><br>        mountPath:string 存储卷在容器内挂载的绝对路径，应少于512字符<br>  ports:      <span class="hljs-comment">#定义容器开放暴露的端口号列表</span><br>  - containerPort: 8080   <span class="hljs-comment">#定义pod对外开放的服务端口号，容器要监听的端口</span><br>  env:    <span class="hljs-comment">#定义容器变量列表</span><br>  - name: MYSQL_SERVICE_HOST<br>    value: <span class="hljs-string">'mysql'</span><br>  resources: <span class="hljs-comment">#资源限制设置</span><br>    limits:  <br>      cpu: string   <span class="hljs-comment">#容器启动后最多可用CPU核数。</span><br>      memory:string  <span class="hljs-comment">#容器启动最多可用内存数 单位MiB、GiB</span><br>    requests:<span class="hljs-comment">#最低启动限制设置</span><br>      cpu: string  <span class="hljs-comment">#最低容器启动可用CPU核数。</span><br>      memory:string  <span class="hljs-comment">#最低容器启动可用内存数 单位MiB、GiB</span><br>  restartPolicy:[Always|Never|OnFailure]<span class="hljs-comment">#pod重启策略，一旦终止立即重启|终止后报告错误后不再重启|只有非0错误码终止才重启其他不重启。默认Always</span><br>  nodeSelector: <span class="hljs-comment">#设置调度pod到指定这里配置的labe的Node上</span><br>    标签key:标签value<br>  imagePullSecrets: <span class="hljs-comment">#拉取镜像时使用的秘钥信息</span><br>    - key:string <br>  volumes: <span class="hljs-comment">#pod的共享存储卷列表</span><br>    - name: string <span class="hljs-comment">#存储卷名，唯一</span><br>      emptyDir:{}  <span class="hljs-comment">#存储卷类型，生命周期和pod相同，临时目录</span><br>      hostPath:    <span class="hljs-comment">#存储卷类型，表示从宿主机目录上挂载</span><br>        path: string  <span class="hljs-comment">#使用的宿主机目录</span><br>      secret:  <span class="hljs-comment">#存储卷类型。</span><br>        secretName: string<br>        items:<br>          - key: string<br>            path: stirng<br>      configMap:  <span class="hljs-comment">#存储卷类型</span><br>        name: string<br>        items:<br>          - key: string<br>            path: sting<br>  livenessProbe: <span class="hljs-comment">#Pod内容器健康检查设置，无响应之后自动重启该容器</span><br>    <span class="hljs-built_in">exec</span>: <span class="hljs-comment">#检查类型，仅需使用其中一种。</span><br>      <span class="hljs-built_in">command</span>:[string]  <span class="hljs-comment">#命令或脚本</span><br>    httpGet: <span class="hljs-comment">#检查类型，仅需使用其中一种。</span><br>      path: string<br>      port: number<br>      host: string<br>      scheme: string<br>      httpHeaders:<br>      - name: string<br>        value: string<br>    tcpSocket:  <span class="hljs-comment">#检查类型，仅需使用其中一种</span><br>      port: number<br>    initialDelaySeconds:0 <span class="hljs-comment">#容器重启完成后，首次探测的间隔时间单位秒</span><br>    timeoutSeconds:0 <span class="hljs-comment">#容器探测等待响应超时时间，单位秒。默认1秒，超时认为不健康重启</span><br>    periodSeconds:0 <span class="hljs-comment">#容器探测间隔时间，单位秒，默认10秒。</span><br>    successThreshold:0<br>    failureThreshold:0<br>    securityContext:<br>      privileged: <span class="hljs-literal">false</span><br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/06/02/kubernetes%E7%9A%84%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2/">kubernetes安装部署<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
