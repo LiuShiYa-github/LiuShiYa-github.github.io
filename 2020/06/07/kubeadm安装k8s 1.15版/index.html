@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>kubeadm安装k8s 1.15版 - 刘世亚</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  <meta name="keywords" content="zhaoo, hexo-theme-zhaoo,"> 
+  
+  <meta name="description" content="北冥有鱼，其名为鲲，鲲之大，不知其几千里也,前提：
+1、安装 k8s 的节点必须是大于 1 核心的..."> 
+  
+  <meta name="author" content="刘世亚"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_58xq2j9v1id.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {}
+    CONFIG = {
+      fancybox: true,
+      pjax: true,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate_alipay: 'https://pic.izhaoo.com/alipay.jpg',
+      donate_wechat: 'https://pic.izhaoo.com/wechat.jpg',
+      gitalk: {
+        enable: false,
+        clientID: '',
+        clientSecret: '',
+        id: window.location.pathname,
+        repo: '',
+        owner: '',
+        admin: ''
+      },
+      motto: {
+        api: '',
+        default: ''
+      },
+      galleries: {
+        enable: 'true'
+      },
+      fab: {
+        enable: 'true',
+        alwaysShow: 'false'
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  <nav class="menu">
+  <div class="menu-close">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <ul class="menu-content">
+    
+    
+    
+    
+    <li class="menu-item"><a href="/ "> 首页</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/galleries "> 摄影</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/archives "> 归档</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/tags "> 标签</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/categories "> 分类</a></li>
+    
+    
+    
+    
+    <li class="menu-item"><a href="/about "> 关于</a></li>
+    
+  </ul>
+  <div class="menu-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <section class="head">
+  <img   class="lazyload" data-original="/images/theme/k8s.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">kubeadm安装k8s 1.15版</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>2020-06-07</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconeye"></i><span id="/2020/06/07/kubeadm%E5%AE%89%E8%A3%85k8s%201.15%E7%89%88/"
+          class="leancloud" data-flag-title="kubeadm安装k8s 1.15版"></span></span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>8511</span>
+    </div>
+  </div>
+</section>
+  <section class="main">
+    <section class="content">
+      <p>前提：<br>
+1、安装 k8s 的节点必须是大于 1 核心的 CPU<br>
+2、阿里云的repo 和base源</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo<br>curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo<br></code></pre></td></tr></tbody></table></figure>
+<p>1、设置系统主机名以及host解析</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">hostnamectl  <span class="hljs-built_in">set</span>-hostname  k8s-master<br>10.0.0.20 k8s-node01<br>10.0.0.21 k8s-node02  <br>10.0.0.10 k8s-master<br></code></pre></td></tr></tbody></table></figure>
+<p>2、安装依赖包</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum install -y  conntrack ntpdate  ntp  ipvsadmin ipset  jq iptables  curl  sysstat  libseccomp wget  vim   net-tools git<br></code></pre></td></tr></tbody></table></figure>
+<p>3、设置防火墙为 Iptables 并设置空规则</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl  stop firewalld  &amp;&amp;  systemctl  <span class="hljs-built_in">disable</span> firewalld<br> yum -y install iptables-services  &amp;&amp;  systemctl  start iptables  &amp;&amp;  systemctl  <span class="hljs-built_in">enable</span> iptables  &amp;&amp;  iptables -F  &amp;&amp;  service iptables save<br></code></pre></td></tr></tbody></table></figure>
+<p>4、关闭selinux 关闭swap<br>
+开启虚拟内存时 如果pod在swap中运行  那么kubernetes出现报错</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">swapoff -a &amp;&amp; sed -i <span class="hljs-string">'/ swap / s/^\(.*\)$/#\1/g'</span> /etc/fstab<br>setenforce 0 &amp;&amp; sed -i <span class="hljs-string">'s/^SELINUX=.*/SELINUX=disabled/'</span> /etc/selinux/config<br></code></pre></td></tr></tbody></table></figure>
+<p>5、调整内核参数，对于 K8S</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">cat &gt; kubernetes.conf &lt;&lt;EOF<br>net.bridge.bridge-nf-call-iptables=1    <span class="hljs-comment">#开启网桥模式</span><br>net.bridge.bridge-nf-call-ip6tables=1    <span class="hljs-comment">#开启网桥模式</span><br>net.ipv4.ip_forward=1<br>net.ipv4.tcp_tw_recycle=0<br>vm.swappiness=0 <span class="hljs-comment"># 禁止使用 swap 空间，只有当系统 OOM 时才允许使用它</span><br>vm.overcommit_memory=1 <span class="hljs-comment"># 不检查物理内存是否够用</span><br>vm.panic_on_oom=0 <span class="hljs-comment"># 开启 OOM  </span><br>fs.inotify.max_user_instances=8192<br>fs.inotify.max_user_watches=1048576<br>fs.file-max=52706963<br>fs.nr_open=52706963<br>net.ipv6.conf.all.disable_ipv6=1   <span class="hljs-comment">#关闭ipv6</span><br>net.netfilter.nf_conntrack_max=2310720<br>EOF<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">cp kubernetes.conf  /etc/sysctl.d/kubernetes.conf  开机调用<br>sysctl -p /etc/sysctl.d/kubernetes.conf    立刻生效<br></code></pre></td></tr></tbody></table></figure>
+<p>6、调整系统时区</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 设置系统时区为 中国/上海</span><br>timedatectl <span class="hljs-built_in">set</span>-timezone Asia/Shanghai<br><span class="hljs-comment"># 将当前的 UTC 时间写入硬件时钟</span><br>timedatectl <span class="hljs-built_in">set</span>-local-rtc 0<br><span class="hljs-comment"># 重启依赖于系统时间的服务</span><br>systemctl restart rsyslog <br>systemctl restart crond<br></code></pre></td></tr></tbody></table></figure>
+<p>7、关闭系统不需要服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl stop postfix &amp;&amp; systemctl <span class="hljs-built_in">disable</span> postfix<br></code></pre></td></tr></tbody></table></figure>
+<p>8、设置 rsyslogd 和 systemd journald<br>
+使用日志为 journald  方式</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkdir /var/<span class="hljs-built_in">log</span>/journal <span class="hljs-comment"># 持久化保存日志的目录</span><br>mkdir /etc/systemd/journald.conf.d  创建配置文件存放目录<br></code></pre></td></tr></tbody></table></figure>
+<p>创建journal 的日志配置文件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs bash">cat &gt; /etc/systemd/journald.conf.d/99-prophet.conf &lt;&lt;EOF<br> [Journal]<br> <span class="hljs-comment"># 持久化保存到磁盘</span><br> Storage=persistent<br>  <br> <span class="hljs-comment"># 压缩历史日志</span><br> Compress=yes<br>  <br> SyncIntervalSec=5m<br> RateLimitInterval=30s<br> RateLimitBurst=1000<br>  <br> <span class="hljs-comment"># 最大占用空间 10G</span><br> SystemMaxUse=10G<br>  <br> <span class="hljs-comment"># 单日志文件最大 200M</span><br> SystemMaxFileSize=200M<br>  <br> <span class="hljs-comment"># 日志保存时间 2 周</span><br> MaxRetentionSec=2week<br>  <br> <span class="hljs-comment"># 不将日志转发到 syslog</span><br> ForwardToSyslog=no<br> EOF<br></code></pre></td></tr></tbody></table></figure>
+<p>9、重启服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl restart systemd-journald<br></code></pre></td></tr></tbody></table></figure>
+<p>10、升级系统内核为 4.44</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">CentOS 7.x 系统自带的 3.10.x 内核存在一些 Bugs，导致运行的 Docker、Kubernetes 不稳定，例如： rpm -Uvh<br>http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm<br></code></pre></td></tr></tbody></table></figure>
+<p>升级</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm<br>   <span class="hljs-comment"># 安装完成后检查 /boot/grub2/grub.cfg 中对应内核 menuentry 中是否包含 initrd16 配置，如果没有，再安装</span><br>一次！<br>yum --enablerepo=elrepo-kernel install -y kernel<span class="hljs-_">-lt</span><br><span class="hljs-comment"># 设置开机从新内核启动</span><br>grub2-set-default <span class="hljs-string">'CentOS Linux (4.4.226-1.el7.elrepo.x86_64) 7 (Core)'</span> &amp;&amp; reboot<br><br><br>uname  -r<br></code></pre></td></tr></tbody></table></figure>
+<p>11、kube-proxy开启ipvs的前置条件</p>
+<p>修改调度方式为ipvs,解决pod和service的调度方式</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">modprobe br_netfilter   加载模块<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash">cat &gt; /etc/sysconfig/modules/ipvs.modules &lt;&lt;EOF<br><span class="hljs-meta">#!/bin/bash</span><br>modprobe -- ip_vs<br>modprobe -- ip_vs_rr<br>modprobe -- ip_vs_wrr<br>modprobe -- ip_vs_sh<br>modprobe -- nf_conntrack_ipv4<br>EOF<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;&amp; bash /etc/sysconfig/modules/ipvs.modules &amp;&amp; lsmod | grep -e ip_vs -e nf_conntrack_ipv4<br></code></pre></td></tr></tbody></table></figure>
+<p>12、安装 Docker 软件</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">  yum install -y yum-utils device-mapper-persistent-data lvm2<br><br>yum-config-manager \<br>--add-repo \<br>http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo<br><br> yum update -y &amp;&amp; yum install -y docker-ce<br> systemctl restart  docker  &amp;&amp; systemctl  <span class="hljs-built_in">enable</span>  docker<br> uname  -r<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">## 创建 /etc/docker 目录</span><br>mkdir /etc/docker<br> <br><span class="hljs-comment"># 配置 daemon.</span><br>cat &gt; /etc/docker/daemon.json &lt;&lt;EOF<br>{<br>  <span class="hljs-string">"exec-opts"</span>: [<span class="hljs-string">"native.cgroupdriver=systemd"</span>],<br>  <span class="hljs-string">"log-driver"</span>: <span class="hljs-string">"json-file"</span>,<br>  <span class="hljs-string">"log-opts"</span>: {<br>    <span class="hljs-string">"max-size"</span>: <span class="hljs-string">"100m"</span><br>  }<br>}<br>EOF<br><br>   mkdir -p /etc/systemd/system/docker.service.d<br></code></pre></td></tr></tbody></table></figure>
+<p>13、  # 重启docker服务</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemctl daemon-reload &amp;&amp; systemctl restart docker &amp;&amp; systemctl <span class="hljs-built_in">enable</span> docker<br></code></pre></td></tr></tbody></table></figure>
+<p>14、安装 Kubeadm （主从配置）</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo<br>[kubernetes]<br>name=Kubernetes<br>baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64<br>enabled=1<br>gpgcheck=0<br>repo_gpgcheck=0<br>gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg <br>http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg<br>EOF<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">yum -y  install  kubeadm-1.15.1 kubectl-1.15.1 kubelet-1.15.1<br>systemctl <span class="hljs-built_in">enable</span> kubelet.service<br></code></pre></td></tr></tbody></table></figure>
+<p>导入镜像<br>
+每个节点都需要导入镜像<br>
+镜像下载<br>
+链接：<a href="https://pan.baidu.com/s/18UoPtPGM4XGZIpUYMW-zaQ" target="_blank" rel="noopener">https://pan.baidu.com/s/18UoPtPGM4XGZIpUYMW-zaQ</a><br>
+提取码：lcrb</p>
+<p>15、初始化主节点</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs bash">   kubeadm config <span class="hljs-built_in">print</span> init-defaults &gt; kubeadm-config.yaml<br><br>修改为一下内容：<br><br><br><br>apiVersion: kubeadm.k8s.io/v1beta2<br>bootstrapTokens:<br>- groups:<br>  - system:bootstrappers:kubeadm:default-node-token<br>  token: abcdef.0123456789abcdef<br>  ttl: 24h0m0s<br>  usages:<br>  - signing<br>  - authentication<br>kind: InitConfiguration<br>localAPIEndpoint:<br>  advertiseAddress: 10.0.0.10<br>  bindPort: 6443<br>nodeRegistration:<br>  criSocket: /var/run/dockershim.sock<br>  name: k8s-master<br>  taints:<br>  - effect: NoSchedule<br>    key: node-role.kubernetes.io/master<br>---<br>apiServer:<br>  timeoutForControlPlane: 4m0s<br>apiVersion: kubeadm.k8s.io/v1beta2<br>certificatesDir: /etc/kubernetes/pki<br>clusterName: kubernetes<br>controllerManager: {}<br>dns:<br>  <span class="hljs-built_in">type</span>: CoreDNS<br>etcd:<br>  <span class="hljs-built_in">local</span>:<br>    dataDir: /var/lib/etcd<br>imageRepository: k8s.gcr.io<br>kind: ClusterConfiguration<br>kubernetesVersion: v1.15.1<br>networking:<br>  dnsDomain: cluster.local<br>  podSubnet: <span class="hljs-string">"10.244.0.0/16"</span><br>  serviceSubnet: 10.96.0.0/12<br>scheduler: {}<br>---<br>apiVersion: kubeproxy.config.k8s.io/v1alpha1<br>kind: KubeProxyConfiguration<br>featureGates:<br>  SupportIPVSProxyMode: <span class="hljs-literal">true</span><br>mode: ipvs<br></code></pre></td></tr></tbody></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">kubeadm init --config=kubeadm-config.yaml --experimental-upload-certs | tee kubeadm-init.log<br></code></pre></td></tr></tbody></table></figure>
+<p>安装kubernetes日志文件解释：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs bash">[init] Using Kubernetes version: v1.15.1  版本信息<br>[preflight] Running pre-flight checks 检测当前运行环境<br>[preflight] Pulling images required <span class="hljs-keyword">for</span> setting up a Kubernetes cluster 下载镜像<br>[kubelet-start] Writing kubelet environment file with flags to file <span class="hljs-string">"/var/lib/kubelet/kubeadm-flags.env"</span> 存放kubernetes的环境变量<br>[kubelet-start] Writing kubelet configuration to file <span class="hljs-string">"/var/lib/kubelet/config.yaml"</span> kubernetes的配置文件<br>[certs] Using certificateDir folder <span class="hljs-string">"/etc/kubernetes/pki"</span> 存放kubernetes的证书<br>[certs] apiserver serving cert is signed <span class="hljs-keyword">for</span> DNS names [k8s-master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 10.0.0.10]<br>设置默认的dns<br> [certs] Generating <span class="hljs-string">"front-proxy-ca"</span> certificate and key  密钥的生成<br>[certs] etcd/server serving cert is signed <span class="hljs-keyword">for</span> DNS names [k8s-master localhost] and IPs [10.0.0.10 127.0.0.1 ::1]  DNS的名称和地址<br>[kubeconfig] Using kubeconfig folder <span class="hljs-string">"/etc/kubernetes"</span>配置文件存放位置<br></code></pre></td></tr></tbody></table></figure>
+<p>初始化后的操作</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkdir -p <span class="hljs-variable">$HOME</span>/.kube   当前家目录下创建.kube的目录<br>sudo cp -i /etc/kubernetes/admin.conf <span class="hljs-variable">$HOME</span>/.kube/config    拷贝管理员的配置文件到.kube<br>sudo chown $(id -u):$(id -g) <span class="hljs-variable">$HOME</span>/.kube/config  赋予属主属组的权限<br></code></pre></td></tr></tbody></table></figure>
+<p>此时查看节点信息</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">[root@k8s-master ~]<span class="hljs-comment"># kubectl  get node</span><br>NAME         STATUS     ROLES    AGE    VERSION<br>k8s-master   NotReady   master   9m4s   v1.15.1<br></code></pre></td></tr></tbody></table></figure>
+<p>出现 NotReady 状态的原因是 kubernetes需要扁平化的网络，构建flannel网络</p>
+<p>加入主节点以及其余工作节点<br>
+执行安装日志中的加入命令即可<br>
+16、部署网络</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">/root/install-k8s/plugin/flannel<br><span class="hljs-built_in">cd</span>  /root/install-k8s/plugin/flannel<br>wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml<br></code></pre></td></tr></tbody></table></figure>
+<p>下载下来之后（什么都不需要改）进行创建flannel网络</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs bash"> kubectl  create -f  kube-flannel.yml <br><br><br>kubectl   get  pod  -n kube-system   查看是否执行成功<br><br><br> kubectl   get  node  再次查看 发现状态变为了Ready<br><br>kubectl   get  pod -n kube-system -o wide  查看<br><br>在node节点执行日志提示的加入信息<br><br><br>kubectl   get  node  全部都变为了Ready <br><br>kubectl   get  pod -n kube-system  -w  持续查看<br><br><br>搭建完成<br>[root@k8s-master ~]<span class="hljs-comment"># kubectl   get node</span><br>NAME         STATUS   ROLES    AGE     VERSION<br>k8s-master   Ready    master   26m     v1.15.1<br>k8s-node01   Ready    &lt;none&gt;   7m10s   v1.15.1<br>k8s-node02   Ready    &lt;none&gt;   7m7s    v1.15.1<br></code></pre></td></tr></tbody></table></figure><script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+    </section>
+    <section class="extra">
+      
+        <section class="donate">
+  <div class="qrcode">
+    <img   class="lazyload" data-original="https://pic.izhaoo.com/alipay.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+      
+      
+      
+<nav class="nav">
+  
+  
+    <a href="/2020/06/03/zabbix%20ReplicationController%E6%A8%A1%E6%9D%BF/">zabbix ReplicationController模板<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+    </section>
+    
+  </section>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="tencent://message/?Menu=yes&uin=2573514647 " target="_blank" onMouseOver="this.style.color= '#12B7F5'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  iconQQ "></i>
+    </a>
+    
+    
+    
+    
+    
+    <a href="https://github.com/LiuShiYa-github/LiuShiYa-github.github.io " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Copyright© 2019-2020 | <a target="_blank" href="http://www.beian.miit.gov.cn/">京ICP备20015941号</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  <div class="fab fab-menu">
+    <i class="iconfont iconmenu"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js"></script>
+
+
+
+
+<script src="//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js"></script>
+<script>
+  AV.init({
+    appId: '',
+    appKey: '',
+    serverURLs: '',
+  });
+
+  function showCount(Counter) {
+    $(".leancloud").each(function (e) {
+      (function (e) {
+        var url = $(".leancloud").eq(e).attr('id').trim();
+        var query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        query.count().then(function (number) {
+          $(".leancloud").eq(e).text(number ? number : '--');
+        }, function (error) {});
+      })(e)
+    })
+  }
+
+  function addCount(Counter) {
+    var url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'https://LiuShiYa-github.github.io';
+    var Counter = AV.Object.extend("Counter");
+    var query = new Counter;
+    query.save({
+      words: url
+    }).then(function (object) {})
+  }
+  
+  $(function () {
+    var Counter = AV.Object.extend("Counter");
+    addCount(Counter);
+    showCount(Counter);
+  });
+</script>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</html>
